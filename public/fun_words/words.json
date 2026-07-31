@@ -45,6 +45,11 @@
       "text": "你每天都会忘记上千件事，为什么不把这个也忘了？",
       "align": "random",
       "motion": "fade"
+    },
+    {
+      "text": "？强强？",
+      "align": "random",
+      "motion": "left"
     }
   ]
 }

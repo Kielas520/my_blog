@@ -3,5 +3,30 @@
     "name": "frutigeraero",
     "target": "https://frutigeraeroarchive.org",
     "description": "千禧年的梦"
+  },
+  {
+    "name": "cat",
+    "target": "https://cat-bounce.com/",
+    "description": "？猫猫？"
+  },
+  {
+    "name": "cat",
+    "target": "https://cat-bounce.com/",
+    "description": "？猫猫？"
+  },
+  {
+    "name": "just type",
+    "target": "https://justtypestuff.com/",
+    "description": "？要什么有什么？"
+  },
+  {
+    "name": "blocks?",
+    "target": "https://mondrianandme.com/",
+    "description": "？什么玩意？"
+  },
+  {
+    "name": "point at you?",
+    "target": "https://pointerpointer.com/",
+    "description": "？就指你？"
   }
 ]

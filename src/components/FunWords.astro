@@ -24,22 +24,36 @@
     ];
     const alignments = ['left', 'center', 'right'];
     const motions = ['fade', 'up', 'left', 'right'];
-    let previous = -1;
-
     const pick = <T,>(values: T[]) => values[Math.floor(Math.random() * values.length)];
     const normalize = (entry: string | WordEntry): WordEntry => typeof entry === 'string' ? { text: entry } : entry;
+    const shuffle = <T,>(values: T[]) => {
+      for (let index = values.length - 1; index > 0; index -= 1) {
+        const randomIndex = Math.floor(Math.random() * (index + 1));
+        [values[index], values[randomIndex]] = [values[randomIndex], values[index]];
+      }
+      return values;
+    };
 
     const run = (entries: Array<string | WordEntry>, interval?: number) => {
       const words = entries.map(normalize).filter((entry) => entry?.text);
       if (!words.length) words.push(...fallback.map((text) => ({ text })));
       const duration = Math.max(Number(interval) || 6500, 3200);
       stage.style.setProperty('--word-duration', `${duration}ms`);
+      let queue: WordEntry[] = [];
+      let previousText = '';
+
+      const refillQueue = () => {
+        queue = shuffle([...words]);
+        if (queue.length > 1 && queue[0].text === previousText) {
+          [queue[0], queue[1]] = [queue[1], queue[0]];
+        }
+      };
 
       const showNext = () => {
-        let index = Math.floor(Math.random() * words.length);
-        if (words.length > 1 && index === previous) index = (index + 1) % words.length;
-        previous = index;
-        const entry = words[index];
+        if (!queue.length) refillQueue();
+        const entry = queue.shift();
+        if (!entry) return;
+        previousText = entry.text;
         textNode.className = 'fun-text';
         void textNode.offsetWidth;
         textNode.textContent = entry.text;
@@ -88,10 +102,10 @@
   .fun-text[data-motion='up'] { animation-name: word-up; }
   .fun-text[data-motion='left'] { animation-name: word-left; }
   .fun-text[data-motion='right'] { animation-name: word-right; }
-  @keyframes word-fade { 0%,100% { opacity: 0; } 16%,82% { opacity: 1; } }
-  @keyframes word-up { 0% { opacity: 0; transform: translateY(35px); } 18%,80% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-32px); } }
-  @keyframes word-left { 0% { opacity: 0; transform: translateX(60px); } 18%,80% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(-70px); } }
-  @keyframes word-right { 0% { opacity: 0; transform: translateX(-60px); } 18%,80% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(70px); } }
+  @keyframes word-fade { 0%,100% { opacity: .28; } 7%,93% { opacity: 1; } }
+  @keyframes word-up { 0% { opacity: .28; transform: translateY(22px); } 7%,93% { opacity: 1; transform: translateY(0); } 100% { opacity: .28; transform: translateY(-22px); } }
+  @keyframes word-left { 0% { opacity: .28; transform: translateX(38px); } 7%,93% { opacity: 1; transform: translateX(0); } 100% { opacity: .28; transform: translateX(-42px); } }
+  @keyframes word-right { 0% { opacity: .28; transform: translateX(-38px); } 7%,93% { opacity: 1; transform: translateX(0); } 100% { opacity: .28; transform: translateX(42px); } }
   @media (prefers-reduced-motion: reduce) { .fun-text { animation-name: word-fade !important; } }
   @media (max-width: 600px) {
     .fun-words { margin-top: 68px; }
