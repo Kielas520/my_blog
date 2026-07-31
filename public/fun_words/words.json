@@ -19,7 +19,32 @@
     {
       "text": "未定义，也是一种定义。",
       "align": "random",
-      "motion": "random"
+      "motion": "up"
+    },
+    {
+      "text": "666，这个入是桂。",
+      "align": "random",
+      "motion": "left"
+    },
+    {
+      "text": "无聊的时候，可以睡觉。",
+      "align": "random",
+      "motion": "fade"
+    },
+    {
+      "text": "你是凑企鹅，你是谁呀？",
+      "align": "random",
+      "motion": "right"
+    },
+    {
+      "text": "咕咕嘎嘎",
+      "align": "random",
+      "motion": "left"
+    },
+    {
+      "text": "你每天都会忘记上千件事，为什么不把这个也忘了？",
+      "align": "random",
+      "motion": "fade"
     }
   ]
 }
