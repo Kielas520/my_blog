@@ -20,26 +20,31 @@ const pictures = pictureData as string[];
   </section>
 </BaseLayout>
 
-<script>
-  const stage = document.querySelector<HTMLElement>('#picture-stage');
-  if (stage) {
-    const photos = Array.from(stage.querySelectorAll<HTMLElement>('[data-photo]'));
-    for (let index = photos.length - 1; index > 0; index -= 1) {
-      const randomIndex = Math.floor(Math.random() * (index + 1));
-      [photos[index], photos[randomIndex]] = [photos[randomIndex], photos[index]];
-    }
+<script is:inline>
+  (() => {
+    const stage = document.querySelector('#picture-stage');
+    if (!stage) return;
 
-    const alignments = ['left', 'center', 'right'];
-    const rotations = [-4.2, -2.8, -1.4, 1.2, 2.6, 4];
+    const shuffle = (values) => {
+      for (let index = values.length - 1; index > 0; index -= 1) {
+        const randomIndex = Math.floor(Math.random() * (index + 1));
+        [values[index], values[randomIndex]] = [values[randomIndex], values[index]];
+      }
+      return values;
+    };
+
+    const photos = shuffle(Array.from(stage.querySelectorAll('[data-photo]')));
+    const alignments = shuffle(['left', 'center', 'right']);
+
     photos.forEach((photo, index) => {
-      const alignment = alignments[(index + Math.floor(Math.random() * alignments.length)) % alignments.length];
-      const rotation = rotations[Math.floor(Math.random() * rotations.length)];
-      photo.dataset.align = alignment;
-      photo.style.setProperty('--rotation', `${rotation}deg`);
-      photo.style.setProperty('--delay', `${Math.min(index * 55, 420)}ms`);
+      const magnitude = 1.8 + Math.random() * 3.8;
+      const rotation = magnitude * (Math.random() > .5 ? 1 : -1);
+      photo.dataset.align = alignments[index % alignments.length];
+      photo.style.setProperty('--rotation', `${rotation.toFixed(2)}deg`);
+      photo.style.setProperty('--delay', `${Math.min(index * 70, 490)}ms`);
       stage.append(photo);
     });
-  }
+  })();
 </script>
 
 <style>

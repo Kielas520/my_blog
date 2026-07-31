@@ -4,5 +4,29 @@
     "short": "kielasovo.com/me",
     "target": "https://kielas520.notion.site/INDEX-2d8d8528a99d4fa2a6016eb2768911e2",
     "description": "我的 Notion 主页"
+  },
+  {
+    "name": "works",
+    "short": "kielasovo.com/works",
+    "target": "https://kielas520.notion.site/34ea064aa1788080aec1fb1fed5de182",
+    "description": "我的作品集"
+  },
+  {
+    "name": "github",
+    "short": "kielasovo.com/github",
+    "target": "https://github.com/Kielas520",
+    "description": "我的github主页"
+  },
+  {
+    "name": "bilibili",
+    "short": "kielasovo.com/bilibili",
+    "target": "https://space.bilibili.com/109139721?spm_id_from=333.1007.0.0",
+    "description": "我的b站主页"
+  },
+  {
+    "name": "steam",
+    "short": "kielasovo.com/steam",
+    "target": "https://steamcommunity.com/id/Kielas_Elias/",
+    "description": "我的steam主页"
   }
 ]
