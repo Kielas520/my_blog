@@ -16,32 +16,28 @@
 
 `category` 必须使用以下值之一：
 
-| Notion 分类 | Frontmatter 值 | 适合内容 |
-| --- | --- | --- |
-| `_INIT` | `init` | 环境、命令和工具手册 |
-| `Stuff` | `stuff` | 项目、比赛和杂项 |
-| `TECH_` | `tech` | 通用技术、课程和观点 |
-| `MACHINE_LEARNING` | `machine-learning` | 机器学习理论与实战 |
-| `EMBODIED_AI` | `embodied-ai` | 具身智能、机械臂和 ROS |
-| `Memory` | `memory` | 精选日记、回忆和随想 |
+| Notion 资料库 | 页面名称 | Frontmatter 值 | 适合内容 |
+| --- | --- | --- | --- |
+| 记 | `dairy` | `dairy` | 精选日记和回忆 |
+| Thoughts | `Thoughts` | `thoughts` | 观点与思考 |
+| TICKTICK | `TICKTICK` | `ticktick` | 方法、规范和知识整理 |
+| 求职 | `getAjob` | `get-a-job` | 求职经验与准备 |
 
 建议使用与分类一致的子目录：
 
 ```text
 src/content/blogs/
-├─ init/
-├─ stuff/
-├─ tech/
-├─ machine-learning/
-├─ embodied-ai/
-└─ memory/
+├─ dairy/
+├─ thoughts/
+├─ ticktick/
+└─ get-a-job/
 ```
 
 目录会成为文章 URL 的一部分。例如：
 
 ```text
-src/content/blogs/machine-learning/what-is-yolo.md
-→ /blogs/machine-learning/what-is-yolo
+src/content/blogs/thoughts/ai-coding.md
+→ /blogs/thoughts/ai-coding
 ```
 
 ## 创建文章
@@ -50,21 +46,21 @@ src/content/blogs/machine-learning/what-is-yolo.md
 
 ```powershell
 New-Item -ItemType Directory `
-  -Path .\src\content\blogs\machine-learning `
+  -Path .\src\content\blogs\thoughts `
   -Force
 
 Copy-Item `
   .\src\content\blogs\_template.md `
-  .\src\content\blogs\machine-learning\what-is-yolo.md
+  .\src\content\blogs\thoughts\new-article.md
 ```
 
 填写 Frontmatter：
 
 ```yaml
 ---
-title: YOLO 是什么
-description: 从检测任务出发理解 YOLO 的基本结构和推理过程。
-category: machine-learning
+title: 新文章标题
+description: 用一两句话概括文章内容，供列表和 SEO 使用。
+category: thoughts
 publishedAt: 2026-08-01
 updatedAt: 2026-08-03
 draft: false

@@ -3,12 +3,10 @@ import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
 const notionCategory = z.enum([
-  'init',
-  'stuff',
-  'tech',
-  'machine-learning',
-  'embodied-ai',
-  'memory',
+  'dairy',
+  'thoughts',
+  'ticktick',
+  'get-a-job',
 ]);
 
 const postSchema = z.object({

@@ -17,12 +17,10 @@ export async function getStaticPaths() {
 const { post } = Astro.props as { post: Post };
 const { Content } = await render(post);
 const categoryName = {
-  'init': '_INIT',
-  'stuff': 'Stuff',
-  'tech': 'TECH_',
-  'machine-learning': 'MACHINE_LEARNING',
-  'embodied-ai': 'EMBODIED_AI',
-  'memory': 'Memory',
+  'dairy': 'dairy',
+  'thoughts': 'Thoughts',
+  'ticktick': 'TICKTICK',
+  'get-a-job': 'getAjob',
 }[post.data.category];
 ---
 

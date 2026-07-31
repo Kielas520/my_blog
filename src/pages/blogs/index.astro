@@ -7,12 +7,10 @@ const posts = (await getCollection('blogs'))
   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 
 const categoryName = {
-  'init': '_INIT',
-  'stuff': 'Stuff',
-  'tech': 'TECH_',
-  'machine-learning': 'MACHINE_LEARNING',
-  'embodied-ai': 'EMBODIED_AI',
-  'memory': 'Memory',
+  'dairy': 'dairy',
+  'thoughts': 'Thoughts',
+  'ticktick': 'TICKTICK',
+  'get-a-job': 'getAjob',
 } as const;
 ---
 
