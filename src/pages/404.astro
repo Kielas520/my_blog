@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="页面未找到">
+  <section class="container not-found">
+    <p class="eyebrow">Error 404</p>
+    <h1>坐标不存在。</h1>
+    <p>这个页面可能被移动了，或从未存在过。</p>
+    <a href="/">返回首页 →</a>
+  </section>
+</BaseLayout>
+<style>
+  .not-found { min-height: 65vh; padding-top: 15vh; }
+  h1 { margin: 0; font-size: clamp(3rem, 8vw, 7rem); letter-spacing: -.07em; }
+  .not-found > p:not(.eyebrow) { color: var(--muted); }
+  a { display: inline-block; margin-top: 24px; color: var(--accent); }
+</style>

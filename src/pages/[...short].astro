@@ -1,0 +1,33 @@
+---
+import shortLinks from '../data/short-links.json';
+
+export function getStaticPaths() {
+  return shortLinks.map((link) => ({
+    params: {
+      short: link.short
+        .replace(/^https?:\/\//, '')
+        .replace(/^(?:www\.)?kielasovo\.com\/?/, '')
+        .replace(/^\/+|\/+$/g, ''),
+    },
+    props: { link },
+  }));
+}
+
+const { link } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="refresh" content={`0;url=${link.target}`} />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={link.target} />
+    <title>正在前往 {link.name}…</title>
+    <script is:inline set:html={`window.location.replace(${JSON.stringify(link.target)});`}></script>
+  </head>
+  <body>
+    <p>正在前往 <a href={link.target}>{link.name}</a>…</p>
+  </body>
+</html>

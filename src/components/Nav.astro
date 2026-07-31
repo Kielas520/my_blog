@@ -1,0 +1,76 @@
+---
+const pathname = Astro.url.pathname;
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/blogs', label: 'Blogs' },
+  { href: '/tools', label: 'Tools' },
+  { href: '/link', label: 'Link' },
+];
+
+const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
+---
+
+<div class="nav-wrap">
+  <nav class="nav container" aria-label="主导航">
+    <a class="brand" href="/" aria-label="Kielasovo 首页">
+      <span class="brand-orb" aria-hidden="true"></span>
+      <span>Kielasovo</span>
+      <small>online</small>
+    </a>
+    <div class="links">
+      {links.map((link) => (
+        <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </nav>
+</div>
+
+<style>
+  .nav-wrap {
+    position: relative;
+    z-index: 10;
+    padding-top: 14px;
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 54px;
+    padding: 7px 10px 7px 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(226,246,255,.65));
+    border: 1px solid rgba(255,255,255,.9);
+    border-bottom-color: rgba(38,117,153,.3);
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(35,105,137,.12), inset 0 1px rgba(255,255,255,.95);
+    backdrop-filter: blur(12px);
+  }
+  .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; letter-spacing: -.03em; text-shadow: 0 1px #fff; }
+  .brand small { color: var(--green-dark); font: 600 .58rem/1 Verdana, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+  .brand-orb {
+    width: 24px;
+    height: 24px;
+    background: radial-gradient(circle at 35% 25%, #fff 0 8%, #a9f57e 16%, #54b83f 55%, #24792d 100%);
+    border: 1px solid rgba(30,106,43,.5);
+    border-radius: 50%;
+    box-shadow: inset 0 -3px 5px rgba(11,78,23,.25), 0 1px 3px rgba(29,88,51,.25);
+  }
+  .links { display: flex; align-items: center; gap: 6px; }
+  .links a {
+    padding: 7px 12px;
+    color: var(--muted);
+    border: 1px solid transparent;
+    border-radius: 11px;
+    font-size: .75rem;
+    font-weight: 700;
+    transition: color 160ms ease, background 160ms ease, border 160ms ease;
+  }
+  .links a:hover, .links a[aria-current='page'] { color: #07577f; background: linear-gradient(#fff, #d9f1fb); border-color: rgba(58,137,172,.25); box-shadow: inset 0 1px #fff; }
+  @media (max-width: 480px) {
+    .brand small { display: none; }
+    .links { gap: 1px; }
+    .links a { padding-inline: 7px; font-size: .68rem; }
+    .nav { padding-left: 10px; }
+  }
+</style>

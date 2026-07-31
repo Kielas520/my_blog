@@ -1,0 +1,65 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = (await getCollection('blogs'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+
+const categoryName = {
+  'init': '_INIT',
+  'stuff': 'Stuff',
+  'tech': 'TECH_',
+  'machine-learning': 'MACHINE_LEARNING',
+  'embodied-ai': 'EMBODIED_AI',
+  'memory': 'Memory',
+} as const;
+---
+
+<BaseLayout title="Blogs" description="从 Notion 内容库中选出的文章。">
+  <header class="container page-head">
+    <p class="eyebrow">Selected from Notion</p>
+    <h1>Blogs</h1>
+    <p>只放值得公开、也值得以后再读一次的内容；分类沿用原来的 Notion 结构。</p>
+  </header>
+  <div class="container categories">
+    {Object.entries(categoryName).map(([key, label]) => (
+      <span><i>{posts.filter((post) => post.data.category === key).length}</i>{label}</span>
+    ))}
+  </div>
+  <section class="container posts" aria-label="文章列表">
+    {posts.length === 0 ? (
+      <div class="empty-state"><strong>SELECTED BLOGS / SOON</strong><p>等待第一批精选文章进入这里。</p></div>
+    ) : posts.map((post) => (
+      <article>
+        <a href={`/blogs/${post.id}`}>
+          <div class="meta"><span>{categoryName[post.data.category]}</span><time>{post.data.publishedAt.toLocaleDateString('zh-CN')}</time></div>
+          <h2>{post.data.title}</h2>
+          <p>{post.data.description}</p>
+          <div class="tags">{post.data.tags.map((tag) => <span>#{tag}</span>)}</div>
+          <span class="arrow">READ ›</span>
+        </a>
+      </article>
+    ))}
+  </section>
+</BaseLayout>
+
+<style>
+  .categories { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 25px; }
+  .categories span { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; color: #527486; background: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.9); border-radius: 9px; box-shadow: 0 3px 8px rgba(45,111,139,.08); font: 700 .6rem/1 Verdana, sans-serif; }
+  .categories i { display: grid; width: 18px; height: 18px; color: #fff; background: #66aa4b; border-radius: 50%; place-items: center; font-style: normal; }
+  .posts { display: grid; grid-template-columns: repeat(2, 1fr); overflow: hidden; background: rgba(255,255,255,.38); border: 1px solid rgba(255,255,255,.9); border-radius: 22px; box-shadow: 0 16px 35px rgba(43,109,137,.11); }
+  article { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  article a { position: relative; display: block; min-height: 310px; padding: 30px; transition: background 180ms ease; }
+  article a:hover { background: rgba(255,255,255,.55); }
+  .meta { display: flex; justify-content: space-between; color: var(--muted); font: .65rem/1 ui-monospace, monospace; }
+  .meta > span { color: var(--green-dark); }
+  h2 { max-width: 450px; margin: 48px 0 10px; color: #184b64; font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.15; letter-spacing: -.04em; }
+  article p { max-width: 440px; margin: 0; color: var(--muted); font-size: .8rem; }
+  .tags { display: flex; gap: 9px; margin-top: 18px; color: #6f929e; font: .65rem/1 ui-monospace, monospace; }
+  .arrow { position: absolute; right: 28px; bottom: 25px; color: #277d9f; font: 700 .6rem/1 Verdana, sans-serif; }
+  .empty-state { grid-column: 1 / -1; padding: 78px 30px; }
+  .empty-state strong { color: #2c708d; font: 800 .75rem/1 Verdana, sans-serif; letter-spacing: .1em; }
+  .empty-state p { margin: 12px 0 0; }
+  @media (max-width: 720px) { .posts { grid-template-columns: 1fr; } article a { min-height: 270px; } }
+</style>

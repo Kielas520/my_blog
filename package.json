@@ -1,0 +1,20 @@
+{
+  "name": "kielasovo",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0 --port 1314",
+    "start": "npm run build && npm run serve",
+    "build": "astro check && astro build",
+    "serve": "sirv dist --host 127.0.0.1 --port 1314 --quiet --etag",
+    "preview": "astro preview --host 0.0.0.0 --port 1314",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.6",
+    "astro": "^7.1.6",
+    "sirv-cli": "^3.0.1",
+    "typescript": "^5.9.3"
+  }
+}

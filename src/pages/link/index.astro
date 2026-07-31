@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import shortLinks from '../../data/short-links.json';
+
+const localPath = (short: string) => `/${short
+  .replace(/^https?:\/\//, '')
+  .replace(/^(?:www\.)?kielasovo\.com\/?/, '')
+  .replace(/^\/+|\/+$/g, '')}`;
+---
+
+<BaseLayout title="Link" description="Kielasovo 的自定义短链接目录。">
+  <header class="container page-head link-head">
+    <p class="eyebrow">Shortcut directory</p>
+    <h1>Link</h1>
+    <p>一些容易记住的互联网坐标。编辑 <code>src/data/short-links.json</code> 即可添加。</p>
+  </header>
+  <section class="container link-list">
+    {shortLinks.map((link, index) => (
+      <a class="link-card" href={localPath(link.short)}>
+        <span class="index">{String(index + 1).padStart(2, '0')}</span>
+        <div><strong>{link.name}</strong><p>{link.description}</p></div>
+        <code>{link.short}</code>
+        <span class="arrow">↗</span>
+      </a>
+    ))}
+  </section>
+</BaseLayout>
+
+<style>
+  .link-head code { padding: 3px 7px; color: #246886; background: rgba(255,255,255,.58); border: 1px solid var(--line); border-radius: 6px; }
+  .link-list { overflow: hidden; background: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.85); border-radius: 20px; box-shadow: 0 14px 35px rgba(41,112,142,.12); }
+  .link-card { display: grid; grid-template-columns: 42px 1fr auto 25px; align-items: center; gap: 18px; padding: 21px 24px; border-bottom: 1px solid var(--line); transition: background 160ms ease; }
+  .link-card:last-child { border-bottom: 0; }
+  .link-card:hover { background: rgba(255,255,255,.7); }
+  .index { color: #7b9aa8; font: .65rem/1 ui-monospace, monospace; }
+  strong { color: #184b64; font-size: 1rem; }
+  p { margin: 3px 0 0; color: var(--muted); font-size: .7rem; }
+  .link-card code { color: #2c7793; font-size: .68rem; }
+  .arrow { color: var(--green-dark); }
+  @media (max-width: 650px) { .link-card { grid-template-columns: 30px 1fr 20px; } .link-card code { display: none; } }
+</style>

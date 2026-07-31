@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FunWords from '../components/FunWords.astro';
+
+const portals = [
+  { href: '/blogs', label: 'BLOGS', note: '精选文章与系列', icon: '✎', tone: 'blue' },
+  { href: '/tools', label: 'TOOLS', note: '网络与实用工具', icon: '⚙', tone: 'green' },
+  { href: '/link', label: 'LINK', note: '短链接与坐标', icon: '↗', tone: 'aqua' },
+];
+---
+
+<BaseLayout>
+  <div class="home container">
+    <section class="profile" aria-labelledby="profile-title">
+      <div class="avatar-wrap">
+        <div class="avatar-glow"></div>
+        <img src="/images/kiana.jpg" width="640" height="640" alt="Kielasovo 的头像：白发蓝眼的女孩" />
+        <span class="online" title="online"></span>
+      </div>
+      <div class="profile-copy">
+        <p class="hello"><span>WELCOME</span> to kielasovo.com</p>
+        <h1 id="profile-title">Definition <i>→</i> NuLL</h1>
+        <p class="collie">🌹 我的智商堪比一条边牧 🌹</p>
+        <p class="sea">深夜的海边，浪声没停过，但你不觉得吵…</p>
+        <div class="tiny-meta"><span>OWNER / KIELAS520</span><span>STATUS / FLOATING</span></div>
+      </div>
+    </section>
+
+    <section class="portal" aria-labelledby="portal-title">
+      <div class="portal-heading">
+        <span>Choose a destination</span>
+        <h2 id="portal-title">Internet shortcuts</h2>
+      </div>
+      <nav class="portal-grid" aria-label="主页入口">
+        {portals.map((item, index) => (
+          <a class={`portal-button ${item.tone}`} href={item.href}>
+            <span class="button-shine"></span>
+            <span class="portal-index">0{index + 1}</span>
+            <span class="portal-icon" aria-hidden="true">{item.icon}</span>
+            <strong>{item.label}</strong>
+            <small>{item.note}</small>
+            <span class="go">OPEN ›</span>
+          </a>
+        ))}
+      </nav>
+    </section>
+
+    <FunWords />
+  </div>
+</BaseLayout>
+
+<style>
+  .home { padding-top: clamp(56px, 9vw, 105px); }
+  .profile { display: grid; grid-template-columns: minmax(190px, 300px) 1fr; max-width: 920px; margin-inline: auto; align-items: center; gap: clamp(34px, 7vw, 82px); }
+  .avatar-wrap { position: relative; aspect-ratio: 1; padding: 9px; background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(183,228,246,.72)); border: 1px solid rgba(34,126,166,.3); border-radius: 50%; box-shadow: 0 18px 45px rgba(34,110,145,.2), inset 0 2px #fff; }
+  .avatar-wrap::after { position: absolute; inset: 8px; content: ""; border: 2px solid rgba(255,255,255,.58); border-radius: 50%; pointer-events: none; }
+  .avatar-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .avatar-glow { position: absolute; inset: 9% -14% -8%; z-index: -1; background: radial-gradient(ellipse, rgba(71,176,215,.34), transparent 66%); filter: blur(10px); }
+  .online { position: absolute; right: 12%; bottom: 8%; width: 25px; height: 25px; background: radial-gradient(circle at 35% 25%, #fff, #94ed63 25%, #45aa36 70%); border: 4px solid #f5fcff; border-radius: 50%; box-shadow: 0 3px 8px rgba(31,109,43,.32); }
+  .hello { margin: 0 0 13px; color: #507789; font: 700 .66rem/1.5 Verdana, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+  .hello span { display: inline-block; margin-right: 5px; padding: 4px 8px; color: #fff; background: linear-gradient(#54aee0, #147eaf); border: 1px solid #0b6e9e; border-radius: 7px; box-shadow: inset 0 1px rgba(255,255,255,.5); }
+  h1 { margin: 0; color: #194b64; font: 700 clamp(2.6rem, 6.5vw, 5.6rem)/.98 "Trebuchet MS", Verdana, sans-serif; letter-spacing: -.07em; text-shadow: 0 2px #fff, 0 7px 18px rgba(26,93,126,.14); }
+  h1 i { color: #49a33c; font-style: normal; }
+  .collie { display: inline-block; margin: 24px 0 0; padding: 8px 13px; color: #37604a; background: linear-gradient(90deg, rgba(255,255,255,.52), rgba(230,249,218,.62)); border: 1px solid rgba(85,151,74,.2); border-radius: 8px; font: 700 .8rem/1.5 Verdana, sans-serif; }
+  .sea { max-width: 550px; margin: 17px 0 0; color: #57788a; font: italic 1rem/1.8 Georgia, serif; }
+  .tiny-meta { display: flex; gap: 20px; margin-top: 24px; color: #7191a0; font: .56rem/1.3 ui-monospace, monospace; letter-spacing: .1em; }
+  .portal { margin-top: clamp(100px, 15vw, 170px); }
+  .portal-heading { margin-bottom: 25px; text-align: center; }
+  .portal-heading span { color: #5c8495; font: 700 .62rem/1 Verdana, sans-serif; letter-spacing: .13em; text-transform: uppercase; }
+  .portal-heading h2 { margin: 7px 0 0; color: #214f65; font: 700 clamp(1.7rem, 4vw, 2.8rem)/1.1 "Trebuchet MS", sans-serif; letter-spacing: -.04em; }
+  .portal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 900px; margin-inline: auto; }
+  .portal-button { position: relative; display: grid; min-height: 210px; overflow: hidden; padding: 25px; color: #174257; background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(211,242,252,.78)); border: 1px solid rgba(38,124,160,.3); border-radius: 22px; box-shadow: 0 13px 30px rgba(42,112,142,.13), inset 0 2px rgba(255,255,255,.9), inset 0 -4px rgba(26,109,143,.05); transition: transform 180ms ease, box-shadow 180ms ease; }
+  .portal-button.green { background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(221,245,207,.82)); border-color: rgba(74,145,57,.28); }
+  .portal-button.aqua { background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(207,246,239,.78)); border-color: rgba(44,149,139,.28); }
+  .portal-button:hover { transform: translateY(-5px); box-shadow: 0 19px 36px rgba(42,112,142,.19), inset 0 2px #fff; }
+  .button-shine { position: absolute; inset: 0 0 52% 0; background: linear-gradient(180deg, rgba(255,255,255,.65), transparent); border-radius: inherit; pointer-events: none; }
+  .portal-index { position: absolute; top: 18px; right: 19px; color: rgba(38,85,104,.4); font: .62rem/1 ui-monospace, monospace; }
+  .portal-icon { position: relative; display: grid; width: 44px; height: 44px; color: #fff; background: linear-gradient(#4eb3e3, #087bab); border: 1px solid #086c99; border-radius: 14px; box-shadow: inset 0 2px rgba(255,255,255,.55), 0 4px 9px rgba(22,110,151,.22); place-items: center; font-size: 1.25rem; }
+  .green .portal-icon { background: linear-gradient(#82cf61, #3d9637); border-color: #347c2e; }
+  .aqua .portal-icon { background: linear-gradient(#5ad4c5, #168d8d); border-color: #147b7b; }
+  .portal-button strong { position: relative; margin-top: 24px; font: 800 1.35rem/1 Verdana, sans-serif; letter-spacing: .04em; }
+  .portal-button small { position: relative; margin-top: 8px; color: #668595; font-size: .72rem; }
+  .go { position: absolute; right: 22px; bottom: 20px; color: #287c9e; font: 700 .58rem/1 Verdana, sans-serif; letter-spacing: .08em; }
+  @media (max-width: 700px) {
+    .profile { grid-template-columns: 140px 1fr; gap: 26px; }
+    .portal-grid { grid-template-columns: 1fr; max-width: 470px; }
+    .portal-button { min-height: 165px; }
+  }
+  @media (max-width: 520px) {
+    .home { padding-top: 45px; }
+    .profile { grid-template-columns: 1fr; text-align: center; }
+    .avatar-wrap { width: 155px; margin-inline: auto; }
+    .profile-copy { display: grid; justify-items: center; }
+    .tiny-meta { justify-content: center; }
+    .portal { margin-top: 100px; }
+  }
+</style>

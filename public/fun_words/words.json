@@ -1,0 +1,25 @@
+{
+  "interval": 6500,
+  "words": [
+    {
+      "text": "深夜的海边，浪声没停过，但你不觉得吵…",
+      "align": "random",
+      "motion": "fade"
+    },
+    {
+      "text": "Definition → NuLL",
+      "align": "random",
+      "motion": "left"
+    },
+    {
+      "text": "互联网是一片有潮汐的海。",
+      "align": "random",
+      "motion": "up"
+    },
+    {
+      "text": "未定义，也是一种定义。",
+      "align": "random",
+      "motion": "random"
+    }
+  ]
+}

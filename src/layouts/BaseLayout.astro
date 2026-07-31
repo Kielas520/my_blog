@@ -1,0 +1,40 @@
+---
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Personal Homepage',
+  description = 'Kielasovo：来自早期互联网的一小块私人空间。',
+} = Astro.props;
+const pageTitle = title === 'Personal Homepage' ? `Kielasovo — ${title}` : `${title} — Kielasovo`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#dff5ff" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <div class="aero-sky" aria-hidden="true"><span></span><span></span><span></span></div>
+    <header><Nav /></header>
+    <main><slot /></main>
+    <Footer />
+  </body>
+</html>
