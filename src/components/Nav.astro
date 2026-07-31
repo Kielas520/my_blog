@@ -1,8 +1,12 @@
 ---
+import { siteConfig } from '../config/site';
+
 const pathname = Astro.url.pathname;
 const links = [
   { href: '/', label: 'Home' },
   { href: '/blogs', label: 'Blogs' },
+  { href: '/picture', label: 'Picture' },
+  { href: '/music', label: 'Music' },
   { href: '/tools', label: 'Tools' },
   { href: '/link', label: 'Link' },
 ];
@@ -14,7 +18,7 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
   <nav class="nav container" aria-label="主导航">
     <a class="brand" href="/" aria-label="Kielasovo 首页">
       <span class="brand-orb" aria-hidden="true"></span>
-      <span>Kielasovo</span>
+      <span data-site-name>{siteConfig.siteName}</span>
       <small>online</small>
     </a>
     <div class="links">
@@ -67,10 +71,17 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
     transition: color 160ms ease, background 160ms ease, border 160ms ease;
   }
   .links a:hover, .links a[aria-current='page'] { color: #07577f; background: linear-gradient(#fff, #d9f1fb); border-color: rgba(58,137,172,.25); box-shadow: inset 0 1px #fff; }
+  @media (max-width: 760px) {
+    .nav { flex-direction: column; align-items: stretch; gap: 3px; padding: 9px 10px 7px; }
+    .brand { align-self: flex-start; padding: 2px 4px 5px; }
+    .links { justify-content: space-between; width: 100%; gap: 1px; }
+    .links a { padding: 7px 6px; font-size: .65rem; text-align: center; }
+  }
+  @media (max-width: 600px) {
+    .links { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; }
+  }
   @media (max-width: 480px) {
     .brand small { display: none; }
-    .links { gap: 1px; }
-    .links a { padding-inline: 7px; font-size: .68rem; }
-    .nav { padding-left: 10px; }
+    .links a { padding-inline: 4px; font-size: .62rem; }
   }
 </style>

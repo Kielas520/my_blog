@@ -1,14 +1,24 @@
-<footer>
-  <div class="container footer-inner">
-    <p>© {new Date().getFullYear()} Kielasovo · personal homepage</p>
-    <p><span class="status"></span> best viewed with curiosity</p>
-  </div>
-</footer>
+<footer aria-hidden="true"><span></span></footer>
 
 <style>
-  footer { margin-top: 90px; color: var(--muted); border-top: 1px solid rgba(46,125,157,.18); background: rgba(255,255,255,.28); }
-  .footer-inner { display: flex; justify-content: space-between; gap: 24px; padding: 30px 0 42px; }
-  p { margin: 0; font: .66rem/1.5 Verdana, sans-serif; letter-spacing: .03em; }
-  .status { display: inline-block; width: 7px; height: 7px; margin-right: 6px; background: #69ba42; border: 1px solid #3c872d; border-radius: 50%; box-shadow: 0 0 5px #8ed56d; }
-  @media (max-width: 520px) { .footer-inner { flex-direction: column; gap: 5px; } }
+  footer {
+    width: min(calc(100% - 64px), 920px);
+    height: 34px;
+    margin: 72px auto 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.36);
+    border-radius: 999px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.32) 22% 78%, transparent);
+    box-shadow: inset 0 1px rgba(255,255,255,.48), 0 7px 22px rgba(29,103,137,.08);
+    mask-image: linear-gradient(90deg, transparent, #000 16% 84%, transparent);
+    backdrop-filter: blur(10px) saturate(1.3);
+  }
+
+  span {
+    display: block;
+    width: 54%;
+    height: 1px;
+    margin: 16px auto 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.82), transparent);
+  }
 </style>

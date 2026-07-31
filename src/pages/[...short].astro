@@ -1,14 +1,14 @@
 ---
 import shortLinks from '../data/short-links.json';
+import { siteConfig } from '../config/site';
 
 export function getStaticPaths() {
-  const pageRoutes = new Set(['picture', 'music']);
   const normalizeShort = (short: string) => short
     .replace(/^https?:\/\//, '')
     .replace(/^(?:www\.)?kielasovo\.com\/?/, '')
     .replace(/^\/+|\/+$/g, '');
 
-  return shortLinks.filter((link) => !pageRoutes.has(normalizeShort(link.short))).map((link) => ({
+  return shortLinks.map((link) => ({
     params: {
       short: normalizeShort(link.short),
     },
@@ -27,6 +27,7 @@ const { link } = Astro.props;
     <meta http-equiv="refresh" content={`0;url=${link.target}`} />
     <meta name="robots" content="noindex" />
     <link rel="canonical" href={link.target} />
+    <link rel="icon" href={siteConfig.icon} />
     <title>正在前往 {link.name}…</title>
     <script is:inline set:html={`window.location.replace(${JSON.stringify(link.target)});`}></script>
   </head>

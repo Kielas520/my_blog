@@ -4,6 +4,9 @@
 
 完整使用手册见 [`docs/README.md`](./docs/README.md)。
 
+日常更新网站时，可直接查看
+[`docs/maintenance-guide.md`](./docs/maintenance-guide.md)。
+
 ## 开发模式
 
 ```powershell

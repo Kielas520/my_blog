@@ -1,4 +1,29 @@
-# 名言、链接、媒体与 Tools 配置
+# 网站外观、名言、链接、媒体与 Tools 配置
+
+## 网站外观
+
+全站外观配置位于：
+
+```text
+public/config.json
+```
+
+```json
+{
+  "siteName": "Hi There",
+  "icon": "/images/kiana.jpg",
+  "avatar": "/images/kiana.jpg",
+  "backgroundImage": "/images/frutiger_aero.jpg",
+  "cursor": "/cursors/vista-glass.svg"
+}
+```
+
+`siteName` 是浏览器标签页名称，也用于导航左上角；`icon` 是标签页图标；`avatar` 是主页头像；
+`backgroundImage` 是所有页面共用的背景；`cursor` 是网页光标。以 `/` 开头的路径都相对于
+`public/`，例如 `/images/a.jpg` 对应 `public/images/a.jpg`。
+
+页面会以 `no-store` 方式重新读取这份配置。直接修改发布后的 `dist/config.json` 并刷新即可生效；
+下一次构建会用 `public/config.json` 覆盖它，因此长期配置应同时写回源文件。
 
 ## 随机名言
 
@@ -95,8 +120,6 @@ npm run build
 
 短链接目录位于 `/link`，具体跳转页位于 `/<short>`。
 
-`picture` 和 `music` 是站内页面，已经作为保留快捷路径处理，不会生成重复的重定向页。
-
 ## 有趣链接
 
 配置文件：
@@ -136,7 +159,10 @@ src/data/picture.json
 ]
 ```
 
-`/picture` 会在浏览器中随机排列图片，并为相框随机设置左、中、右位置和轻微旋转。
+这里既可以填写完整的远程 URL，也可以填写本地公开路径。本地图片放在 `public/images/` 后，填写
+`/images/文件名.jpg`；不要把 `public` 写进 URL。
+
+`/picture` 是一级导航页面，会在浏览器中随机排列图片，并为相框随机设置左、中、右位置和轻微旋转。
 
 ## Music
 
@@ -157,7 +183,7 @@ src/data/music.json
 ]
 ```
 
-`/music` 使用一个播放器和曲目列表。浏览器是否能播放某种格式取决于其音频解码支持。
+`/music` 是一级导航页面，使用一个播放器和曲目列表。浏览器是否能播放某种格式取决于其音频解码支持。
 
 ## Tools
 

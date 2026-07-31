@@ -1,11 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FunWords from '../components/FunWords.astro';
+import { siteConfig } from '../config/site';
 
 const portals = [
   { href: '/blogs', label: 'BLOGS', note: '精选文章与系列', icon: '✎', tone: 'blue' },
   { href: '/tools', label: 'TOOLS', note: '网络与实用工具', icon: '⚙', tone: 'green' },
   { href: '/link', label: 'LINK', note: '短链接与坐标', icon: '↗', tone: 'aqua' },
+  { href: '/picture', label: 'PICTURE', note: '随机图片与相框', icon: '▣', tone: 'violet' },
+  { href: '/music', label: 'MUSIC', note: '音乐与声音收藏', icon: '♫', tone: 'sunset' },
 ];
 ---
 
@@ -14,7 +17,7 @@ const portals = [
     <section class="profile" aria-labelledby="profile-title">
       <div class="avatar-wrap">
         <div class="avatar-glow"></div>
-        <img src="/images/kiana.jpg" width="640" height="640" alt="Kielasovo 的头像：白发蓝眼的女孩" />
+        <img data-site-avatar src={siteConfig.avatar} width="640" height="640" alt="Kielasovo 的头像：白发蓝眼的女孩" />
         <span class="online" title="online"></span>
       </div>
       <div class="profile-copy">
@@ -68,22 +71,30 @@ const portals = [
   .portal-heading { margin-bottom: 25px; text-align: center; }
   .portal-heading span { color: #5c8495; font: 700 .62rem/1 Verdana, sans-serif; letter-spacing: .13em; text-transform: uppercase; }
   .portal-heading h2 { margin: 7px 0 0; color: #214f65; font: 700 clamp(1.7rem, 4vw, 2.8rem)/1.1 "Trebuchet MS", sans-serif; letter-spacing: -.04em; }
-  .portal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 900px; margin-inline: auto; }
+  .portal-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; max-width: 900px; margin-inline: auto; }
+  .portal-button { grid-column: span 2; }
+  .portal-button:nth-child(4) { grid-column: 2 / span 2; }
+  .portal-button:nth-child(5) { grid-column: 4 / span 2; }
   .portal-button { position: relative; display: grid; min-height: 210px; overflow: hidden; padding: 25px; color: #174257; background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(211,242,252,.78)); border: 1px solid rgba(38,124,160,.3); border-radius: 22px; box-shadow: 0 13px 30px rgba(42,112,142,.13), inset 0 2px rgba(255,255,255,.9), inset 0 -4px rgba(26,109,143,.05); transition: transform 180ms ease, box-shadow 180ms ease; }
   .portal-button.green { background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(221,245,207,.82)); border-color: rgba(74,145,57,.28); }
   .portal-button.aqua { background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(207,246,239,.78)); border-color: rgba(44,149,139,.28); }
+  .portal-button.violet { background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(231,225,249,.8)); border-color: rgba(113,88,168,.25); }
+  .portal-button.sunset { background: linear-gradient(155deg, rgba(255,255,255,.94), rgba(255,237,203,.82)); border-color: rgba(194,135,47,.25); }
   .portal-button:hover { transform: translateY(-5px); box-shadow: 0 19px 36px rgba(42,112,142,.19), inset 0 2px #fff; }
   .button-shine { position: absolute; inset: 0 0 52% 0; background: linear-gradient(180deg, rgba(255,255,255,.65), transparent); border-radius: inherit; pointer-events: none; }
   .portal-index { position: absolute; top: 18px; right: 19px; color: rgba(38,85,104,.4); font: .62rem/1 ui-monospace, monospace; }
   .portal-icon { position: relative; display: grid; width: 44px; height: 44px; color: #fff; background: linear-gradient(#4eb3e3, #087bab); border: 1px solid #086c99; border-radius: 14px; box-shadow: inset 0 2px rgba(255,255,255,.55), 0 4px 9px rgba(22,110,151,.22); place-items: center; font-size: 1.25rem; }
   .green .portal-icon { background: linear-gradient(#82cf61, #3d9637); border-color: #347c2e; }
   .aqua .portal-icon { background: linear-gradient(#5ad4c5, #168d8d); border-color: #147b7b; }
+  .violet .portal-icon { background: linear-gradient(#a894db, #6651a7); border-color: #584493; }
+  .sunset .portal-icon { background: linear-gradient(#f3be61, #d47a32); border-color: #b86528; }
   .portal-button strong { position: relative; margin-top: 24px; font: 800 1.35rem/1 Verdana, sans-serif; letter-spacing: .04em; }
   .portal-button small { position: relative; margin-top: 8px; color: #668595; font-size: .72rem; }
   .go { position: absolute; right: 22px; bottom: 20px; color: #287c9e; font: 700 .58rem/1 Verdana, sans-serif; letter-spacing: .08em; }
   @media (max-width: 700px) {
     .profile { grid-template-columns: 140px 1fr; gap: 26px; }
     .portal-grid { grid-template-columns: 1fr; max-width: 470px; }
+    .portal-button, .portal-button:nth-child(4), .portal-button:nth-child(5) { grid-column: 1; }
     .portal-button { min-height: 165px; }
   }
   @media (max-width: 520px) {

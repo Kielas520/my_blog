@@ -1,9 +1,7 @@
 <section class="fun-words" data-fun-words data-source="/fun_words/words.json" aria-label="随机名言">
-  <div class="fun-label"><span></span> FUN_WORDS.JSON</div>
   <div class="fun-window">
     <p class="fun-text" data-fun-text data-align="center" data-motion="fade">正在接收来自互联网的句子…</p>
   </div>
-  <p class="fun-hint">运行时读取 /dist/fun_words/words.json</p>
 </section>
 
 <script>
@@ -64,14 +62,25 @@
 </script>
 
 <style>
-  .fun-words { --word-duration: 6500ms; margin-top: 96px; padding-top: 22px; border-top: 1px solid rgba(31,116,153,.18); }
-  .fun-label { display: flex; align-items: center; gap: 8px; color: #4a7b8e; font: 700 .62rem/1 Verdana, sans-serif; letter-spacing: .12em; }
-  .fun-label span { width: 8px; height: 8px; background: #ffce4e; border: 1px solid #cf9b17; border-radius: 50%; box-shadow: 0 0 0 3px rgba(255,216,92,.2); }
-  .fun-window { position: relative; display: grid; min-height: 230px; overflow: hidden; align-items: center; }
-  .fun-window::before, .fun-window::after { position: absolute; top: 18%; bottom: 18%; z-index: 2; width: 54px; content: ""; pointer-events: none; }
-  .fun-window::before { left: 0; background: linear-gradient(90deg, rgba(238,249,244,.95), transparent); }
-  .fun-window::after { right: 0; background: linear-gradient(-90deg, rgba(238,249,244,.95), transparent); }
-  .fun-text { width: 78%; margin: 0; color: #245368; font: 400 clamp(1.15rem, 2.8vw, 2rem)/1.6 Georgia, "Times New Roman", serif; text-shadow: 0 1px rgba(255,255,255,.9); animation-duration: var(--word-duration); animation-timing-function: ease-in-out; animation-fill-mode: both; }
+  .fun-words { --word-duration: 6500ms; margin-top: 96px; }
+  .fun-window {
+    position: relative;
+    display: grid;
+    min-height: 250px;
+    overflow: hidden;
+    padding: clamp(48px, 7vw, 90px);
+    align-items: center;
+    background:
+      radial-gradient(ellipse at 50% 18%, rgba(255,255,255,.62), transparent 58%),
+      rgba(225,247,255,.42);
+    border: 1px solid rgba(255,255,255,.52);
+    border-radius: 38px;
+    box-shadow: inset 0 1px rgba(255,255,255,.74), 0 16px 42px rgba(30,112,145,.09);
+    backdrop-filter: blur(14px) saturate(1.25);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 0 67%, rgba(0,0,0,.92) 78%, transparent 100%);
+    mask-image: radial-gradient(ellipse at center, #000 0 67%, rgba(0,0,0,.92) 78%, transparent 100%);
+  }
+  .fun-text { width: 100%; margin: 0; color: #245368; font: 400 clamp(1.15rem, 2.8vw, 2rem)/1.6 Georgia, "Times New Roman", serif; text-shadow: 0 1px rgba(255,255,255,.9); animation-duration: var(--word-duration); animation-timing-function: ease-in-out; animation-fill-mode: both; }
   .fun-text[data-align='left'] { margin-right: auto; text-align: left; }
   .fun-text[data-align='center'] { margin-inline: auto; text-align: center; }
   .fun-text[data-align='right'] { margin-left: auto; text-align: right; }
@@ -79,11 +88,13 @@
   .fun-text[data-motion='up'] { animation-name: word-up; }
   .fun-text[data-motion='left'] { animation-name: word-left; }
   .fun-text[data-motion='right'] { animation-name: word-right; }
-  .fun-hint { margin: 0; color: #7494a2; font: .58rem/1.4 ui-monospace, monospace; text-align: right; }
   @keyframes word-fade { 0%,100% { opacity: 0; } 16%,82% { opacity: 1; } }
   @keyframes word-up { 0% { opacity: 0; transform: translateY(35px); } 18%,80% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-32px); } }
   @keyframes word-left { 0% { opacity: 0; transform: translateX(60px); } 18%,80% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(-70px); } }
   @keyframes word-right { 0% { opacity: 0; transform: translateX(-60px); } 18%,80% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; transform: translateX(70px); } }
   @media (prefers-reduced-motion: reduce) { .fun-text { animation-name: word-fade !important; } }
-  @media (max-width: 600px) { .fun-words { margin-top: 68px; } .fun-window { min-height: 190px; } .fun-text { width: 88%; } }
+  @media (max-width: 600px) {
+    .fun-words { margin-top: 68px; }
+    .fun-window { min-height: 210px; padding: 48px 34px; border-radius: 30px; }
+  }
 </style>

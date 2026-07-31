@@ -1,6 +1,8 @@
 ---
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import AmbientBubbles from '../components/AmbientBubbles.astro';
+import { siteConfig } from '../config/site';
 import '../styles/global.css';
 
 interface Props {
@@ -9,15 +11,17 @@ interface Props {
 }
 
 const {
-  title = 'Personal Homepage',
+  title = siteConfig.siteName,
   description = 'Kielasovo：来自早期互联网的一小块私人空间。',
 } = Astro.props;
-const pageTitle = title === 'Personal Homepage' ? `Kielasovo — ${title}` : `${title} — Kielasovo`;
+const isHome = Astro.url.pathname === '/';
+const pageTitle = title === siteConfig.siteName ? title : `${title} — ${siteConfig.siteName}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const initialStyle = `--site-background-image: url(${JSON.stringify(siteConfig.backgroundImage)}); --site-cursor: url(${JSON.stringify(siteConfig.cursor)}) 4 2, auto;`;
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-page-title={title === siteConfig.siteName ? '' : title} data-home={isHome ? 'true' : undefined} style={initialStyle}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -28,13 +32,37 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <link rel="canonical" href={canonicalURL} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link id="site-icon" rel="icon" href={siteConfig.icon} />
     <title>{pageTitle}</title>
   </head>
   <body>
-    <div class="aero-sky" aria-hidden="true"><span></span><span></span><span></span></div>
+    <AmbientBubbles />
+    <div class="edge-glass" aria-hidden="true"></div>
     <header><Nav /></header>
     <main><slot /></main>
     <Footer />
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const pageTitle = root.dataset.pageTitle || '';
+        const safeCssUrl = (value) => `url(${JSON.stringify(value)})`;
+
+        fetch('/config.json', { cache: 'no-store' })
+          .then((response) => response.ok ? response.json() : Promise.reject())
+          .then((config) => {
+            const siteName = config.siteName || 'Hi There';
+            document.title = pageTitle ? `${pageTitle} — ${siteName}` : siteName;
+
+            if (config.icon) document.querySelector('#site-icon')?.setAttribute('href', config.icon);
+            if (config.avatar) {
+              document.querySelectorAll('[data-site-avatar]').forEach((image) => image.setAttribute('src', config.avatar));
+            }
+            if (config.backgroundImage) root.style.setProperty('--site-background-image', safeCssUrl(config.backgroundImage));
+            if (config.cursor) root.style.setProperty('--site-cursor', `${safeCssUrl(config.cursor)} 4 2, auto`);
+            document.querySelectorAll('[data-site-name]').forEach((node) => { node.textContent = siteName; });
+          })
+          .catch(() => {});
+      })();
+    </script>
   </body>
 </html>
