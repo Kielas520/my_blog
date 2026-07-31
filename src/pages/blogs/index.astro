@@ -14,11 +14,10 @@ const categoryName = {
 } as const;
 ---
 
-<BaseLayout title="Blogs" description="从 Notion 内容库中选出的文章。">
+<BaseLayout title="Blogs" description="Kielasovo 的文章与随笔。">
   <header class="container page-head">
-    <p class="eyebrow">Selected from Notion</p>
+    <p class="eyebrow">Personal archive</p>
     <h1>Blogs</h1>
-    <p>只放值得公开、也值得以后再读一次的内容；分类沿用原来的 Notion 结构。</p>
   </header>
   <div class="container categories">
     {Object.entries(categoryName).map(([key, label]) => (

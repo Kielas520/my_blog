@@ -1,38 +1,38 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-
-const tools = [
-  { name: 'IP INSPECTOR', note: '检查访问 IP 的网络属性与纯净度', icon: '◎', status: 'planning' },
-  { name: 'SPEED TEST', note: '测试当前网络延迟、下载与上传速度', icon: '↯', status: 'planning' },
-];
 ---
 
 <BaseLayout title="Tools" description="Kielasovo 的网络与实用工具箱。">
   <header class="container page-head">
     <p class="eyebrow">Web utilities</p>
     <h1>Tools</h1>
-    <p>这里会逐步加入 IP 检测、网络测速和其他自己真正会用到的小工具。</p>
   </header>
   <section class="container tool-grid">
-    {tools.map((tool) => (
-      <article class="tool-card">
-        <span class="tool-icon">{tool.icon}</span>
-        <span class="status">{tool.status}</span>
-        <h2>{tool.name}</h2>
-        <p>{tool.note}</p>
-        <button disabled>COMING SOON</button>
-      </article>
-    ))}
+    <a class="tool-card" href="/tools/ip-inspector">
+      <span class="tool-icon">◎</span>
+      <span class="status">READY</span>
+      <h2>IP INSPECTOR</h2>
+      <p>查看公网 IP、网络归属和风险特征。</p>
+      <span class="open">OPEN ›</span>
+    </a>
+    <a class="tool-card" href="/tools/speed-test">
+      <span class="tool-icon">↯</span>
+      <span class="status">READY</span>
+      <h2>SPEED TEST</h2>
+      <p>测量延迟、抖动以及上下行速度。</p>
+      <span class="open">OPEN ›</span>
+    </a>
   </section>
 </BaseLayout>
 
 <style>
-  .tool-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-  .tool-card { position: relative; min-height: 275px; padding: 30px; background: linear-gradient(150deg, rgba(255,255,255,.88), rgba(215,244,250,.64)); border: 1px solid rgba(255,255,255,.9); border-bottom-color: rgba(33,117,150,.28); border-radius: 22px; box-shadow: 0 14px 32px rgba(39,110,140,.12), inset 0 2px #fff; }
+  .tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; padding-bottom: 74px; }
+  .tool-card { position: relative; min-height: 275px; padding: 30px; background: linear-gradient(150deg, rgba(255,255,255,.88), rgba(215,244,250,.64)); border: 1px solid rgba(255,255,255,.9); border-bottom-color: rgba(33,117,150,.28); border-radius: 22px; box-shadow: 0 14px 32px rgba(39,110,140,.12), inset 0 2px #fff; transition: transform 180ms ease, box-shadow 180ms ease; }
+  .tool-card:hover { transform: translateY(-4px); box-shadow: 0 19px 38px rgba(39,110,140,.17), inset 0 2px #fff; }
   .tool-icon { display: grid; width: 48px; height: 48px; color: white; background: linear-gradient(#65c6e6,#187fa8); border: 1px solid #127496; border-radius: 15px; box-shadow: inset 0 2px rgba(255,255,255,.5); place-items: center; font-size: 1.4rem; }
-  .status { position: absolute; top: 30px; right: 30px; color: #4c843a; font: .6rem/1 ui-monospace, monospace; text-transform: uppercase; }
+  .status { position: absolute; top: 30px; right: 30px; color: #4c843a; font: .6rem/1 ui-monospace, monospace; }
   h2 { margin: 48px 0 8px; color: #184b64; font: 800 1.3rem/1 Verdana, sans-serif; }
   p { max-width: 380px; margin: 0; color: var(--muted); font-size: .8rem; }
-  button { position: absolute; right: 26px; bottom: 24px; padding: 7px 10px; color: #688895; background: rgba(255,255,255,.55); border: 1px solid var(--line); border-radius: 8px; font: 700 .56rem/1 Verdana, sans-serif; }
+  .open { position: absolute; right: 27px; bottom: 25px; color: #277d9f; font: 700 .6rem/1 Verdana, sans-serif; }
   @media (max-width: 700px) { .tool-grid { grid-template-columns: 1fr; } }
 </style>

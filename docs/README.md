@@ -8,7 +8,7 @@ Kielasovo 是一个基于 Astro SSG 的静态个人站点。主页采用克制�
 - [安装与运行](./getting-started.md)
 - [项目架构](./architecture.md)
 - [Blog 内容管理](./content-guide.md)
-- [名言、短链与 Tools 配置](./configuration.md)
+- [名言、链接、媒体与 Tools 配置](./configuration.md)
 - [构建与 Cloudflare Tunnel 部署](./deployment.md)
 - [常见问题](./troubleshooting.md)
 
@@ -37,7 +37,9 @@ npm run serve
 | Blog 分类和字段 | `src/content.config.ts` |
 | 随机名言 | `public/fun_words/words.json` |
 | 短链接 | `src/data/short-links.json` |
-| Tools 页面 | `src/pages/tools/index.astro` |
+| 有趣链接 | `src/data/intrest-links.json` |
+| 图片墙 | `src/data/picture.json` |
+| 音乐列表 | `src/data/music.json` |
+| Tools 页面 | `src/pages/tools/` |
 | 全局样式 | `src/styles/global.css` |
 | 域名和端口 | `astro.config.mjs`、`package.json` |
-

@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import pictureData from '../../data/picture.json';
+
+const pictures = pictureData as string[];
+---
+
+<BaseLayout title="Picture" description="Kielasovo 的随机图片墙。">
+  <header class="container page-head picture-head">
+    <p class="eyebrow">Loose frames</p>
+    <h1>Picture</h1>
+  </header>
+
+  <section class="container picture-stage" id="picture-stage" aria-label="随机图片墙">
+    {pictures.map((link, index) => (
+      <figure class="photo-frame" data-photo>
+        <img src={link} alt={`Picture ${index + 1}`} loading="lazy" decoding="async" />
+      </figure>
+    ))}
+  </section>
+</BaseLayout>
+
+<script>
+  const stage = document.querySelector<HTMLElement>('#picture-stage');
+  if (stage) {
+    const photos = Array.from(stage.querySelectorAll<HTMLElement>('[data-photo]'));
+    for (let index = photos.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [photos[index], photos[randomIndex]] = [photos[randomIndex], photos[index]];
+    }
+
+    const alignments = ['left', 'center', 'right'];
+    const rotations = [-4.2, -2.8, -1.4, 1.2, 2.6, 4];
+    photos.forEach((photo, index) => {
+      const alignment = alignments[(index + Math.floor(Math.random() * alignments.length)) % alignments.length];
+      const rotation = rotations[Math.floor(Math.random() * rotations.length)];
+      photo.dataset.align = alignment;
+      photo.style.setProperty('--rotation', `${rotation}deg`);
+      photo.style.setProperty('--delay', `${Math.min(index * 55, 420)}ms`);
+      stage.append(photo);
+    });
+  }
+</script>
+
+<style>
+  .picture-head { padding-bottom: 34px; }
+  .picture-stage { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; gap: clamp(28px, 7vw, 76px) 0; padding: 24px 0 100px; }
+  .photo-frame { --rotation: 0deg; --delay: 0ms; grid-column: 3 / 11; width: min(100%, 650px); margin: 0; padding: clamp(10px, 1.5vw, 16px); opacity: 0; background: #fffefa; border: 1px solid rgba(71,108,119,.22); border-radius: 4px; box-shadow: 0 18px 36px rgba(31,83,101,.2), 0 3px 8px rgba(31,83,101,.12); transform: rotate(var(--rotation)) translateY(14px); animation: settle 600ms cubic-bezier(.2,.8,.2,1) var(--delay) forwards; }
+  .photo-frame[data-align="left"] { grid-column: 1 / 9; justify-self: start; }
+  .photo-frame[data-align="center"] { grid-column: 3 / 11; justify-self: center; }
+  .photo-frame[data-align="right"] { grid-column: 5 / 13; justify-self: end; }
+  .photo-frame::after { display: block; height: clamp(18px, 3vw, 34px); content: ""; }
+  .photo-frame img { display: block; width: 100%; max-height: 75vh; object-fit: contain; background: #edf5f6; }
+  @keyframes settle { to { opacity: 1; transform: rotate(var(--rotation)) translateY(0); } }
+  @media (prefers-reduced-motion: reduce) { .photo-frame { opacity: 1; transform: rotate(var(--rotation)); animation: none; } }
+  @media (max-width: 640px) { .picture-stage { gap: 42px; } .photo-frame, .photo-frame[data-align] { grid-column: 1 / -1; width: min(94%, 520px); justify-self: center; } }
+</style>

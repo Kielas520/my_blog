@@ -2,12 +2,15 @@
 import shortLinks from '../data/short-links.json';
 
 export function getStaticPaths() {
-  return shortLinks.map((link) => ({
+  const pageRoutes = new Set(['picture', 'music']);
+  const normalizeShort = (short: string) => short
+    .replace(/^https?:\/\//, '')
+    .replace(/^(?:www\.)?kielasovo\.com\/?/, '')
+    .replace(/^\/+|\/+$/g, '');
+
+  return shortLinks.filter((link) => !pageRoutes.has(normalizeShort(link.short))).map((link) => ({
     params: {
-      short: link.short
-        .replace(/^https?:\/\//, '')
-        .replace(/^(?:www\.)?kielasovo\.com\/?/, '')
-        .replace(/^\/+|\/+$/g, ''),
+      short: normalizeShort(link.short),
     },
     props: { link },
   }));

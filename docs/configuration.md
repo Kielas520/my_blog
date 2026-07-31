@@ -1,4 +1,4 @@
-# 名言、短链与 Tools 配置
+# 名言、链接、媒体与 Tools 配置
 
 ## 随机名言
 
@@ -95,34 +95,82 @@ npm run build
 
 短链接目录位于 `/link`，具体跳转页位于 `/<short>`。
 
-## 新增 Tools
+`picture` 和 `music` 是站内页面，已经作为保留快捷路径处理，不会生成重复的重定向页。
 
-当前 Tools 页面位于：
+## 有趣链接
+
+配置文件：
+
+```text
+src/data/intrest-links.json
+```
+
+格式：
+
+```json
+[
+  {
+    "name": "frutigeraero",
+    "target": "https://frutigeraeroarchive.org",
+    "description": "千禧年的梦"
+  }
+]
+```
+
+这些链接显示在 `/link` 的 Shortcuts 下方，并在新标签页打开。
+
+## Picture
+
+图片墙的数据位于：
+
+```text
+src/data/picture.json
+```
+
+文件只保存图片 URL：
+
+```json
+[
+  "/images/kiana.jpg",
+  "https://image.kielasovo.com/example.jpg"
+]
+```
+
+`/picture` 会在浏览器中随机排列图片，并为相框随机设置左、中、右位置和轻微旋转。
+
+## Music
+
+音乐列表位于：
+
+```text
+src/data/music.json
+```
+
+格式：
+
+```json
+[
+  {
+    "name": "heatwaves",
+    "link": "https://sound.kielasovo.com/example.flac"
+  }
+]
+```
+
+`/music` 使用一个播放器和曲目列表。浏览器是否能播放某种格式取决于其音频解码支持。
+
+## Tools
+
+入口和两个工具页面分别位于：
 
 ```text
 src/pages/tools/index.astro
+src/pages/tools/ip-inspector.astro
+src/pages/tools/speed-test.astro
 ```
 
-页面中的 `tools` 数组用于展示工具入口：
+IP Inspector 调用 `api.ipapi.is` 的公开接口，展示网络归属及 VPN、Proxy、Tor、Datacenter
+等数据库标记。结果只能作为参考，不能视作绝对判断。
 
-```ts
-const tools = [
-  {
-    name: 'IP INSPECTOR',
-    note: '检查访问 IP 的网络属性与纯净度',
-    icon: '◎',
-    status: 'planning',
-  },
-];
-```
-
-真正实现工具时，建议每个工具使用独立路由：
-
-```text
-src/pages/tools/ip.astro
-src/pages/tools/speed.astro
-```
-
-涉及第三方 API、访问者 IP 或测速节点时，不要把私钥写入客户端代码或提交到仓库。纯静态站点
-不能安全保存 API 密钥，需要额外的后端、Cloudflare Worker 或受保护的 API 服务。
-
+Speed Test 使用 `@cloudflare/speedtest`，连接 Cloudflare 边缘节点测量延迟、抖动和上下行带宽。
+配置关闭了结果日志上传，也没有启用依赖 TURN 的丢包测试。

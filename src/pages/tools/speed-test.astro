@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Speed Test" description="测量当前网络的延迟、抖动与上下行速度。">
+  <article class="container tool-page">
+    <a class="back" href="/tools">← Tools</a>
+    <header>
+      <p class="eyebrow">Connection quality</p>
+      <h1>Speed Test</h1>
+      <p>连接 Cloudflare 边缘节点，测量当前网络质量。</p>
+    </header>
+
+    <section class="speed-panel" aria-live="polite">
+      <div class="meter">
+        <div class="orb"><strong id="main-value">0.0</strong><span id="main-unit">Mbps</span></div>
+        <p id="phase">READY</p>
+        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+        <button id="speed-button" type="button">START TEST</button>
+      </div>
+
+      <div class="metrics">
+        <div><span>DOWNLOAD</span><strong id="download">—</strong><small>Mbps</small></div>
+        <div><span>UPLOAD</span><strong id="upload">—</strong><small>Mbps</small></div>
+        <div><span>LATENCY</span><strong id="latency">—</strong><small>ms</small></div>
+        <div><span>JITTER</span><strong id="jitter">—</strong><small>ms</small></div>
+      </div>
+      <p class="status" id="speed-status">准备就绪。</p>
+    </section>
+    <p class="notice">测速会产生实际上下行流量；结果受 Wi-Fi、后台任务和当前网络拥塞影响。</p>
+  </article>
+</BaseLayout>
+
+<script>
+  import SpeedTest, { type MeasurementSummary } from '@cloudflare/speedtest';
+
+  const button = document.querySelector<HTMLButtonElement>('#speed-button');
+  const phase = document.querySelector<HTMLElement>('#phase');
+  const progress = document.querySelector<HTMLElement>('#progress-bar');
+  const status = document.querySelector<HTMLElement>('#speed-status');
+  const mainValue = document.querySelector<HTMLElement>('#main-value');
+  const mainUnit = document.querySelector<HTMLElement>('#main-unit');
+
+  const setText = (selector: string, value: string) => {
+    const element = document.querySelector<HTMLElement>(selector);
+    if (element) element.textContent = value;
+  };
+
+  const formatSpeed = (bps?: number) => typeof bps === 'number' && Number.isFinite(bps)
+    ? (bps / 1_000_000).toFixed(bps >= 100_000_000 ? 0 : 1)
+    : '—';
+  const formatMs = (ms?: number) => typeof ms === 'number' && Number.isFinite(ms) ? ms.toFixed(ms >= 100 ? 0 : 1) : '—';
+
+  const render = (summary: MeasurementSummary) => {
+    setText('#download', formatSpeed(summary.download));
+    setText('#upload', formatSpeed(summary.upload));
+    setText('#latency', formatMs(summary.latency));
+    setText('#jitter', formatMs(summary.jitter));
+    if (mainValue && mainUnit) {
+      const active = summary.download ?? summary.upload;
+      if (active) {
+        mainValue.textContent = formatSpeed(active);
+        mainUnit.textContent = 'Mbps';
+      } else {
+        mainValue.textContent = formatMs(summary.latency) === '—' ? '0.0' : formatMs(summary.latency);
+        mainUnit.textContent = 'ms';
+      }
+    }
+  };
+
+  const runTest = () => {
+    if (!button || !phase || !progress || !status || !mainValue || !mainUnit) return;
+    button.disabled = true;
+    button.textContent = 'TESTING…';
+    phase.textContent = 'CONNECTING';
+    status.textContent = '正在连接测速节点…';
+    progress.style.width = '2%';
+    mainValue.textContent = '0.0';
+    mainUnit.textContent = 'ms';
+    ['#download', '#upload', '#latency', '#jitter'].forEach((selector) => setText(selector, '—'));
+
+    const measurements = [
+      { type: 'latency' as const, numPackets: 12 },
+      { type: 'download' as const, bytes: 100_000, count: 2, bypassMinDuration: true },
+      { type: 'download' as const, bytes: 1_000_000, count: 3 },
+      { type: 'download' as const, bytes: 10_000_000, count: 3 },
+      { type: 'download' as const, bytes: 25_000_000, count: 2 },
+      { type: 'upload' as const, bytes: 100_000, count: 2, bypassMinDuration: true },
+      { type: 'upload' as const, bytes: 1_000_000, count: 3 },
+      { type: 'upload' as const, bytes: 10_000_000, count: 2 },
+    ];
+
+    const test = new SpeedTest({
+      autoStart: false,
+      logMeasurementApiUrl: null,
+      logAimApiUrl: null,
+      measurements,
+      bandwidthFinishRequestDuration: 800,
+      measureDownloadLoadedLatency: false,
+      measureUploadLoadedLatency: false,
+    });
+
+    test.onPhaseChange = ({ measurementId, measurement }) => {
+      const labels = { latency: 'LATENCY', download: 'DOWNLOAD', upload: 'UPLOAD', packetLoss: 'PACKET LOSS' } as const;
+      phase.textContent = labels[measurement.type] || measurement.type.toUpperCase();
+      status.textContent = `${phase.textContent} · ${measurementId + 1}/${measurements.length}`;
+      progress.style.width = `${Math.max(4, (measurementId / measurements.length) * 100)}%`;
+    };
+    test.onResultsChange = () => render(test.results.getSummary());
+    test.onFinish = (results) => {
+      const summary = results.getSummary();
+      render(summary);
+      phase.textContent = 'COMPLETE';
+      status.textContent = summary.totalDurationMs
+        ? `测试完成 · ${(summary.totalDurationMs / 1000).toFixed(1)}s`
+        : '测试完成。';
+      progress.style.width = '100%';
+      button.disabled = false;
+      button.textContent = 'TEST AGAIN';
+    };
+    test.onError = (message) => {
+      phase.textContent = 'ERROR';
+      status.textContent = `测速失败：${message}`;
+      button.disabled = false;
+      button.textContent = 'TRY AGAIN';
+    };
+    test.play();
+  };
+
+  button?.addEventListener('click', runTest);
+</script>
+
+<style>
+  .tool-page { max-width: 960px; padding-top: 54px; padding-bottom: 76px; }
+  .back { color: var(--muted); font-size: .82rem; }
+  header { padding: 72px 0 38px; }
+  header h1 { margin: 0; color: #143f57; font-size: clamp(2.6rem, 7vw, 5rem); line-height: 1; letter-spacing: -.06em; text-wrap: balance; }
+  header > p:last-child { max-width: 620px; margin: 20px 0 0; color: var(--muted); }
+  .speed-panel { display: grid; grid-template-columns: minmax(280px, .9fr) minmax(0, 1.35fr); overflow: hidden; background: rgba(255,255,255,.64); border: 1px solid rgba(255,255,255,.92); border-radius: 24px; box-shadow: 0 18px 42px rgba(36,104,133,.13); }
+  .meter { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 460px; padding: 36px; background: linear-gradient(155deg, rgba(205,241,252,.88), rgba(238,251,229,.72)); border-right: 1px solid var(--line); }
+  .orb { display: grid; width: 196px; height: 196px; background: radial-gradient(circle at 38% 28%, #fff, #d8f3f8 54%, #9ed6e5); border: 1px solid rgba(30,111,143,.27); border-radius: 50%; place-content: center; text-align: center; box-shadow: inset 0 4px 12px rgba(255,255,255,.9), inset 0 -10px 22px rgba(30,115,149,.14), 0 16px 30px rgba(31,102,131,.16); }
+  .orb strong { color: #174b63; font-size: 2.8rem; line-height: 1; letter-spacing: -.06em; }
+  .orb span { margin-top: 8px; color: #688b99; font: .65rem/1 ui-monospace, monospace; }
+  .meter > p { margin: 20px 0 11px; color: #3b7085; font: 700 .62rem/1 Verdana, sans-serif; letter-spacing: .08em; }
+  .progress { width: min(220px, 100%); height: 6px; margin-bottom: 26px; overflow: hidden; background: rgba(39,112,141,.13); border-radius: 999px; }
+  .progress span { display: block; width: 0; height: 100%; background: linear-gradient(90deg,#53ac42,#35a0c6); border-radius: inherit; transition: width 240ms ease; }
+  button { padding: 11px 15px; color: white; background: linear-gradient(#4eafd0,#237f9f); border: 1px solid #1f7694; border-radius: 10px; box-shadow: inset 0 1px rgba(255,255,255,.45), 0 5px 12px rgba(32,108,139,.18); font: 700 .62rem/1 Verdana, sans-serif; cursor: pointer; }
+  button:disabled { cursor: wait; opacity: .62; }
+  .metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: center; gap: 1px; padding: 36px; }
+  .metrics div { min-height: 135px; padding: 24px; background: rgba(255,255,255,.46); border: 1px solid rgba(41,112,141,.15); }
+  .metrics div:nth-child(1) { border-radius: 14px 0 0; }
+  .metrics div:nth-child(2) { border-radius: 0 14px 0 0; }
+  .metrics div:nth-child(3) { border-radius: 0 0 0 14px; }
+  .metrics div:nth-child(4) { border-radius: 0 0 14px; }
+  .metrics span { display: block; color: #6d8d99; font: .58rem/1 Verdana, sans-serif; }
+  .metrics strong { display: inline-block; margin-top: 22px; color: #174b63; font-size: 2rem; line-height: 1; }
+  .metrics small { margin-left: 5px; color: #6c8b97; font-size: .62rem; }
+  .status { grid-column: 2; margin: -58px 60px 32px; color: var(--muted); font-size: .75rem; text-align: center; }
+  .notice { margin: 16px 4px 0; color: #668593; font-size: .7rem; }
+  @media (max-width: 720px) { .speed-panel { grid-template-columns: 1fr; } .meter { min-height: 390px; border-right: 0; border-bottom: 1px solid var(--line); } .metrics { padding: 24px; } .status { grid-column: 1; margin: -45px 40px 28px; } }
+  @media (max-width: 430px) { .metrics { grid-template-columns: 1fr; } .metrics div { min-height: 110px; border-radius: 12px !important; } .status { margin-top: 0; } }
+</style>

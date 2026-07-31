@@ -42,8 +42,11 @@ Service URL: http://localhost:1314
 
 - 精选文章：`src/content/blogs/`
 - 文章模板：`src/content/blogs/_template.md`（`draft: true`，不会发布）
-- Notion 一级分类：`init`、`stuff`、`tech`、`machine-learning`、`embodied-ai`、`memory`
-- 工具页面：`src/pages/tools/index.astro`
+- Blog 分类：`dairy`、`thoughts`、`ticktick`、`get-a-job`
+- 工具页面：`src/pages/tools/`
+- 有趣链接：`src/data/intrest-links.json`
+- 图片墙：`src/data/picture.json`
+- 音乐列表：`src/data/music.json`
 - 构建静态站点：`npm run build`
 - 在 1314 端口提供静态构建：`npm run serve`
 

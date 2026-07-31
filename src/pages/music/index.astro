@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import musicData from '../../data/music.json';
+
+interface Track {
+  name: string;
+  link: string;
+}
+
+const tracks = musicData as Track[];
+const firstTrack = tracks[0];
+---
+
+<BaseLayout title="Music" description="Kielasovo 的音乐架。">
+  <header class="container page-head music-head">
+    <p class="eyebrow">Now playing</p>
+    <h1>Music</h1>
+  </header>
+
+  <section class="container player-shell">
+    <div class="player-display">
+      <div class="disc" aria-hidden="true"><span></span></div>
+      <div class="now-playing">
+        <p>NOW PLAYING</p>
+        <h2 id="current-track">{firstTrack?.name ?? 'NO TRACK'}</h2>
+        {firstTrack ? (
+          <audio id="audio-player" controls preload="metadata" src={firstTrack.link}></audio>
+        ) : (
+          <p class="empty">No music here.</p>
+        )}
+      </div>
+    </div>
+
+    {tracks.length > 0 && (
+      <div class="track-list" aria-label="歌曲列表">
+        {tracks.map((track, index) => (
+          <button
+            class:list={['track', { active: index === 0 }]}
+            type="button"
+            data-track
+            data-name={track.name}
+            data-link={track.link}
+          >
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <strong>{track.name}</strong>
+            <i>PLAY</i>
+          </button>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<script>
+  const player = document.querySelector<HTMLAudioElement>('#audio-player');
+  const currentTrack = document.querySelector<HTMLElement>('#current-track');
+  const playerDisplay = document.querySelector<HTMLElement>('.player-display');
+  const trackButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-track]'));
+
+  player?.addEventListener('play', () => playerDisplay?.classList.add('playing'));
+  player?.addEventListener('pause', () => playerDisplay?.classList.remove('playing'));
+  player?.addEventListener('ended', () => playerDisplay?.classList.remove('playing'));
+
+  trackButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      if (!player) return;
+      const link = button.dataset.link;
+      const name = button.dataset.name;
+      if (!link) return;
+
+      if (player.src !== new URL(link, window.location.href).href) {
+        player.src = link;
+        player.load();
+      }
+      if (currentTrack) currentTrack.textContent = name || 'UNTITLED';
+      trackButtons.forEach((item) => item.classList.toggle('active', item === button));
+      try {
+        await player.play();
+      } catch {
+        // Native audio controls remain available when autoplay is blocked.
+      }
+    });
+  });
+</script>
+
+<style>
+  .music-head { padding-bottom: 38px; }
+  .player-shell { padding-bottom: 90px; }
+  .player-display { display: grid; grid-template-columns: minmax(210px, .7fr) minmax(0, 1.3fr); align-items: center; min-height: 390px; overflow: hidden; background: linear-gradient(145deg, rgba(255,255,255,.82), rgba(213,241,247,.7)); border: 1px solid rgba(255,255,255,.92); border-radius: 25px 25px 0 0; box-shadow: 0 18px 42px rgba(34,101,130,.13); }
+  .disc { display: grid; width: clamp(180px, 24vw, 260px); aspect-ratio: 1; justify-self: center; background: repeating-radial-gradient(circle, #183849 0 2px, #102b39 3px 6px, #214858 7px 8px); border: 8px solid rgba(255,255,255,.74); border-radius: 50%; box-shadow: 0 18px 30px rgba(23,70,91,.25), inset 0 0 22px rgba(255,255,255,.13); animation: spin 12s linear infinite paused; }
+  .player-display.playing .disc { animation-play-state: running; }
+  .disc span { width: 30%; aspect-ratio: 1; margin: auto; background: radial-gradient(circle, #eef9fc 0 13%, #6db8ce 14% 45%, #f3dc7f 46%); border-radius: 50%; }
+  .now-playing { padding: 45px 50px 45px 24px; }
+  .now-playing > p:first-child { margin: 0; color: #6b8f9e; font: .6rem/1 ui-monospace, monospace; letter-spacing: .12em; }
+  h2 { margin: 30px 0 34px; overflow-wrap: anywhere; color: #17485f; font-size: clamp(2rem, 5vw, 4rem); line-height: 1; letter-spacing: -.055em; text-wrap: balance; }
+  audio { width: 100%; min-height: 44px; }
+  .empty { color: var(--muted); }
+  .track-list { overflow: hidden; background: rgba(255,255,255,.56); border: 1px solid rgba(255,255,255,.9); border-top: 0; border-radius: 0 0 20px 20px; box-shadow: 0 15px 34px rgba(34,101,130,.1); }
+  .track { display: grid; grid-template-columns: 42px 1fr auto; align-items: center; width: 100%; padding: 19px 24px; color: inherit; background: transparent; border: 0; border-bottom: 1px solid var(--line); text-align: left; cursor: pointer; transition: background 160ms ease; }
+  .track:last-child { border-bottom: 0; }
+  .track:hover, .track.active { background: rgba(224,247,250,.72); }
+  .track > span { color: #7b99a5; font: .62rem/1 ui-monospace, monospace; }
+  .track strong { color: #20566d; font-size: .9rem; }
+  .track i { color: var(--green-dark); font: 700 .55rem/1 Verdana, sans-serif; font-style: normal; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .disc { animation: none; } }
+  @media (max-width: 680px) { .player-display { grid-template-columns: 1fr; padding-top: 40px; } .now-playing { padding: 38px 24px 32px; text-align: center; } }
+</style>

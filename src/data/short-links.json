@@ -3,6 +3,18 @@
     "name": "notion",
     "short": "kielasovo.com/me",
     "target": "https://kielas520.notion.site/INDEX-2d8d8528a99d4fa2a6016eb2768911e2",
-    "description": "Kielas520 的 Notion 主页"
+    "description": "我的 Notion 主页"
+  },
+  {
+    "name": "picture",
+    "short": "kielasovo.com/picture",
+    "target": "https://kielasovo.com/picture",
+    "description": "Picture wall"
+  },
+  {
+    "name": "music",
+    "short": "kielasovo.com/music",
+    "target": "https://kielasovo.com/music",
+    "description": "Music shelf"
   }
 ]

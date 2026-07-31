@@ -15,13 +15,15 @@ kielasWEB/
 │  │  ├─ Footer.astro
 │  │  └─ FunWords.astro
 │  ├─ content/blogs/          精选 Blog Markdown
-│  ├─ data/short-links.json   短链接配置
+│  ├─ data/                   短链、有趣链接、图片和音乐数据
 │  ├─ layouts/BaseLayout.astro
 │  ├─ pages/
 │  │  ├─ index.astro          主页
 │  │  ├─ blogs/               Blog 列表和文章路由
 │  │  ├─ tools/               工具页
 │  │  ├─ link/                短链接目录
+│  │  ├─ picture/             随机图片墙
+│  │  ├─ music/               音乐播放器
 │  │  └─ [...short].astro     短链接跳转页生成器
 │  ├─ styles/global.css
 │  └─ content.config.ts
@@ -37,7 +39,11 @@ kielasWEB/
 ├─ /blogs
 │  └─ /blogs/<文章路径>
 ├─ /tools
+│  ├─ /tools/ip-inspector
+│  └─ /tools/speed-test
 ├─ /link
+├─ /picture
+├─ /music
 └─ /<short>  → 外部目标地址
 ```
 
@@ -80,5 +86,5 @@ src/data/short-links.json
 - Notion 用于管理原始内容和分类习惯。
 - 网站只收录人工选出的公开文章，不自动发布整个 Notion 数据库。
 - Blog、Tools、Link 相互独立，避免功能和内容耦合。
+- Picture 和 Music 通过独立 JSON 数据文件维护。
 - Cloudflare Tunnel 只负责公网到本地源站的安全转发。
-
