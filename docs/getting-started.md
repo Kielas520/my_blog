@@ -61,21 +61,47 @@ npm run build
 
 ## 启动正式静态服务
 
-首次启动或电脑重启后执行：
+首次安装后台管理命令：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install-web-command.ps1
+```
+
+安装脚本会把项目路径写入用户环境变量 `KIELAS_WEB_ROOT`，并把项目的 `scripts` 目录加入
+用户 `PATH`。重新打开终端后，可以在任意目录执行：
+
+```powershell
+web start
+web check
+web stop
+```
+
+- `web start`：停止由脚本管理的旧服务，执行检查和构建，然后隐藏窗口启动新服务。
+- `web check`：同时检查保存的进程和 `http://127.0.0.1:1314/` 的 HTTP 状态。
+- `web stop`：停止由脚本管理的后台服务。
+
+后台输出分别保存在项目根目录的 `.web-service.log` 和 `.web-service.error.log`。服务监听
+`127.0.0.1:1314`，关闭启动命令所在的终端不会停止服务；Windows 重启后仍需执行
+`web start`。
+
+如需临时前台运行，也可以继续使用：
 
 ```powershell
 npm start
-```
-
-`npm start` 会先检查并构建，再在 `127.0.0.1:1314` 启动静态服务。
-
-如果已经构建，只启动现有 `dist/`：
-
-```powershell
 npm run serve
 ```
 
-注意：静态服务器启动后重新执行构建，应重启 `npm run serve`，让它重新加载目录。
+`npm start` 会构建后在前台启动，`npm run serve` 只提供已有的 `dist/`。
+
+## 服务环境变量
+
+| 变量 | 默认值 | 作用 |
+| --- | --- | --- |
+| `KIELAS_WEB_ROOT` | 安装脚本所在项目 | 项目绝对路径 |
+| `KIELAS_WEB_HOST` | `127.0.0.1` | 正式源站监听地址 |
+| `KIELAS_WEB_PORT` | `1314` | 正式源站监听端口 |
+
+修改用户环境变量后需要重新打开终端。若修改端口，还要同步修改 Cloudflare Tunnel 的源站地址。
 
 ## npm scripts
 
@@ -87,4 +113,3 @@ npm run serve
 | `npm run serve` | 在 1314 端口提供已有的 `dist/` |
 | `npm start` | 构建后启动正式静态服务 |
 | `npm run preview` | 使用 Astro Preview 预览构建结果 |
-

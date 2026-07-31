@@ -15,13 +15,37 @@ Get-CimInstance Win32_Process -Filter "ProcessId=$($listener.OwningProcess)"
 
 不要在没有确认进程身份的情况下强制终止端口占用者。
 
+如果占用者是当前网站且由管理脚本启动，直接执行 `web stop`；`web start` 也会先停止脚本记录的
+旧实例。若占用者不是 `.web-service.pid` 中记录的进程，脚本不会擅自终止它。
+
 ## 构建后新页面出现 404
 
-`sirv` 可能仍然使用启动时的旧目录索引。停止并重新执行：
+重新构建并重启后台服务：
 
 ```powershell
-npm run serve
+web start
+web check
 ```
+
+## `web` 不是可识别的命令
+
+在项目目录重新执行安装脚本：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install-web-command.ps1
+```
+
+随后关闭并重新打开终端，使用户 `PATH` 生效。
+
+## 后台进程存在但网站无法访问
+
+```powershell
+web check
+Get-Content D:\project\kielasWEB\.web-service.error.log -Tail 50
+```
+
+确认 `KIELAS_WEB_ROOT` 指向正确项目，且 `KIELAS_WEB_HOST`、`KIELAS_WEB_PORT` 没有被设置成
+意外值。修正后执行 `web start`。
 
 ## Cloudflare 显示 502 Bad Gateway
 
@@ -68,7 +92,7 @@ dist/fun_words/words.json
 npm run build
 ```
 
-并重启静态服务。
+并执行 `web start` 重启静态服务。
 
 ## Blog 不显示
 
@@ -94,4 +118,3 @@ npm audit
 
 不要直接执行 `npm audit fix --force`。强制升级可能引入不兼容版本，应先确认漏洞来源和可用的
 非破坏性升级方案。
-

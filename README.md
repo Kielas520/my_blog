@@ -25,6 +25,23 @@ npm start
 该命令会先检查并构建站点，然后仅在 `127.0.0.1:1314` 提供 `dist/` 中的纯静态文件。
 Cloudflare Tunnel 与源站位于同一台机器，因此不需要把正式服务暴露到局域网。
 
+也可以安装后台服务管理命令（只需执行一次）：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install-web-command.ps1
+```
+
+重新打开终端后，可在任意目录运行：
+
+```powershell
+web start  # 关闭旧服务、重新构建，并在后台启动
+web check  # 检查进程及 HTTP 状态
+web stop   # 停止后台服务
+```
+
+用户环境变量 `KIELAS_WEB_ROOT` 会指向本项目，`scripts` 会加入用户 `PATH`。
+可选变量 `KIELAS_WEB_HOST` 和 `KIELAS_WEB_PORT` 可覆盖默认的 `127.0.0.1:1314`。
+
 ## Cloudflare Tunnel
 
 在 Cloudflare 控制台进入 `Networking → Tunnels → 选择隧道 → Routes`，添加

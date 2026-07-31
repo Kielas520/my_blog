@@ -284,23 +284,23 @@ npm run build
 
 ## 十一、启动正式服务
 
-构建并启动：
+首次使用先安装命令并重新打开终端：
 
 ```powershell
-npm start
+powershell -ExecutionPolicy Bypass -File .\scripts\install-web-command.ps1
 ```
 
-该命令等同于：
+之后构建并在后台启动：
 
 ```powershell
-npm run build
-npm run serve
+web start
 ```
 
-如果已经构建完成，只启动 `dist/`：
+检查或停止服务：
 
 ```powershell
-npm run serve
+web check
+web stop
 ```
 
 正式静态服务监听：
@@ -315,7 +315,8 @@ Cloudflare Tunnel 的源站地址保持：
 http://localhost:1314
 ```
 
-运行服务的终端窗口不能关闭。按 `Ctrl+C` 会停止网站源站。
+服务在隐藏的后台进程中运行，可以关闭终端。PID 写入 `.web-service.pid`，标准输出和错误日志
+分别写入 `.web-service.log` 与 `.web-service.error.log`。电脑重启后需要再次执行 `web start`。
 
 ## 十二、网站更新流程
 
@@ -323,12 +324,12 @@ http://localhost:1314
 
 1. 修改 `src/` 或 `public/` 中的数据。
 2. 使用 `npm run dev` 在本地检查页面。
-3. 执行 `npm run build`。
-4. 检查主页、修改过的页面、图片和链接。
-5. 重启正在运行的 `npm run serve`。
+3. 执行 `web start`，自动停止旧服务、检查、构建并后台启动。
+4. 执行 `web check`，确认进程和本地 HTTP 状态正常。
+5. 检查主页、修改过的页面、图片和链接。
 6. 访问 `https://kielasovo.com` 验证公网结果。
 
-如果 1314 端口已经有旧服务，先查询监听进程：
+如果 1314 端口被不属于脚本管理的其他进程占用，先查询监听进程：
 
 ```powershell
 Get-NetTCPConnection -LocalPort 1314 -State Listen
@@ -340,10 +341,10 @@ Get-NetTCPConnection -LocalPort 1314 -State Listen
 Stop-Process -Id <OwningProcess>
 ```
 
-然后重新启动：
+确认并停止冲突进程后重新启动：
 
 ```powershell
-npm run serve
+web start
 ```
 
 不要在未确认进程用途时直接终止它。
@@ -366,4 +367,3 @@ public/fun_words/words.json
 ```
 
 其他 `src/data` 文件和 Blog 不支持这种方式，必须重新构建。
-

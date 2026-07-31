@@ -27,8 +27,13 @@ npm run build
 ## 启动源站
 
 ```powershell
-npm run serve
+web start
+web check
 ```
+
+首次使用时，先在项目目录执行
+`powershell -ExecutionPolicy Bypass -File .\scripts\install-web-command.ps1` 并重新打开终端。
+`web start` 会停止旧实例、重新构建并在后台启动源站。
 
 正式源站仅监听：
 
@@ -89,25 +94,24 @@ DNS 记录应保持 Proxied（橙色云）。同一个主机名不能同时存�
 ## 更新网站
 
 ```powershell
-npm run check
-npm run build
+web start
+web check
 ```
 
-如果静态服务已经运行，构建完成后重启它。先确认 1314 端口对应的是 Kielasovo 的 `sirv`
-进程，再终止旧进程并执行：
+`web start` 已包含检查、构建和重启。完成后再访问公网地址确认 Cloudflare 返回了新版本。
+需要停止源站时执行：
 
 ```powershell
-npm run serve
+web stop
 ```
 
 ## 开机后恢复
 
-`cloudflared` 已作为 Windows 自动服务运行，但站点静态服务目前不是 Windows 系统服务。
-电脑重启后需要在项目目录执行：
+`cloudflared` 已作为 Windows 自动服务运行。站点源站由后台脚本管理，不依赖终端窗口，但它不是
+Windows 开机自启服务。电脑重启后执行：
 
 ```powershell
-npm start
+web start
 ```
 
-如果以后需要真正的无人值守运行，可以再配置 Windows 任务计划或专用服务包装器。
-
+若需要开机自动恢复，可另行配置 Windows 任务计划运行 `web start`。

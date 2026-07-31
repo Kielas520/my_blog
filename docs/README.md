@@ -20,8 +20,14 @@ npm install
 npm run dev
 npm run check
 npm run build
-npm run serve
+web start
+web check
+web stop
 ```
+
+首次使用 `web` 命令前，在项目目录执行
+`.\scripts\install-web-command.ps1`，然后重新打开终端。`web start` 会构建网站并在后台运行，
+关闭当前终端不会停止源站。
 
 本地源站端口为 `1314`：
 
