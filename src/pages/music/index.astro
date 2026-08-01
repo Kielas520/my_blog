@@ -24,7 +24,7 @@ const firstTrack = tracks[0];
         <p>NOW PLAYING</p>
         <h2 id="current-track">{firstTrack?.name ?? 'NO TRACK'}</h2>
         {firstTrack ? (
-          <audio id="audio-player" controls preload="metadata" src={firstTrack.link}></audio>
+          <p class="player-hint">从下方选择歌曲，播放会在浏览网站时持续进行。</p>
         ) : (
           <p class="empty">No music here.</p>
         )}
@@ -52,35 +52,35 @@ const firstTrack = tracks[0];
 </BaseLayout>
 
 <script>
-  const player = document.querySelector<HTMLAudioElement>('#audio-player');
-  const currentTrack = document.querySelector<HTMLElement>('#current-track');
-  const playerDisplay = document.querySelector<HTMLElement>('.player-display');
-  const trackButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-track]'));
+  const bindMusicPage = () => {
+    const currentTrack = document.querySelector<HTMLElement>('#current-track');
+    const playerDisplay = document.querySelector<HTMLElement>('.player-display');
+    const trackButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-track]'));
+    if (!playerDisplay || playerDisplay.dataset.bound === 'true') return;
+    playerDisplay.dataset.bound = 'true';
 
-  player?.addEventListener('play', () => playerDisplay?.classList.add('playing'));
-  player?.addEventListener('pause', () => playerDisplay?.classList.remove('playing'));
-  player?.addEventListener('ended', () => playerDisplay?.classList.remove('playing'));
-
-  trackButtons.forEach((button) => {
-    button.addEventListener('click', async () => {
-      if (!player) return;
-      const link = button.dataset.link;
-      const name = button.dataset.name;
-      if (!link) return;
-
-      if (player.src !== new URL(link, window.location.href).href) {
-        player.src = link;
-        player.load();
-      }
-      if (currentTrack) currentTrack.textContent = name || 'UNTITLED';
-      trackButtons.forEach((item) => item.classList.toggle('active', item === button));
-      try {
-        await player.play();
-      } catch {
-        // Native audio controls remain available when autoplay is blocked.
-      }
+    trackButtons.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('site-music-select', { detail: { index } }));
+      });
     });
-  });
+
+    window.addEventListener('site-music-state', ((event: CustomEvent<{ index: number; playing: boolean }>) => {
+      const { index, playing } = event.detail;
+      const activeButton = trackButtons[index];
+      if (currentTrack) currentTrack.textContent = activeButton?.dataset.name || 'NO TRACK';
+      playerDisplay.classList.toggle('playing', playing);
+      trackButtons.forEach((button, buttonIndex) => {
+        button.classList.toggle('active', buttonIndex === index);
+        const label = button.querySelector('i');
+        if (label) label.textContent = buttonIndex === index && playing ? 'PLAYING' : 'PLAY';
+      });
+    }) as EventListener);
+    window.dispatchEvent(new Event('site-music-request-state'));
+  };
+
+  document.addEventListener('astro:page-load', bindMusicPage);
+  bindMusicPage();
 </script>
 
 <style>
@@ -93,7 +93,7 @@ const firstTrack = tracks[0];
   .now-playing { padding: 45px 50px 45px 24px; }
   .now-playing > p:first-child { margin: 0; color: #6b8f9e; font: .6rem/1 ui-monospace, monospace; letter-spacing: .12em; }
   h2 { margin: 30px 0 34px; overflow-wrap: anywhere; color: #17485f; font-size: clamp(2rem, 5vw, 4rem); line-height: 1; letter-spacing: -.055em; text-wrap: balance; }
-  audio { width: 100%; min-height: 44px; }
+  .player-hint { max-width: 520px; color: #648795; font-size: .82rem; line-height: 1.7; }
   .empty { color: var(--muted); }
   .track-list { overflow: hidden; background: rgba(255,255,255,.56); border: 1px solid rgba(255,255,255,.9); border-top: 0; border-radius: 0 0 20px 20px; box-shadow: 0 15px 34px rgba(34,101,130,.1); }
   .track { display: grid; grid-template-columns: 42px 1fr auto; align-items: center; width: 100%; padding: 19px 24px; color: inherit; background: transparent; border: 0; border-bottom: 1px solid var(--line); text-align: left; cursor: pointer; transition: background 160ms ease; }

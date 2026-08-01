@@ -1,0 +1,131 @@
+---
+import musicData from '../data/music.json';
+
+interface Track {
+  name: string;
+  link: string;
+}
+
+const tracks = musicData as Track[];
+const firstTrack = tracks[0];
+---
+
+{firstTrack && (
+  <aside
+    class="floating-music"
+    data-floating-music
+    data-playlist={JSON.stringify(tracks)}
+    transition:persist="site-music-player"
+  >
+    <audio data-floating-audio src={firstTrack.link} preload="metadata"></audio>
+    <div class="music-controls">
+      <span class="track-name" data-floating-track-name>{firstTrack.name}</span>
+      <button type="button" class="skip" data-music-previous aria-label="上一首" title="上一首">‹</button>
+      <button
+        type="button"
+        class="music-ball"
+        data-music-toggle
+        aria-label={`播放 ${firstTrack.name}`}
+        aria-pressed="false"
+        title={firstTrack.name}
+      >
+        <span class="disc" aria-hidden="true"><i></i></span>
+        <span class="state-icon" data-state-icon aria-hidden="true">▶</span>
+      </button>
+      <button type="button" class="skip" data-music-next aria-label="下一首" title="下一首">›</button>
+    </div>
+  </aside>
+)}
+
+<script>
+  interface SiteTrack { name: string; link: string }
+  interface MusicWindow extends Window { __siteMusicReady?: boolean }
+
+  const musicWindow = window as MusicWindow;
+
+  if (!musicWindow.__siteMusicReady) {
+    musicWindow.__siteMusicReady = true;
+    const root = document.querySelector<HTMLElement>('[data-floating-music]');
+    const audio = root?.querySelector<HTMLAudioElement>('[data-floating-audio]');
+    const toggle = root?.querySelector<HTMLButtonElement>('[data-music-toggle]');
+    const previous = root?.querySelector<HTMLButtonElement>('[data-music-previous]');
+    const next = root?.querySelector<HTMLButtonElement>('[data-music-next]');
+    const stateIcon = root?.querySelector<HTMLElement>('[data-state-icon]');
+    const trackLabel = root?.querySelector<HTMLElement>('[data-floating-track-name]');
+    const tracks: SiteTrack[] = JSON.parse(root?.dataset.playlist || '[]');
+    let currentIndex = 0;
+
+    const emitState = () => {
+      window.dispatchEvent(new CustomEvent('site-music-state', {
+        detail: { index: currentIndex, playing: Boolean(audio && !audio.paused) },
+      }));
+    };
+
+    const updateDisplay = () => {
+      const track = tracks[currentIndex];
+      const playing = Boolean(audio && !audio.paused);
+      root?.classList.toggle('playing', playing);
+      toggle?.setAttribute('aria-pressed', String(playing));
+      toggle?.setAttribute('aria-label', `${playing ? '暂停' : '播放'} ${track?.name || '音乐'}`);
+      toggle?.setAttribute('title', track?.name || '音乐');
+      if (stateIcon) stateIcon.textContent = playing ? 'Ⅱ' : '▶';
+      if (trackLabel) trackLabel.textContent = track?.name || 'NO TRACK';
+      emitState();
+    };
+
+    const selectTrack = async (index: number, shouldPlay = true) => {
+      if (!audio || tracks.length === 0) return;
+      currentIndex = (index + tracks.length) % tracks.length;
+      const track = tracks[currentIndex];
+      if (audio.src !== new URL(track.link, window.location.href).href) {
+        audio.src = track.link;
+        audio.load();
+      }
+      updateDisplay();
+      if (shouldPlay) {
+        try { await audio.play(); } catch { updateDisplay(); }
+      }
+    };
+
+    audio?.addEventListener('play', updateDisplay);
+    audio?.addEventListener('pause', updateDisplay);
+    audio?.addEventListener('ended', () => selectTrack(currentIndex + 1));
+    toggle?.addEventListener('click', async () => {
+      if (!audio) return;
+      if (audio.paused) {
+        try { await audio.play(); } catch { updateDisplay(); }
+      } else {
+        audio.pause();
+      }
+    });
+    previous?.addEventListener('click', () => selectTrack(currentIndex - 1));
+    next?.addEventListener('click', () => selectTrack(currentIndex + 1));
+    window.addEventListener('site-music-select', ((event: CustomEvent<{ index: number }>) => {
+      selectTrack(event.detail.index);
+    }) as EventListener);
+    window.addEventListener('site-music-request-state', emitState);
+    updateDisplay();
+  }
+</script>
+
+<style>
+  .floating-music { position: fixed; right: clamp(16px, 3vw, 34px); bottom: clamp(18px, 3vw, 34px); z-index: 50; filter: drop-shadow(0 10px 18px rgba(28,82,105,.24)); animation: music-arrive 520ms cubic-bezier(.2,.8,.2,1) both; }
+  .music-controls { display: flex; align-items: center; padding: 5px; background: rgba(245,253,255,.9); border: 1px solid rgba(255,255,255,.95); border-radius: 38px; backdrop-filter: blur(12px); }
+  .track-name { max-width: 0; overflow: hidden; color: #24586d; opacity: 0; white-space: nowrap; font: 700 .65rem/1.2 system-ui,sans-serif; transition: max-width 220ms ease, padding 220ms ease, opacity 160ms ease; }
+  .floating-music:hover .track-name, .floating-music:focus-within .track-name { max-width: min(220px,45vw); padding: 0 10px; opacity: 1; }
+  button { cursor: pointer; }
+  .skip { width: 30px; height: 38px; padding: 0; color: #32677b; background: transparent; border: 0; border-radius: 15px; font: 400 1.45rem/1 system-ui,sans-serif; }
+  .skip:hover { background: rgba(199,235,244,.65); }
+  .music-ball { position: relative; display: grid; width: 54px; height: 54px; flex: 0 0 auto; padding: 0; overflow: hidden; color: #fff; background: #effafd; border: 2px solid #fff; border-radius: 50%; place-items: center; }
+  button:focus-visible { outline: 3px solid rgba(39,125,159,.58); outline-offset: 2px; }
+  .disc { position: absolute; inset: 4px; display: grid; background: repeating-radial-gradient(circle,#244e60 0 2px,#123442 3px 6px,#2c6273 7px 8px); border-radius: 50%; place-items: center; animation: music-spin 8s linear infinite paused; }
+  .disc i { width: 34%; aspect-ratio: 1; background: radial-gradient(circle,#f5fbfc 0 14%,#70b9cf 15% 45%,#f3dc7f 46%); border-radius: 50%; }
+  .state-icon { position: relative; z-index: 1; display: grid; width: 23px; height: 23px; padding-left: 2px; color: #fff; background: rgba(17,55,70,.68); border-radius: 50%; place-items: center; font: 700 10px/1 system-ui,sans-serif; transition: opacity 160ms ease; }
+  .playing .disc { animation-play-state: running; }
+  .playing .state-icon { opacity: 0; }
+  .music-ball:hover .state-icon, .music-ball:focus-visible .state-icon { opacity: 1; }
+  @keyframes music-spin { to { transform: rotate(360deg); } }
+  @keyframes music-arrive { from { opacity: 0; transform: translateY(18px) scale(.84); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .floating-music { animation: none; } .disc { animation: none; } }
+  @media (max-width: 580px) { .music-ball { width: 48px; height: 48px; } .skip { width: 27px; } }
+</style>
