@@ -12,6 +12,16 @@ const categoryName = {
   'ticktick': 'TICKTICK',
   'get-a-job': 'getAjob',
 } as const;
+
+const categories = Object.entries(categoryName)
+  .map(([key, label]) => ({
+    key,
+    label,
+    count: posts.filter((post) => post.data.category === key).length,
+  }))
+  .sort((a, b) => b.count - a.count);
+
+const defaultCategory = categories[0]?.key;
 ---
 
 <BaseLayout title="Blogs" description="Kielasovo 的文章与随笔。">
@@ -19,16 +29,24 @@ const categoryName = {
     <p class="eyebrow">Personal archive</p>
     <h1>Blogs</h1>
   </header>
-  <div class="container categories">
-    {Object.entries(categoryName).map(([key, label]) => (
-      <span><i>{posts.filter((post) => post.data.category === key).length}</i>{label}</span>
+  <div class="container categories" aria-label="按分类筛选文章">
+    {categories.map(({ key, label, count }) => (
+      <button
+        type="button"
+        class:list={{ active: key === defaultCategory }}
+        data-category={key}
+        aria-pressed={key === defaultCategory ? 'true' : 'false'}
+        aria-controls="blog-posts"
+      >
+        <i>{count}</i>{label}
+      </button>
     ))}
   </div>
-  <section class="container posts" aria-label="文章列表">
+  <section class="container posts" id="blog-posts" aria-label="文章列表" aria-live="polite">
     {posts.length === 0 ? (
       <div class="empty-state"><strong>SELECTED BLOGS / SOON</strong><p>等待第一批精选文章进入这里。</p></div>
     ) : posts.map((post) => (
-      <article>
+      <article data-post-category={post.data.category} hidden={post.data.category !== defaultCategory}>
         <a href={`/blogs/${post.id}`}>
           <div class="meta"><span>{categoryName[post.data.category]}</span><time>{post.data.publishedAt.toLocaleDateString('zh-CN')}</time></div>
           <h2>{post.data.title}</h2>
@@ -41,11 +59,37 @@ const categoryName = {
   </section>
 </BaseLayout>
 
+<script>
+  const categoryButtons = document.querySelectorAll<HTMLButtonElement>('[data-category]');
+  const postCards = document.querySelectorAll<HTMLElement>('[data-post-category]');
+
+  categoryButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const selectedCategory = button.dataset.category;
+
+      categoryButtons.forEach((item) => {
+        const isActive = item === button;
+        item.classList.toggle('active', isActive);
+        item.setAttribute('aria-pressed', String(isActive));
+      });
+
+      postCards.forEach((card) => {
+        card.hidden = card.dataset.postCategory !== selectedCategory;
+      });
+    });
+  });
+</script>
+
 <style>
   .categories { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 25px; }
-  .categories span { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; color: #527486; background: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.9); border-radius: 9px; box-shadow: 0 3px 8px rgba(45,111,139,.08); font: 700 .6rem/1 Verdana, sans-serif; }
+  .categories button { display: inline-flex; align-items: center; gap: 7px; padding: 7px 10px; color: #527486; background: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.9); border-radius: 9px; box-shadow: 0 3px 8px rgba(45,111,139,.08); font: 700 .6rem/1 Verdana, sans-serif; cursor: pointer; transition: color 160ms ease, background 160ms ease, border-color 160ms ease, transform 160ms ease; }
+  .categories button:hover { transform: translateY(-1px); background: rgba(255,255,255,.82); }
+  .categories button:focus-visible { outline: 2px solid #277d9f; outline-offset: 2px; }
+  .categories button.active { color: #174f67; background: rgba(221,247,255,.92); border-color: rgba(70,153,185,.55); }
   .categories i { display: grid; width: 18px; height: 18px; color: #fff; background: #66aa4b; border-radius: 50%; place-items: center; font-style: normal; }
+  .categories button.active i { background: #277d9f; }
   .posts { display: grid; grid-template-columns: repeat(2, 1fr); overflow: hidden; background: rgba(255,255,255,.38); border: 1px solid rgba(255,255,255,.9); border-radius: 22px; box-shadow: 0 16px 35px rgba(43,109,137,.11); }
+  article[hidden] { display: none; }
   article { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   article a { position: relative; display: block; min-height: 310px; padding: 30px; transition: background 180ms ease; }
   article a:hover { background: rgba(255,255,255,.55); }
