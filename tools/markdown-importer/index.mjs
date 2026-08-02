@@ -34,6 +34,7 @@ Markdown Importer
   --order           系列顺序，整数
   --source          正文来源文件；会移除来源文件已有的 frontmatter
   --content         直接传入 Markdown 正文
+  --keep-source-header  保留 Notion 导出的标题、DATE 和 TAG 头部
   --skip-images     不上传和替换正文中的本地图片
   --force           允许覆盖已经存在的目标文件
   --help            显示帮助
@@ -46,7 +47,7 @@ function parseArgs(argv) {
     if (!token.startsWith('--')) throw new Error(`无法识别的参数：${token}`);
     const [rawKey, inlineValue] = token.slice(2).split('=', 2);
     const key = rawKey.replace(/([a-z0-9])([A-Z])/g, '$1_$2').replaceAll('-', '_').toLowerCase();
-    if (key === 'help' || key === 'force' || key === 'skip_images') {
+    if (key === 'help' || key === 'force' || key === 'skip_images' || key === 'keep_source_header') {
       result[key] = inlineValue === undefined ? true : parseBoolean(inlineValue, key);
       continue;
     }
@@ -89,6 +90,35 @@ function parseTags(value) {
 
 function stripFrontmatter(content) {
   return content.replace(/^---\s*\r?\n[\s\S]*?\r?\n---\s*(?:\r?\n)?/, '');
+}
+
+function stripNotionHeader(content) {
+  const lines = content.replace(/^\uFEFF/, '').split(/\r?\n/);
+  let headingIndex = 0;
+  while (headingIndex < lines.length && lines[headingIndex].trim() === '') headingIndex += 1;
+  if (!/^#\s+\S/.test(lines[headingIndex] ?? '')) return content;
+
+  const metadataPattern = /^(?:DATE|TAG|日期|标签)\s*[:：]\s*.+$/i;
+  let cursor = headingIndex + 1;
+  let metadataCount = 0;
+  while (cursor < lines.length) {
+    const line = lines[cursor].trim();
+    if (line === '') {
+      cursor += 1;
+      continue;
+    }
+    if (metadataPattern.test(line)) {
+      metadataCount += 1;
+      cursor += 1;
+      continue;
+    }
+    break;
+  }
+
+  // A standalone H1 is normal Markdown. Only remove it when Notion-style
+  // metadata is also present immediately below it.
+  if (metadataCount === 0) return content;
+  return lines.slice(cursor).join('\n').replace(/^\s+/, '');
 }
 
 function isRemoteImage(reference) {
@@ -139,8 +169,8 @@ async function replaceLocalImages(markdown, sourceDirectory) {
   const uploadedPaths = new Map();
   const references = [];
 
-  const inlinePattern = /!\[[^\]]*\]\(\s*(<[^>]+>|[^\s)]+)(?=\s*(?:["'(]|\)))/g;
-  for (const match of markdown.matchAll(inlinePattern)) references.push(match[1]);
+  const inlinePattern = /(!\[[^\]]*\]\(\s*)(<[^>]+>|[^\s)]+)(?=\s*(?:["'(]|\)))/g;
+  for (const match of markdown.matchAll(inlinePattern)) references.push(match[2]);
 
   const htmlPattern = /<img\b[^>]*?\bsrc\s*=\s*(["'])(.*?)\1[^>]*>/gi;
   for (const match of markdown.matchAll(htmlPattern)) references.push(match[2]);
@@ -177,7 +207,7 @@ async function replaceLocalImages(markdown, sourceDirectory) {
 
   if (replacements.size === 0) return markdown;
   return markdown
-    .replace(inlinePattern, (match, reference) => match.replace(reference, replacements.get(reference) ?? reference))
+    .replace(inlinePattern, (_match, prefix, reference) => `${prefix}${replacements.get(reference) ?? reference}`)
     .replace(htmlPattern, (match, quote, reference) => match.replace(`${quote}${reference}${quote}`, `${quote}${replacements.get(reference) ?? reference}${quote}`))
     .replace(definitionPattern, (match, indent, id, reference, suffix) => {
       const replacement = replacements.get(reference);
@@ -229,7 +259,10 @@ async function main() {
 
   let body = args.content ?? '';
   const sourcePath = args.source ? path.resolve(args.source) : undefined;
-  if (sourcePath) body = stripFrontmatter(await readFile(sourcePath, 'utf8'));
+  if (sourcePath) {
+    body = stripFrontmatter(await readFile(sourcePath, 'utf8'));
+    if (!args.keep_source_header) body = stripNotionHeader(body);
+  }
   body = body.trim();
   if (!args.skip_images && body) {
     const sourceDirectory = sourcePath ? path.dirname(sourcePath) : process.cwd();

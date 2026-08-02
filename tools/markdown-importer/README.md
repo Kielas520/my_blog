@@ -17,6 +17,17 @@ npm run import:markdown -- `
 
 `--source` 文件如果带有自己的 `---` frontmatter，导入时会将它移除，只保留正文。也可以用 `--content "正文"` 直接提供内容；两者都不传时会创建正文为空的文章。
 
+Notion 导出文件如果以一级标题和 `DATE`、`TAG` 开头，导入器会自动移除这段重复头部。例如：
+
+```markdown
+# HK打卡
+
+DATE: 2026年8月3日 05:21
+TAG: 忆
+```
+
+页面标题、日期和标签以 CLI 参数生成的 frontmatter 为准。普通的一级标题不会被删除；需要原样保留 Notion 头部时可添加 `--keep-source-header`。
+
 ## 本地图片
 
 导入器默认检查 Markdown 图片和 HTML `<img>`。相对图片路径按照 `--source` Markdown 文件所在目录解析，站点绝对路径按照项目的 `public` 目录解析。本地图片会通过 `media-uploader` 的 `image` 配置上传到 R2，并在写入目标 Markdown 前替换为 `image.kielasovo.com` URL。
