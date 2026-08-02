@@ -2,17 +2,10 @@ import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
 
-const notionCategory = z.enum([
-  'dairy',
-  'thoughts',
-  'ticktick',
-  'get-a-job',
-]);
-
 const postSchema = z.object({
   title: z.string(),
   description: z.string(),
-  category: notionCategory,
+  category: z.string().min(1),
   publishedAt: z.coerce.date(),
   updatedAt: z.coerce.date().optional(),
   draft: z.boolean().default(false),

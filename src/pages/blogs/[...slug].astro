@@ -23,7 +23,7 @@ const categoryName = {
   'thoughts': 'Thoughts',
   'ticktick': 'TICKTICK',
   'get-a-job': 'getAjob',
-}[post.data.category];
+}[post.data.category] ?? post.data.category;
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>

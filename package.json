@@ -9,7 +9,9 @@
     "build": "astro check && astro build",
     "serve": "sirv dist --host 127.0.0.1 --port 1314 --quiet --etag",
     "preview": "astro preview --host 0.0.0.0 --port 1314",
-    "check": "astro check"
+    "check": "astro check",
+    "import:markdown": "node tools/markdown-importer/index.mjs",
+    "upload:file": "python tools/media-uploader/upload.py"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",

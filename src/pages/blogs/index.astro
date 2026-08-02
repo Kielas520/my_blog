@@ -13,10 +13,12 @@ const categoryName = {
   'get-a-job': 'getAjob',
 } as const;
 
-const categories = Object.entries(categoryName)
-  .map(([key, label]) => ({
+const categoryKeys = [...new Set(posts.map((post) => post.data.category))];
+const getCategoryName = (category: string) => categoryName[category as keyof typeof categoryName] ?? category;
+const categories = categoryKeys
+  .map((key) => ({
     key,
-    label,
+    label: getCategoryName(key),
     count: posts.filter((post) => post.data.category === key).length,
   }))
   .sort((a, b) => b.count - a.count);
@@ -48,7 +50,7 @@ const defaultCategory = categories[0]?.key;
     ) : posts.map((post) => (
       <article data-post-category={post.data.category} hidden={post.data.category !== defaultCategory}>
         <a href={`/blogs/${post.id}`}>
-          <div class="meta"><span>{categoryName[post.data.category]}</span><time>{post.data.publishedAt.toLocaleDateString('zh-CN')}</time></div>
+          <div class="meta"><span>{getCategoryName(post.data.category)}</span><time>{post.data.publishedAt.toLocaleDateString('zh-CN')}</time></div>
           <h2>{post.data.title}</h2>
           <p>{post.data.description}</p>
           <div class="tags">{post.data.tags.map((tag) => <span>#{tag}</span>)}</div>
