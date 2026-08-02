@@ -4,8 +4,10 @@ import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { spawnSync } from 'node:child_process';
 
 const BLOGS_ROOT = path.resolve(process.cwd(), 'src', 'content', 'blogs');
+const MEDIA_UPLOADER = path.resolve(process.cwd(), 'tools', 'media-uploader', 'upload.py');
 const VALID_TYPES = new Set(['article', 'series', 'project', 'note']);
 
 const help = `
@@ -32,6 +34,7 @@ Markdown Importer
   --order           系列顺序，整数
   --source          正文来源文件；会移除来源文件已有的 frontmatter
   --content         直接传入 Markdown 正文
+  --skip-images     不上传和替换正文中的本地图片
   --force           允许覆盖已经存在的目标文件
   --help            显示帮助
 `;
@@ -43,7 +46,7 @@ function parseArgs(argv) {
     if (!token.startsWith('--')) throw new Error(`无法识别的参数：${token}`);
     const [rawKey, inlineValue] = token.slice(2).split('=', 2);
     const key = rawKey.replace(/([a-z0-9])([A-Z])/g, '$1_$2').replaceAll('-', '_').toLowerCase();
-    if (key === 'help' || key === 'force') {
+    if (key === 'help' || key === 'force' || key === 'skip_images') {
       result[key] = inlineValue === undefined ? true : parseBoolean(inlineValue, key);
       continue;
     }
@@ -88,6 +91,100 @@ function stripFrontmatter(content) {
   return content.replace(/^---\s*\r?\n[\s\S]*?\r?\n---\s*(?:\r?\n)?/, '');
 }
 
+function isRemoteImage(reference) {
+  return /^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(reference);
+}
+
+function resolveImagePath(reference, sourceDirectory) {
+  let localReference = reference.trim();
+  if (localReference.startsWith('<') && localReference.endsWith('>')) {
+    localReference = localReference.slice(1, -1);
+  }
+  try {
+    localReference = decodeURIComponent(localReference);
+  } catch {
+    // Keep the original path when it contains a literal percent sign.
+  }
+  localReference = localReference.replace(/\\([ ()])/g, '$1');
+
+  if (path.isAbsolute(localReference)) {
+    if (/^[\\/]/.test(localReference) && !/^[a-z]:/i.test(localReference)) {
+      return path.resolve(process.cwd(), 'public', localReference.replace(/^[\\/]+/, ''));
+    }
+    return path.resolve(localReference);
+  }
+  return path.resolve(sourceDirectory, localReference);
+}
+
+function uploadImage(imagePath) {
+  const python = process.env.PYTHON || 'python';
+  const result = spawnSync(python, [MEDIA_UPLOADER, '--type', 'image', '--source', imagePath], {
+    cwd: process.cwd(),
+    encoding: 'utf8',
+    windowsHide: true,
+    maxBuffer: 10 * 1024 * 1024,
+  });
+  if (result.error) throw new Error(`无法启动图片上传工具：${result.error.message}`);
+  if (result.status !== 0) {
+    const details = [result.stdout, result.stderr].filter(Boolean).join('\n').trim();
+    throw new Error(`图片上传失败：${imagePath}${details ? `\n${details}` : ''}`);
+  }
+  const urls = result.stdout.match(/https?:\/\/image\.kielasovo\.com\/[^\s]+/g);
+  if (!urls?.length) throw new Error(`图片上传工具没有返回有效 URL：${imagePath}`);
+  return urls.at(-1).trim();
+}
+
+async function replaceLocalImages(markdown, sourceDirectory) {
+  const replacements = new Map();
+  const uploadedPaths = new Map();
+  const references = [];
+
+  const inlinePattern = /!\[[^\]]*\]\(\s*(<[^>]+>|[^\s)]+)(?=\s*(?:["'(]|\)))/g;
+  for (const match of markdown.matchAll(inlinePattern)) references.push(match[1]);
+
+  const htmlPattern = /<img\b[^>]*?\bsrc\s*=\s*(["'])(.*?)\1[^>]*>/gi;
+  for (const match of markdown.matchAll(htmlPattern)) references.push(match[2]);
+
+  const referenceIds = new Set();
+  for (const match of markdown.matchAll(/!\[[^\]]*\]\[([^\]]+)\]/g)) referenceIds.add(match[1].trim().toLowerCase());
+  const definitionPattern = /^([ \t]{0,3})\[([^\]]+)\]:\s*(<[^>]+>|\S+)(.*)$/gm;
+  for (const match of markdown.matchAll(definitionPattern)) {
+    if (referenceIds.has(match[2].trim().toLowerCase())) references.push(match[3]);
+  }
+
+  const localImages = [];
+  for (const reference of [...new Set(references)]) {
+    const cleanReference = reference.startsWith('<') && reference.endsWith('>')
+      ? reference.slice(1, -1)
+      : reference;
+    if (isRemoteImage(cleanReference)) continue;
+    const imagePath = resolveImagePath(reference, sourceDirectory);
+    if (!await exists(imagePath)) throw new Error(`Markdown 引用的本地图片不存在：${imagePath}`);
+    localImages.push({ reference, imagePath });
+  }
+
+  for (const { reference, imagePath } of localImages) {
+    const pathKey = imagePath.toLowerCase();
+    if (uploadedPaths.has(pathKey)) {
+      replacements.set(reference, uploadedPaths.get(pathKey));
+      continue;
+    }
+    console.log(`正在上传图片：${imagePath}`);
+    const url = uploadImage(imagePath);
+    uploadedPaths.set(pathKey, url);
+    replacements.set(reference, url);
+  }
+
+  if (replacements.size === 0) return markdown;
+  return markdown
+    .replace(inlinePattern, (match, reference) => match.replace(reference, replacements.get(reference) ?? reference))
+    .replace(htmlPattern, (match, quote, reference) => match.replace(`${quote}${reference}${quote}`, `${quote}${replacements.get(reference) ?? reference}${quote}`))
+    .replace(definitionPattern, (match, indent, id, reference, suffix) => {
+      const replacement = replacements.get(reference);
+      return replacement ? `${indent}[${id}]: ${replacement}${suffix}` : match;
+    });
+}
+
 async function exists(filePath) {
   try {
     await access(filePath, constants.F_OK);
@@ -124,9 +221,20 @@ async function main() {
   }
   if (args.source && args.content !== undefined) throw new Error('--source 和 --content 只能使用其中一个');
 
+  const categoryDirectory = path.join(BLOGS_ROOT, args.category);
+  const destination = path.join(categoryDirectory, `${fileName}.md`);
+  if (!args.force && await exists(destination)) {
+    throw new Error(`目标文件已经存在：${path.relative(process.cwd(), destination)}（如需覆盖请添加 --force）`);
+  }
+
   let body = args.content ?? '';
-  if (args.source) body = stripFrontmatter(await readFile(path.resolve(args.source), 'utf8'));
+  const sourcePath = args.source ? path.resolve(args.source) : undefined;
+  if (sourcePath) body = stripFrontmatter(await readFile(sourcePath, 'utf8'));
   body = body.trim();
+  if (!args.skip_images && body) {
+    const sourceDirectory = sourcePath ? path.dirname(sourcePath) : process.cwd();
+    body = await replaceLocalImages(body, sourceDirectory);
+  }
 
   const fields = [
     `title: ${yamlString(args.title)}`,
@@ -140,12 +248,6 @@ async function main() {
   fields.push(`type: ${type}`);
   if (args.series) fields.push(`series: ${yamlString(args.series)}`);
   if (args.order !== undefined) fields.push(`order: ${Number(args.order)}`);
-
-  const categoryDirectory = path.join(BLOGS_ROOT, args.category);
-  const destination = path.join(categoryDirectory, `${fileName}.md`);
-  if (!args.force && await exists(destination)) {
-    throw new Error(`目标文件已经存在：${path.relative(process.cwd(), destination)}（如需覆盖请添加 --force）`);
-  }
 
   await mkdir(categoryDirectory, { recursive: true });
   const markdown = `---\n${fields.join('\n')}\n---\n${body ? `\n${body}\n` : '\n'}`;
