@@ -38,9 +38,111 @@ const categoryName = {
         <span>{post.data.tags.map((tag) => `#${tag}`).join('  ')}</span>
       </div>
     </header>
-    <div class="prose"><Content /></div>
+    <div class="prose" data-prose><Content /></div>
   </article>
 </BaseLayout>
+
+<script>
+  const enhanceImageGallery = (gallery: HTMLElement) => {
+    const blocks = Array.from(gallery.children).filter((element): element is HTMLParagraphElement => element.tagName === 'P');
+    const images = blocks.map((block) => block.querySelector<HTMLImageElement>('img')).filter((image): image is HTMLImageElement => Boolean(image));
+    if (images.length !== blocks.length) return;
+
+    const applyLayout = () => {
+      if (gallery.dataset.layoutApplied === 'true') return;
+      if (images.some((image) => !image.naturalWidth || !image.naturalHeight)) return;
+      gallery.dataset.layoutApplied = 'true';
+      const ratios = images.map((image) => image.naturalWidth / image.naturalHeight);
+      gallery.replaceChildren();
+
+      const createRow = (kind: 'pair' | 'mosaic' | 'solo' | 'wide') => {
+        const row = document.createElement('div');
+        row.className = `gallery-row gallery-${kind}`;
+        gallery.append(row);
+        return row;
+      };
+
+      let index = 0;
+      while (index < blocks.length) {
+        const remaining = blocks.length - index;
+        const ratio = ratios[index];
+
+        if (ratio >= 2.2) {
+          createRow('wide').append(blocks[index]);
+          index += 1;
+          continue;
+        }
+
+        if (remaining >= 3 && ratio < .9 && ratios[index + 1] >= 1 && ratios[index + 1] < 2.2 && ratios[index + 2] >= 1 && ratios[index + 2] < 2.2) {
+          const row = createRow('mosaic');
+          blocks[index].classList.add('gallery-feature');
+          row.append(blocks[index]);
+          const stack = document.createElement('div');
+          stack.className = 'gallery-stack';
+          stack.append(blocks[index + 1], blocks[index + 2]);
+          row.append(stack);
+          index += 3;
+          continue;
+        }
+
+        if (remaining >= 2 && ratios[index + 1] < 2.2) {
+          const row = createRow('pair');
+          row.append(blocks[index], blocks[index + 1]);
+          index += 2;
+          continue;
+        }
+
+        createRow('solo').append(blocks[index]);
+        index += 1;
+      }
+      gallery.classList.add('gallery-ready');
+    };
+
+    images.forEach((image) => {
+      if (!image.complete) image.addEventListener('load', applyLayout, { once: true });
+    });
+    applyLayout();
+  };
+
+  const arrangeImageGalleries = () => {
+    document.querySelectorAll<HTMLElement>('[data-prose]:not([data-galleries-arranged])').forEach((prose) => {
+      prose.dataset.galleriesArranged = 'true';
+      const imageBlocks = Array.from(prose.children).filter((element): element is HTMLParagraphElement => {
+        if (element.tagName !== 'P') return false;
+        const paragraph = element as HTMLParagraphElement;
+        return paragraph.children.length === 1 && paragraph.firstElementChild?.tagName === 'IMG';
+      });
+
+      let group: HTMLParagraphElement[] = [];
+      const flush = () => {
+        if (group.length < 2) {
+          group = [];
+          return;
+        }
+        const gallery = document.createElement('div');
+        gallery.className = 'image-gallery';
+        gallery.setAttribute('role', 'group');
+        gallery.setAttribute('aria-label', '图片组');
+        group[0].before(gallery);
+        group.forEach((block) => gallery.append(block));
+        enhanceImageGallery(gallery);
+        group = [];
+      };
+
+      Array.from(prose.children).forEach((element) => {
+        if (imageBlocks.includes(element as HTMLParagraphElement)) {
+          group.push(element as HTMLParagraphElement);
+        } else {
+          flush();
+        }
+      });
+      flush();
+    });
+  };
+
+  document.addEventListener('astro:page-load', arrangeImageGalleries);
+  arrangeImageGalleries();
+</script>
 
 <style>
   .article { max-width: 900px; padding-top: 60px; }
@@ -65,9 +167,23 @@ const categoryName = {
   .prose :global(pre code) { padding: 0; color: inherit; background: none; }
   .prose :global(blockquote), .prose :global(aside) { display: block; margin: 2em 0; padding: 16px 20px; color: #355f73; background: rgba(214,243,252,.6); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; }
   .prose :global(img) { display: block; width: auto; max-width: 100%; max-height: min(72vh, 760px); margin: 2.2rem auto; object-fit: contain; border: 8px solid rgba(255,255,255,.9); border-radius: 14px; box-shadow: 0 14px 32px rgba(29,87,111,.18); }
+  .prose :global(.image-gallery) { display: flex; flex-direction: column; gap: clamp(14px, 2.2vw, 26px); margin: clamp(2.4rem, 5vw, 4rem) 0; }
+  .prose :global(.gallery-row) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2.2vw, 26px); align-items: stretch; }
+  .prose :global(.gallery-row p) { display: flex; min-width: 0; min-height: clamp(280px, 30vw, 440px); margin: 0; padding: clamp(14px, 2vw, 22px); background: linear-gradient(145deg, rgba(255,255,255,.76), rgba(238,250,253,.58)); border: 1px solid rgba(255,255,255,.96); border-radius: 18px; box-shadow: 0 13px 28px rgba(29,87,111,.11), inset 0 0 0 1px rgba(190,231,240,.18); align-items: center; justify-content: center; }
+  .prose :global(.image-gallery img) { width: auto; height: auto; max-width: 100%; max-height: min(62vh, 520px); margin: auto; border: 0; border-radius: 10px; box-shadow: 0 8px 18px rgba(29,87,111,.1); object-fit: contain; }
+  .prose :global(.gallery-mosaic) { grid-template-rows: repeat(2, minmax(0, 1fr)); }
+  .prose :global(.gallery-mosaic > p.gallery-feature) { grid-row: 1 / 3; }
+  .prose :global(.gallery-mosaic > .gallery-stack) { grid-row: 1 / 3; }
+  .prose :global(.gallery-stack) { display: grid; min-width: 0; grid-template-rows: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2.2vw, 26px); }
+  .prose :global(.gallery-stack p) { min-height: 0; }
+  .prose :global(.gallery-wide), .prose :global(.gallery-solo) { grid-template-columns: 1fr; }
+  .prose :global(.gallery-wide p) { min-height: clamp(220px, 24vw, 360px); }
+  .prose :global(.gallery-wide img) { max-width: min(100%, 980px); max-height: min(52vh, 420px); }
+  .prose :global(.gallery-solo p) { min-height: clamp(300px, 36vw, 520px); }
+  .prose :global(.gallery-solo img) { max-width: min(82%, 980px); max-height: min(68vh, 620px); }
   .prose :global(hr) { height: 1px; margin: 2.6rem 0; background: var(--line); border: 0; }
   .prose :global(table) { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
   .prose :global(th), .prose :global(td) { padding: 10px 12px; border: 1px solid var(--line); text-align: left; }
   .prose :global(th) { color: #173f56; background: rgba(207,239,250,.65); }
-  @media (max-width: 580px) { header { padding-top: 58px; } .meta { flex-direction: column; } .prose { padding: 24px 20px; border-radius: 17px; } .prose :global(img) { max-height: 68vh; border-width: 5px; } }
+  @media (max-width: 580px) { header { padding-top: 58px; } .meta { flex-direction: column; } .prose { padding: 24px 20px; border-radius: 17px; } .prose :global(img) { max-height: 68vh; border-width: 5px; } .prose :global(.image-gallery), .prose :global(.gallery-row), .prose :global(.gallery-stack) { grid-template-columns: 1fr; grid-template-rows: none; gap: 14px; margin: 2.4rem 0; } .prose :global(.gallery-row p), .prose :global(.gallery-stack p), .prose :global(.gallery-wide p), .prose :global(.gallery-solo p), .prose :global(.gallery-mosaic > p.gallery-feature) { grid-row: auto; grid-column: auto; min-height: 250px; padding: 14px; border-radius: 15px; } .prose :global(.image-gallery img), .prose :global(.gallery-wide img), .prose :global(.gallery-solo img) { max-width: 100%; max-height: 68vh; } }
 </style>
