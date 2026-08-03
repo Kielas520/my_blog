@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -24,6 +25,15 @@ CONFIG_NAMES = {
     "sound": "kielas-nas-music",
     "video": "Kielas-nas-video",
 }
+
+MAX_UPLOAD_ATTEMPTS = 4
+RETRY_DELAYS_SECONDS = (1, 2, 4)
+TRANSIENT_ERROR_PATTERN = re.compile(
+    r"network socket|TLS connection|ECONNRESET|ETIMEDOUT|ECONNREFUSED|"
+    r"EAI_AGAIN|socket hang up|fetch failed|timed?\s*out|RequestTimeout|"
+    r"SlowDown|InternalError|ServiceUnavailable|HTTP\s+5\d\d",
+    re.IGNORECASE,
+)
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -137,6 +147,24 @@ def append_log(source: Path, url: str) -> None:
         log_file.write(entry)
 
 
+def upload_with_retry(source: Path, media_type: str, config: dict[str, Any]) -> str:
+    for attempt in range(1, MAX_UPLOAD_ATTEMPTS + 1):
+        try:
+            return upload(source, media_type, config)
+        except RuntimeError as error:
+            retryable = TRANSIENT_ERROR_PATTERN.search(str(error)) is not None
+            if not retryable or attempt == MAX_UPLOAD_ATTEMPTS:
+                raise
+            delay = RETRY_DELAYS_SECONDS[attempt - 1]
+            print(
+                f"上传连接中断，将在 {delay} 秒后重试（{attempt + 1}/{MAX_UPLOAD_ATTEMPTS}）…",
+                file=sys.stderr,
+            )
+            time.sleep(delay)
+
+    raise RuntimeError("上传重试意外结束")
+
+
 def main() -> int:
     arguments = parse_arguments()
     source = arguments.source.expanduser().resolve()
@@ -146,7 +174,7 @@ def main() -> int:
 
     try:
         config = select_config(load_config(), arguments.type)
-        url = upload(source, arguments.type, config)
+        url = upload_with_retry(source, arguments.type, config)
         append_log(source, url)
     except RuntimeError as error:
         print(f"上传失败：{error}", file=sys.stderr)

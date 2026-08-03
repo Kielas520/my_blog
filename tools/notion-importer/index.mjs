@@ -1,17 +1,21 @@
 #!/usr/bin/env node
 
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 const NOTION_API_VERSION = '2026-03-11';
 const MARKDOWN_IMPORTER = path.resolve(process.cwd(), 'tools', 'markdown-importer', 'index.mjs');
 const MEDIA_UPLOADER = path.resolve(process.cwd(), 'tools', 'media-uploader', 'upload.py');
+const PICGO_CONFIG = path.join(os.homedir(), 'AppData', 'Roaming', 'picgo', 'data.json');
 const DEFAULT_TOKEN_ENV = 'NOTION_API_KEY';
 const REQUIRED_IMPORTER_FIELDS = ['title', 'description', 'category', 'published_at', 'file_name'];
+const FETCH_ATTEMPTS = 4;
+const FETCH_RETRY_DELAYS_MS = [1_000, 2_000, 4_000];
 
 const MEDIA_HOSTS = {
   image: 'image.kielasovo.com',
@@ -69,6 +73,8 @@ Notion 参数：
   --page                Notion 页面 URL 或 32 位页面 ID（必填）
   --page-id             --page 的别名
   --token-env           Token 所在的环境变量名，默认 NOTION_API_KEY
+  --proxy               Notion/媒体下载使用的 HTTP(S) 代理
+  --no-proxy            禁止自动读取环境变量或 PicGo 的代理
   --include-transcript  包含 Notion meeting notes transcript
   --allow-incomplete    页面被截断或有权限缺失时仍然继续导入
 
@@ -121,11 +127,13 @@ function parseArguments(argv) {
     tokenEnv: DEFAULT_TOKEN_ENV,
     includeTranscript: false,
     allowIncomplete: false,
+    proxy: undefined,
+    noProxy: false,
     help: false,
   };
   const forwarded = [];
-  const notionValueOptions = new Set(['page', 'page_id', 'page_url', 'token_env']);
-  const notionBooleanOptions = new Set(['include_transcript', 'allow_incomplete', 'help']);
+  const notionValueOptions = new Set(['page', 'page_id', 'page_url', 'token_env', 'proxy']);
+  const notionBooleanOptions = new Set(['include_transcript', 'allow_incomplete', 'no_proxy', 'help']);
 
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
@@ -138,6 +146,7 @@ function parseArguments(argv) {
       if (value === undefined || value.startsWith('--')) throw new Error(`参数 --${rawKey} 缺少值`);
       if (key === 'page' || key === 'page_id' || key === 'page_url') notion.page = value;
       if (key === 'token_env') notion.tokenEnv = value;
+      if (key === 'proxy') notion.proxy = value;
       continue;
     }
 
@@ -145,6 +154,7 @@ function parseArguments(argv) {
       const value = parseBoolean(inlineValue, rawKey);
       if (key === 'include_transcript') notion.includeTranscript = value;
       if (key === 'allow_incomplete') notion.allowIncomplete = value;
+      if (key === 'no_proxy') notion.noProxy = value;
       if (key === 'help') notion.help = value;
       continue;
     }
@@ -209,23 +219,142 @@ function friendlyApiError(status, payload) {
   return `Notion API 请求失败（HTTP ${status}）：${message}`;
 }
 
+function describeNetworkError(error) {
+  const details = [];
+  const seen = new Set();
+  let current = error;
+  while (current && typeof current === 'object' && !seen.has(current)) {
+    seen.add(current);
+    const code = typeof current.code === 'string' ? current.code : undefined;
+    const message = typeof current.message === 'string' ? current.message : undefined;
+    const description = [code, message].filter(Boolean).join(': ');
+    if (description && !details.includes(description)) details.push(description);
+    current = current.cause;
+  }
+  return details.join(' → ') || String(error);
+}
+
+function retryAfterMilliseconds(response, fallback) {
+  const value = response.headers.get('retry-after');
+  if (!value) return fallback;
+  const seconds = Number(value);
+  if (Number.isFinite(seconds)) return Math.min(Math.max(seconds * 1_000, fallback), 30_000);
+  const date = Date.parse(value);
+  if (Number.isNaN(date)) return fallback;
+  return Math.min(Math.max(date - Date.now(), fallback), 30_000);
+}
+
+function isRetryableHttpStatus(status) {
+  return status === 408 || status === 425 || status === 429 || status >= 500;
+}
+
+function wait(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function normalizeProxy(value) {
+  if (!value || typeof value !== 'string') return undefined;
+  const proxy = value.trim();
+  if (!proxy) return undefined;
+  try {
+    const parsed = new URL(proxy);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return undefined;
+    return parsed.toString();
+  } catch {
+    return undefined;
+  }
+}
+
+async function resolveProxy(notion) {
+  if (notion.noProxy) return undefined;
+  if (notion.proxy) {
+    const proxy = normalizeProxy(notion.proxy);
+    if (!proxy) throw new Error('--proxy 必须是有效的 http:// 或 https:// URL');
+    return proxy;
+  }
+
+  const environmentProxy = process.env.HTTPS_PROXY
+    || process.env.https_proxy
+    || process.env.HTTP_PROXY
+    || process.env.http_proxy;
+  if (environmentProxy) return normalizeProxy(environmentProxy);
+
+  try {
+    const config = JSON.parse(await readFile(PICGO_CONFIG, 'utf8'));
+    const configList = config?.uploader?.['aws-s3']?.configList;
+    const imageConfig = Array.isArray(configList)
+      ? configList.find((item) => item?._configName === 'kielas-nas-picture')
+      : undefined;
+    return normalizeProxy(imageConfig?.proxy);
+  } catch {
+    return undefined;
+  }
+}
+
+function displayProxy(proxy) {
+  try {
+    const parsed = new URL(proxy);
+    parsed.username = '';
+    parsed.password = '';
+    return parsed.toString().replace(/\/$/, '');
+  } catch {
+    return '(已配置)';
+  }
+}
+
+function relaunchWithProxy(proxy) {
+  const scriptPath = fileURLToPath(import.meta.url);
+  const result = spawnSync(process.execPath, [scriptPath, ...process.argv.slice(2)], {
+    cwd: process.cwd(),
+    stdio: 'inherit',
+    windowsHide: true,
+    env: {
+      ...process.env,
+      NODE_USE_ENV_PROXY: '1',
+      HTTP_PROXY: proxy,
+      HTTPS_PROXY: proxy,
+      NOTION_IMPORTER_PROXY_BOOTSTRAPPED: '1',
+    },
+  });
+  if (result.error) throw new Error(`无法使用代理重新启动 notion-importer：${result.error.message}`);
+  process.exitCode = result.status ?? 1;
+}
+
+async function fetchWithRetry(url, options, label, timeoutMilliseconds) {
+  for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: AbortSignal.timeout(timeoutMilliseconds),
+      });
+      if (!isRetryableHttpStatus(response.status) || attempt === FETCH_ATTEMPTS) return response;
+
+      const delay = retryAfterMilliseconds(response, FETCH_RETRY_DELAYS_MS[attempt - 1]);
+      await response.body?.cancel();
+      console.warn(`${label}暂时失败（HTTP ${response.status}），${delay / 1_000} 秒后重试（${attempt + 1}/${FETCH_ATTEMPTS}）…`);
+      await wait(delay);
+    } catch (error) {
+      const details = describeNetworkError(error);
+      if (attempt === FETCH_ATTEMPTS) throw new Error(`${label}失败：${details}`, { cause: error });
+      const delay = FETCH_RETRY_DELAYS_MS[attempt - 1];
+      console.warn(`${label}连接失败（${details}），${delay / 1_000} 秒后重试（${attempt + 1}/${FETCH_ATTEMPTS}）…`);
+      await wait(delay);
+    }
+  }
+  throw new Error(`${label}重试意外结束`);
+}
+
 async function retrieveMarkdown(pageId, token, includeTranscript) {
   const endpoint = new URL(`https://api.notion.com/v1/pages/${pageId}/markdown`);
   if (includeTranscript) endpoint.searchParams.set('include_transcript', 'true');
 
-  let response;
-  try {
-    response = await fetch(endpoint, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-        'Notion-Version': NOTION_API_VERSION,
-      },
-      signal: AbortSignal.timeout(60_000),
-    });
-  } catch (error) {
-    throw new Error(`无法连接 Notion API：${error instanceof Error ? error.message : String(error)}`);
-  }
+  const response = await fetchWithRetry(endpoint, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Notion-Version': NOTION_API_VERSION,
+    },
+  }, 'Notion API 请求', 60_000);
 
   const responseText = await response.text();
   let payload;
@@ -282,17 +411,11 @@ function chooseExtension(url, contentType, mediaType) {
 }
 
 async function downloadMedia(url, mediaType, mediaDirectory, index) {
-  let response;
   const fetchUrl = url.replaceAll('&amp;', '&');
-  try {
-    response = await fetch(fetchUrl, {
-      headers: { 'User-Agent': 'kielasWEB-notion-importer/1.0' },
-      redirect: 'follow',
-      signal: AbortSignal.timeout(120_000),
-    });
-  } catch (error) {
-    throw new Error(`下载 Notion 媒体失败：${error instanceof Error ? error.message : String(error)}`);
-  }
+  const response = await fetchWithRetry(fetchUrl, {
+    headers: { 'User-Agent': 'kielasWEB-notion-importer/1.0' },
+    redirect: 'follow',
+  }, `下载 Notion ${mediaType}`, 120_000);
   if (!response.ok) throw new Error(`下载 Notion 媒体失败（HTTP ${response.status}）：${url}`);
 
   const extension = chooseExtension(url, response.headers.get('content-type'), mediaType);
@@ -309,6 +432,7 @@ function uploadMedia(source, mediaType) {
   const result = spawnSync(python, [MEDIA_UPLOADER, '--type', mediaType, '--source', source], {
     cwd: process.cwd(),
     encoding: 'utf8',
+    env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' },
     windowsHide: true,
     maxBuffer: 10 * 1024 * 1024,
   });
@@ -373,6 +497,15 @@ async function main() {
   const token = process.env[notion.tokenEnv];
   if (!token) {
     throw new Error(`环境变量 ${notion.tokenEnv} 未设置。PowerShell 示例：$env:${notion.tokenEnv} = "ntn_xxx"`);
+  }
+
+  const proxy = await resolveProxy(notion);
+  const proxyReady = process.env.NODE_USE_ENV_PROXY === '1'
+    && Boolean(process.env.HTTPS_PROXY || process.env.https_proxy);
+  if (proxy && !proxyReady && process.env.NOTION_IMPORTER_PROXY_BOOTSTRAPPED !== '1') {
+    console.log(`正在通过代理连接 Notion：${displayProxy(proxy)}`);
+    relaunchWithProxy(proxy);
+    return;
   }
 
   const pageId = extractPageId(notion.page);

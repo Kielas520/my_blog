@@ -151,6 +151,7 @@ function uploadImage(imagePath) {
   const result = spawnSync(python, [MEDIA_UPLOADER, '--type', 'image', '--source', imagePath], {
     cwd: process.cwd(),
     encoding: 'utf8',
+    env: { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' },
     windowsHide: true,
     maxBuffer: 10 * 1024 * 1024,
   });

@@ -66,3 +66,7 @@ npm run import:notion -- --help
 - 当前上传器没有普通文件和 PDF 类型，这两类内容会保留原 URL 并显示警告。
 
 页面被 Notion 截断或包含未授权子区块时，工具默认停止，避免导入残缺文章。确认可以接受后可添加 `--allow-incomplete`。
+
+Notion API 请求和媒体下载遇到断线、超时、限流或临时服务器错误时会自动重试，最多尝试 4 次（通常间隔 1、2、4 秒；HTTP `Retry-After` 会优先采用）。
+
+工具依次读取 `HTTPS_PROXY` / `HTTP_PROXY` 环境变量和 PicGo 图片配置中的代理。也可以通过 `--proxy "http://127.0.0.1:7897"` 明确指定，或使用 `--no-proxy` 强制直连。
