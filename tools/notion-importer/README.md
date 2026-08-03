@@ -20,14 +20,14 @@ Token 只从环境变量读取，不应写进仓库或放在 CLI 参数中。
 
 ```powershell
 npm run import:notion -- `
-  --page "https://www.notion.so/example-0123456789abcdef0123456789abcdef" `
-  --title "被牵着走" `
-  --description "端午回家、陪母亲骑行，以及在成长中愈发强烈的念家。" `
+  --page "https://kielas520.notion.site/3b1a064aa17880ff896dfc97b749afb2" `
+  --title "老无所依" `
+  --description "You can’t stop what’s coming." `
   --category dairy `
-  --published-at 2026-06-20 `
-  --file-name being-led `
+  --published-at 2026-08-03 `
+  --file-name no-country-for-man `
   --draft false `
-  --tags "忆" `
+  --tags "影" `
   --type article
 ```
 
