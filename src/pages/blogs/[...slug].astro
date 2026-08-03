@@ -43,6 +43,65 @@ const categoryName = {
 </BaseLayout>
 
 <script>
+  const appendNotionText = (fragment: DocumentFragment, nodes: Node[]) => {
+    let paragraph = document.createElement('p');
+
+    const flush = () => {
+      if (paragraph.textContent?.trim() || paragraph.children.length) fragment.append(paragraph);
+      paragraph = document.createElement('p');
+    };
+
+    nodes.forEach((node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const lines = (node.textContent ?? '').split(/\r?\n/);
+        lines.forEach((line, index) => {
+          if (line.trim()) paragraph.append(document.createTextNode(line.trim()));
+          if (index < lines.length - 1) flush();
+        });
+        return;
+      }
+      if (node instanceof HTMLBRElement) {
+        flush();
+        return;
+      }
+      if (node instanceof HTMLElement && node.tagName === 'EMPTY-BLOCK') return;
+      paragraph.append(node);
+    });
+    flush();
+  };
+
+  const repairNotionContainers = (prose: HTMLElement) => {
+    const mixedContainers = Array.from(prose.querySelectorAll<HTMLElement>('h2, p')).filter((container) =>
+      Array.from(container.children).some((child) => child.tagName === 'COLUMNS')
+    );
+
+    mixedContainers.forEach((container) => {
+      const fragment = document.createDocumentFragment();
+      let bufferedNodes: Node[] = [];
+      const flush = () => {
+        appendNotionText(fragment, bufferedNodes);
+        bufferedNodes = [];
+      };
+
+      Array.from(container.childNodes).forEach((node) => {
+        if (node instanceof HTMLElement && node.tagName === 'COLUMNS') {
+          flush();
+          fragment.append(node);
+        } else {
+          bufferedNodes.push(node);
+        }
+      });
+      flush();
+
+      // A Notion divider (`---`) immediately after raw <columns> is parsed by
+      // CommonMark as a Setext h2 underline. Restore the intended divider.
+      if (container.tagName === 'H2') fragment.append(document.createElement('hr'));
+      container.replaceWith(fragment);
+    });
+
+    prose.querySelectorAll('empty-block').forEach((block) => block.remove());
+  };
+
   const enhanceImageGallery = (gallery: HTMLElement) => {
     const blocks = Array.from(gallery.children).filter((element): element is HTMLParagraphElement => element.tagName === 'P');
     const images = blocks.map((block) => block.querySelector<HTMLImageElement>('img')).filter((image): image is HTMLImageElement => Boolean(image));
@@ -104,9 +163,45 @@ const categoryName = {
     applyLayout();
   };
 
+  const arrangeNotionColumns = (prose: HTMLElement) => {
+    prose.querySelectorAll<HTMLElement>('columns').forEach((container) => {
+      const columns = Array.from(container.children).filter((column): column is HTMLElement => column.tagName === 'COLUMN');
+      if (!columns.length) {
+        container.remove();
+        return;
+      }
+
+      const images = columns.map((column) => {
+        const matches = column.querySelectorAll<HTMLImageElement>('img');
+        return matches.length === 1 && !column.textContent?.trim() ? matches[0] : null;
+      });
+
+      if (images.every((image): image is HTMLImageElement => Boolean(image))) {
+        const gallery = document.createElement('div');
+        gallery.className = 'image-gallery notion-image-gallery';
+        gallery.setAttribute('role', 'group');
+        gallery.setAttribute('aria-label', 'Notion 图片组');
+        images.forEach((image) => {
+          const block = document.createElement('p');
+          block.append(image);
+          gallery.append(block);
+        });
+        container.replaceWith(gallery);
+        enhanceImageGallery(gallery);
+        return;
+      }
+
+      const ratios = columns.map((column) => Number(column.getAttribute('ratio')) || 1);
+      container.classList.add('notion-columns');
+      container.style.gridTemplateColumns = ratios.map((ratio) => `minmax(0, ${ratio}fr)`).join(' ');
+    });
+  };
+
   const arrangeImageGalleries = () => {
     document.querySelectorAll<HTMLElement>('[data-prose]:not([data-galleries-arranged])').forEach((prose) => {
       prose.dataset.galleriesArranged = 'true';
+      repairNotionContainers(prose);
+      arrangeNotionColumns(prose);
       const imageBlocks = Array.from(prose.children).filter((element): element is HTMLParagraphElement => {
         if (element.tagName !== 'P') return false;
         const paragraph = element as HTMLParagraphElement;
@@ -167,6 +262,9 @@ const categoryName = {
   .prose :global(pre code) { padding: 0; color: inherit; background: none; }
   .prose :global(blockquote), .prose :global(aside) { display: block; margin: 2em 0; padding: 16px 20px; color: #355f73; background: rgba(214,243,252,.6); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; }
   .prose :global(img) { display: block; width: auto; max-width: 100%; max-height: min(72vh, 760px); margin: 2.2rem auto; object-fit: contain; border: 8px solid rgba(255,255,255,.9); border-radius: 14px; box-shadow: 0 14px 32px rgba(29,87,111,.18); }
+  .prose :global(columns) { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: clamp(14px, 2.2vw, 26px); margin: clamp(2.4rem, 5vw, 4rem) 0; }
+  .prose :global(column) { display: block; min-width: 0; }
+  .prose :global(empty-block) { display: none; }
   .prose :global(.image-gallery) { display: flex; flex-direction: column; gap: clamp(14px, 2.2vw, 26px); margin: clamp(2.4rem, 5vw, 4rem) 0; }
   .prose :global(.gallery-row) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2.2vw, 26px); align-items: stretch; }
   .prose :global(.gallery-row p) { display: flex; min-width: 0; min-height: clamp(280px, 30vw, 440px); margin: 0; padding: clamp(14px, 2vw, 22px); background: linear-gradient(145deg, rgba(255,255,255,.76), rgba(238,250,253,.58)); border: 1px solid rgba(255,255,255,.96); border-radius: 18px; box-shadow: 0 13px 28px rgba(29,87,111,.11), inset 0 0 0 1px rgba(190,231,240,.18); align-items: center; justify-content: center; }
@@ -185,5 +283,5 @@ const categoryName = {
   .prose :global(table) { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
   .prose :global(th), .prose :global(td) { padding: 10px 12px; border: 1px solid var(--line); text-align: left; }
   .prose :global(th) { color: #173f56; background: rgba(207,239,250,.65); }
-  @media (max-width: 580px) { header { padding-top: 58px; } .meta { flex-direction: column; } .prose { padding: 24px 20px; border-radius: 17px; } .prose :global(img) { max-height: 68vh; border-width: 5px; } .prose :global(.image-gallery), .prose :global(.gallery-row), .prose :global(.gallery-stack) { grid-template-columns: 1fr; grid-template-rows: none; gap: 14px; margin: 2.4rem 0; } .prose :global(.gallery-row p), .prose :global(.gallery-stack p), .prose :global(.gallery-wide p), .prose :global(.gallery-solo p), .prose :global(.gallery-mosaic > p.gallery-feature) { grid-row: auto; grid-column: auto; min-height: 250px; padding: 14px; border-radius: 15px; } .prose :global(.image-gallery img), .prose :global(.gallery-wide img), .prose :global(.gallery-solo img) { max-width: 100%; max-height: 68vh; } }
+  @media (max-width: 580px) { header { padding-top: 58px; } .meta { flex-direction: column; } .prose { padding: 24px 20px; border-radius: 17px; } .prose :global(img) { max-height: 68vh; border-width: 5px; } .prose :global(columns), .prose :global(.image-gallery), .prose :global(.gallery-row), .prose :global(.gallery-stack) { grid-template-columns: 1fr !important; grid-template-rows: none; gap: 14px; margin: 2.4rem 0; } .prose :global(.gallery-row p), .prose :global(.gallery-stack p), .prose :global(.gallery-wide p), .prose :global(.gallery-solo p), .prose :global(.gallery-mosaic > p.gallery-feature) { grid-row: auto; grid-column: auto; min-height: 250px; padding: 14px; border-radius: 15px; } .prose :global(.image-gallery img), .prose :global(.gallery-wide img), .prose :global(.gallery-solo img) { max-width: 100%; max-height: 68vh; } }
 </style>
