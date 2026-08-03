@@ -1,4 +1,4 @@
-# 数据管理、更新、构建与启动
+# 数据管理、开发与 Pages 发布
 
 这份文档用于 Kielasovo 的日常维护。项目目录为：
 
@@ -21,8 +21,8 @@ dist/      npm run build 自动生成的正式网站
 
 | 内容 | 源文件 | 修改后是否需要构建 |
 | --- | --- | --- |
-| 网站名称、图标、头像、背景、光标 | `public/config.json` | 推荐构建；也可临时修改 `dist/config.json` |
-| 随机名言 | `public/fun_words/words.json` | 推荐构建；也可临时修改 `dist/fun_words/words.json` |
+| 网站名称、图标、头像、背景、光标 | `public/config.json` | 必须构建并发布 |
+| 随机名言 | `public/fun_words/words.json` | 必须构建并发布 |
 | 短链接 | `src/data/short-links.json` | 必须构建 |
 | 有趣网页 | `src/data/intrest-links.json` | 必须构建 |
 | 图片墙列表 | `src/data/picture.json` | 必须构建 |
@@ -31,8 +31,8 @@ dist/      npm run build 自动生成的正式网站
 | 本地图片及其他静态文件 | `public/images/` 等 | 必须构建，或手动同步到 `dist/` |
 | Tools 页面代码 | `src/pages/tools/` | 必须构建 |
 
-最稳妥的规则是：修改源文件后统一执行 `npm run build`。只有 `config.json` 和随机名言支持在
-已经部署的 `dist/` 中临时热更新。
+统一规则是：修改源文件后执行 `npm run build`，再提交并推送到 GitHub。Cloudflare Pages 上的
+`dist/` 是自动生成的部署产物，不能直接编辑。
 
 ## 三、管理网站外观
 
@@ -282,41 +282,10 @@ npm run build
 
 如果构建失败，不要继续发布。根据终端给出的文件名和行号修复后重新构建。
 
-## 十一、启动正式服务
+## 十一、正式托管方式
 
-首次使用先安装命令并重新打开终端：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install-web-command.ps1
-```
-
-之后构建并在后台启动：
-
-```powershell
-web start
-```
-
-检查或停止服务：
-
-```powershell
-web check
-web stop
-```
-
-正式静态服务监听：
-
-```text
-http://127.0.0.1:1314
-```
-
-Cloudflare Tunnel 的源站地址保持：
-
-```text
-http://localhost:1314
-```
-
-服务在隐藏的后台进程中运行，可以关闭终端。PID 写入 `.web-service.pid`，标准输出和错误日志
-分别写入 `.web-service.log` 与 `.web-service.error.log`。电脑重启后需要再次执行 `web start`。
+正式站点由 Cloudflare Pages 托管，来源是 GitHub 仓库的 `main` 分支。本机开发服务器、后台
+静态服务、1314 端口以及 Cloudflare Tunnel 都不参与线上访问。本机关闭不会影响网站。
 
 ## 十二、网站更新流程
 
@@ -324,46 +293,20 @@ http://localhost:1314
 
 1. 修改 `src/` 或 `public/` 中的数据。
 2. 使用 `npm run dev` 在本地检查页面。
-3. 执行 `web start`，自动停止旧服务、检查、构建并后台启动。
-4. 执行 `web check`，确认进程和本地 HTTP 状态正常。
-5. 检查主页、修改过的页面、图片和链接。
-6. 访问 `https://kielasovo.com` 验证公网结果。
-
-如果 1314 端口被不属于脚本管理的其他进程占用，先查询监听进程：
+3. 执行 `npm run build`，确认零错误、零警告、零提示。
+4. 执行 `git status`，确认只包含本次需要发布的文件。
+5. 精确添加文件、提交并推送：
 
 ```powershell
-Get-NetTCPConnection -LocalPort 1314 -State Listen
+git add <需要发布的文件>
+git commit -m "Update blog"
+git push origin main
 ```
 
-确认 `OwningProcess` 确实属于当前网站后停止它：
+6. 在 Cloudflare `Workers & Pages → kielasovo → Deployments` 确认 Production 部署成功。
+7. 访问 `https://kielasovo.com` 检查主页、文章、图片和链接。
 
-```powershell
-Stop-Process -Id <OwningProcess>
-```
+## 十三、不要维护 `dist/`
 
-确认并停止冲突进程后重新启动：
-
-```powershell
-web start
-```
-
-不要在未确认进程用途时直接终止它。
-
-## 十三、临时热更新
-
-下面两个构建结果会被浏览器运行时读取：
-
-```text
-dist/config.json
-dist/fun_words/words.json
-```
-
-临时修改它们后刷新网页即可，不需要重新构建。但是下一次执行 `npm run build` 时，这些修改会被
-`public/` 中的源文件覆盖。确认效果后，应把相同改动同步回：
-
-```text
-public/config.json
-public/fun_words/words.json
-```
-
-其他 `src/data` 文件和 Blog 不支持这种方式，必须重新构建。
+所有长期修改都必须写入 `src/` 或 `public/`。`dist/` 会在本地构建和 Pages 部署时重新生成，
+不应手动修改或提交。即使只是改名言或站点配置，也要修改源文件并通过 GitHub 发布。

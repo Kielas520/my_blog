@@ -5,12 +5,12 @@ Kielasovo 是一个基于 Astro SSG 的静态个人站点。主页采用克制�
 
 ## 文档目录
 
-- [数据管理、更新、构建与启动（日常维护手册）](./maintenance-guide.md)
+- [数据管理、开发与 Pages 发布（日常维护手册）](./maintenance-guide.md)
 - [安装与运行](./getting-started.md)
 - [项目架构](./architecture.md)
 - [Blog 内容管理](./content-guide.md)
 - [名言、链接、媒体与 Tools 配置](./configuration.md)
-- [构建与 Cloudflare Tunnel 部署](./deployment.md)
+- [GitHub 与 Cloudflare Pages 部署](./deployment.md)
 - [常见问题](./troubleshooting.md)
 
 ## 最常用命令
@@ -20,19 +20,19 @@ npm install
 npm run dev
 npm run check
 npm run build
-web start
-web check
-web stop
+git status
+git add <文件>
+git commit -m "Update blog"
+git push origin main
 ```
 
-首次使用 `web` 命令前，在项目目录执行
-`.\scripts\install-web-command.ps1`，然后重新打开终端。`web start` 会构建网站并在后台运行，
-关闭当前终端不会停止源站。
+推送 `main` 分支后，Cloudflare Pages 自动构建并发布。`web start`、`web check` 和 `web stop`
+仅作为可选的本地静态预览命令，不参与正式部署。
 
 本地源站端口为 `1314`：
 
 - 开发模式：`http://localhost:1314`
-- 正式静态服务：`http://127.0.0.1:1314`
+- Pages 预览入口：`https://kielasovo.pages.dev`
 - 公网入口：`https://kielasovo.com`
 
 ## 常用配置入口

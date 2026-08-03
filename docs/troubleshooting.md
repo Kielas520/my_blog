@@ -1,6 +1,6 @@
 # 常见问题
 
-## 1314 端口被占用
+## 本地开发的 1314 端口被占用
 
 ```powershell
 Get-NetTCPConnection -LocalPort 1314 -State Listen
@@ -18,16 +18,19 @@ Get-CimInstance Win32_Process -Filter "ProcessId=$($listener.OwningProcess)"
 如果占用者是当前网站且由管理脚本启动，直接执行 `web stop`；`web start` 也会先停止脚本记录的
 旧实例。若占用者不是 `.web-service.pid` 中记录的进程，脚本不会擅自终止它。
 
-## 构建后新页面出现 404
+## 推送后新页面仍然出现 404
 
-重新构建并重启后台服务：
+先确认本地构建包含该页面，再检查 Pages 的最新 Production 部署是否成功：
 
 ```powershell
-web start
-web check
+npm run build
+git status
 ```
 
-## `web` 不是可识别的命令
+如果文件尚未提交，提交并推送到 `main`。如果 Pages 构建失败，打开 Deployments 中对应记录的
+构建日志，修复第一处错误后重新推送。
+
+## 本地预览的 `web` 不是可识别的命令
 
 在项目目录重新执行安装脚本：
 
@@ -37,7 +40,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install-web-command.ps1
 
 随后关闭并重新打开终端，使用户 `PATH` 生效。
 
-## 后台进程存在但网站无法访问
+## 本地后台预览存在但无法访问
 
 ```powershell
 web check
@@ -47,42 +50,36 @@ Get-Content D:\project\kielasWEB\.web-service.error.log -Tail 50
 确认 `KIELAS_WEB_ROOT` 指向正确项目，且 `KIELAS_WEB_HOST`、`KIELAS_WEB_PORT` 没有被设置成
 意外值。修正后执行 `web start`。
 
-## Cloudflare 显示 502 Bad Gateway
+## 正式域名显示 530、522 或仍指向旧站点
 
-依次检查：
+正式域名应绑定到 Cloudflare Pages，而不是 Tunnel。依次检查：
 
-1. `cloudflared` Connector 是否为 Connected。
-2. 本地是否正在监听 `127.0.0.1:1314`。
-3. Published application route 是否使用 `http://localhost:1314`。
-4. Path 是否留空。
+1. `https://kielasovo.pages.dev` 是否正常。
+2. Pages 项目的 `Custom domains` 中，根域名和 `www` 是否为 `Active`。
+3. DNS 中是否还残留指向 `*.cfargotunnel.com` 的同名记录。
+4. Tunnel 中是否还保留正式域名的 Published application route。
 
-本地测试：
+公网测试：
 
 ```powershell
-curl.exe http://127.0.0.1:1314/
+curl.exe -I https://kielasovo.pages.dev
+curl.exe -I https://kielasovo.com
 ```
 
-## Cloudflare 无法创建 DNS 记录
+## Pages 无法添加自定义域名
 
-进入域名的 `DNS → Records`，检查相同主机名是否已有 A、AAAA 或 CNAME。Tunnel DNS 应为：
-
-```text
-Type:         CNAME
-Name:         @ 或 www
-Target:       <TUNNEL_UUID>.cfargotunnel.com
-Proxy status: Proxied
-TTL:          Auto
-```
+进入 `DNS → Records`，删除同名的旧 Tunnel CNAME，然后必须从 Pages 项目的 `Custom domains`
+重新执行 `Set up a custom domain`。不要只手动创建 Pages CNAME。
 
 ## 修改名言后没有变化
 
-确认编辑的是当前服务器读取的文件：
+确认编辑的是源文件：
 
 ```text
-dist/fun_words/words.json
+public/fun_words/words.json
 ```
 
-刷新页面。脚本已经禁用该 JSON 的浏览器缓存。如果执行过构建，需要重新检查 `dist` 中的内容。
+执行 `npm run build`，提交并推送到 `main`，等待 Pages 部署成功后刷新页面。
 
 ## 新增短链后 404
 
@@ -92,7 +89,7 @@ dist/fun_words/words.json
 npm run build
 ```
 
-并执行 `web start` 重启静态服务。
+并提交、推送到 `main`，等待 Pages 重新部署。
 
 ## Blog 不显示
 

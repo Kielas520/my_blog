@@ -78,7 +78,7 @@ src/data/short-links.json
 因此：
 
 - 修改 Blog 或短链接后需要重新构建。
-- 直接修改 `dist/fun_words/words.json` 可以立即生效。
+- 修改 `public/fun_words/words.json` 后需要重新构建并通过 GitHub 发布。
 - 重新构建会清空并重建 `dist/`。
 
 ## 设计边界
@@ -87,4 +87,5 @@ src/data/short-links.json
 - 网站只收录人工选出的公开文章，不自动发布整个 Notion 数据库。
 - Blog、Tools、Link 相互独立，避免功能和内容耦合。
 - Picture 和 Music 通过独立 JSON 数据文件维护。
-- Cloudflare Tunnel 只负责公网到本地源站的安全转发。
+- GitHub 保存正式源码，Cloudflare Pages 从 `main` 分支构建并托管静态产物。
+- 本地服务和 Cloudflare Tunnel 不参与正式站点的访问链路。

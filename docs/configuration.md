@@ -22,8 +22,8 @@ public/config.json
 `backgroundImage` 是所有页面共用的背景；`cursor` 是网页光标。以 `/` 开头的路径都相对于
 `public/`，例如 `/images/a.jpg` 对应 `public/images/a.jpg`。
 
-页面会以 `no-store` 方式重新读取这份配置。直接修改发布后的 `dist/config.json` 并刷新即可生效；
-下一次构建会用 `public/config.json` 覆盖它，因此长期配置应同时写回源文件。
+页面会以 `no-store` 方式重新读取这份配置。正式网站由 Pages 托管，因此必须修改
+`public/config.json`，再通过 GitHub 提交和发布；不要直接修改自动生成的 `dist/config.json`。
 
 ## 随机名言
 

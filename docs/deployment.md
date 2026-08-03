@@ -1,117 +1,95 @@
-# 构建与 Cloudflare Tunnel 部署
+# GitHub 与 Cloudflare Pages 部署
 
-## 部署结构
+## 正式架构
 
 ```text
-浏览器
+本地源码
+  → GitHub main 分支
+  → Cloudflare Pages 自动安装依赖并执行 npm run build
+  → Cloudflare 全球节点托管 dist/
   → https://kielasovo.com
-  → Cloudflare
-  → Cloudflare Tunnel
-  → http://localhost:1314
-  → sirv
-  → dist/
 ```
 
-Cloudflare 负责公网 HTTPS。本机源站使用 HTTP 即可，不需要本地证书，也不需要开放公网入站端口。
+正式网站不再依赖本机 `1314` 端口、`web start` 或 Cloudflare Tunnel。本机关闭、重启或断网
+不会影响已经发布的网站。
 
-## 构建
+## Pages 项目配置
+
+Cloudflare Pages 项目名为 `kielasovo`，GitHub 仓库为 `Kielas520/my_blog`。
+
+| 配置 | 值 |
+| --- | --- |
+| Production branch | `main` |
+| Framework preset | `Astro` |
+| Build command | `npm run build` |
+| Build output directory | `dist` |
+| Root directory | 留空 |
+| `NODE_VERSION` | `22` |
+
+正式域名 `kielasovo.com` 和 `www.kielasovo.com` 应在 Pages 项目的 `Custom domains` 中显示
+为 `Active`。规范域名是 `https://kielasovo.com`；`www` 可通过 Cloudflare Redirect Rules 做
+301 跳转。
+
+## 日常发布
+
+修改完成后先在本地验证：
 
 ```powershell
 cd D:\project\kielasWEB
-npm install
 npm run build
+git status
 ```
 
-构建必须以零错误、零警告结束。
-
-## 启动源站
+确认待提交文件正确，再提交并推送：
 
 ```powershell
+git add <需要发布的文件>
+git commit -m "Update blog"
+git push origin main
+```
+
+推送 `main` 后，Pages 会自动构建和部署。不要提交自动生成的 `dist/`，也不需要在 Cloudflare
+控制台手动上传文件。
+
+## 检查部署
+
+在 Cloudflare 控制台进入：
+
+```text
+Workers & Pages → kielasovo → Deployments
+```
+
+最新 Production 部署显示成功后，验证：
+
+```powershell
+curl.exe -I https://kielasovo.com
+curl.exe -I https://kielasovo.pages.dev
+```
+
+两者应返回 `200`。如果部署失败，打开对应部署的构建日志，优先修复第一次出现的错误，然后
+重新推送提交。
+
+## 预览部署与回滚
+
+非 `main` 分支和 Pull Request 可以生成独立的 Pages 预览地址，不会覆盖正式站点。需要回滚时，
+优先在 Git 中 revert 有问题的提交并推送 `main`，让源码历史与线上状态保持一致：
+
+```powershell
+git revert <commit>
+git push origin main
+```
+
+## 本地服务的定位
+
+以下命令只用于本地开发或检查，不会发布线上网站：
+
+```powershell
+npm run dev
+npm run preview
 web start
 web check
-```
-
-首次使用时，先在项目目录执行
-`powershell -ExecutionPolicy Bypass -File .\scripts\install-web-command.ps1` 并重新打开终端。
-`web start` 会停止旧实例、重新构建并在后台启动源站。
-
-正式源站仅监听：
-
-```text
-127.0.0.1:1314
-```
-
-验证：
-
-```powershell
-Invoke-WebRequest http://127.0.0.1:1314 -UseBasicParsing
-```
-
-## Cloudflare Tunnel 路由
-
-在 Cloudflare Zero Trust 中进入：
-
-```text
-Networks
-→ Tunnels & Mesh
-→ 选择 5060Ti-NAS
-→ Published application routes
-```
-
-路由配置：
-
-```text
-Hostname:    kielasovo.com
-Path:        留空
-Service:     HTTP
-URL:         localhost:1314
-```
-
-`Path` 使用正则表达式。匹配全部路径时必须留空，不要填写单独的 `*`。
-
-如果保留 `www.kielasovo.com`，可添加第二条相同源站的路由，或使用 Cloudflare Redirect Rules
-将 `www` 301 重定向到根域名。
-
-## DNS
-
-Tunnel 主机名应使用 CNAME 指向：
-
-```text
-<TUNNEL_UUID>.cfargotunnel.com
-```
-
-DNS 记录应保持 Proxied（橙色云）。同一个主机名不能同时存在冲突的 A、AAAA 和 CNAME 记录。
-
-不要在 DNS Target 中填写：
-
-- `http://`
-- `localhost`
-- 端口 `1314`
-- URL 路径
-
-这些只属于 Tunnel 的 Service URL。
-
-## 更新网站
-
-```powershell
-web start
-web check
-```
-
-`web start` 已包含检查、构建和重启。完成后再访问公网地址确认 Cloudflare 返回了新版本。
-需要停止源站时执行：
-
-```powershell
 web stop
 ```
 
-## 开机后恢复
-
-`cloudflared` 已作为 Windows 自动服务运行。站点源站由后台脚本管理，不依赖终端窗口，但它不是
-Windows 开机自启服务。电脑重启后执行：
-
-```powershell
-web start
-```
-
-若需要开机自动恢复，可另行配置 Windows 任务计划运行 `web start`。
+旧 Tunnel 可以保持禁用。除非将来需要发布本机动态服务，否则不要再把正式域名指向
+`*.cfargotunnel.com`。

@@ -5,7 +5,7 @@
 - Windows 10/11
 - Node.js 22 或更高版本
 - npm
-- 可选：Cloudflare Tunnel，用于公网访问
+- Git，用于提交和发布
 
 查看当前版本：
 
@@ -59,16 +59,30 @@ npm run build
 
 构建结果输出到 `dist/`。该目录是自动生成的，不应作为内容源长期维护。
 
-## 启动正式静态服务
+## 发布到正式网站
 
-首次安装后台管理命令：
+正式网站由 Cloudflare Pages 托管。确认构建成功后，将修改提交并推送到 GitHub 的 `main`
+分支：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install-web-command.ps1
+git status
+git add <需要发布的文件>
+git commit -m "Update blog"
+git push origin main
 ```
 
-安装脚本会把项目路径写入用户环境变量 `KIELAS_WEB_ROOT`，并把项目的 `scripts` 目录加入
-用户 `PATH`。重新打开终端后，可以在任意目录执行：
+Pages 会自动执行 `npm run build` 并发布 `dist/`。本地不需要启动长期后台服务。部署状态在
+Cloudflare 的 `Workers & Pages → kielasovo → Deployments` 中查看。
+
+## 可选的本地静态服务
+
+需要检查构建后的静态文件时，可以运行：
+
+```powershell
+npm run preview
+```
+
+旧的后台管理命令仍可用于本地测试，但不会更新正式网站：
 
 ```powershell
 web start
@@ -76,32 +90,7 @@ web check
 web stop
 ```
 
-- `web start`：停止由脚本管理的旧服务，执行检查和构建，然后隐藏窗口启动新服务。
-- `web check`：同时检查保存的进程和 `http://127.0.0.1:1314/` 的 HTTP 状态。
-- `web stop`：停止由脚本管理的后台服务。
-
-后台输出分别保存在项目根目录的 `.web-service.log` 和 `.web-service.error.log`。服务监听
-`127.0.0.1:1314`，关闭启动命令所在的终端不会停止服务；Windows 重启后仍需执行
-`web start`。
-
-如需临时前台运行，也可以继续使用：
-
-```powershell
-npm start
-npm run serve
-```
-
-`npm start` 会构建后在前台启动，`npm run serve` 只提供已有的 `dist/`。
-
-## 服务环境变量
-
-| 变量 | 默认值 | 作用 |
-| --- | --- | --- |
-| `KIELAS_WEB_ROOT` | 安装脚本所在项目 | 项目绝对路径 |
-| `KIELAS_WEB_HOST` | `127.0.0.1` | 正式源站监听地址 |
-| `KIELAS_WEB_PORT` | `1314` | 正式源站监听端口 |
-
-修改用户环境变量后需要重新打开终端。若修改端口，还要同步修改 Cloudflare Tunnel 的源站地址。
+是否运行这些本地命令不会影响 `kielasovo.com`。
 
 ## npm scripts
 
