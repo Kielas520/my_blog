@@ -62,24 +62,31 @@ const defaultCategory = categories[0]?.key;
 </BaseLayout>
 
 <script>
-  const categoryButtons = document.querySelectorAll<HTMLButtonElement>('[data-category]');
-  const postCards = document.querySelectorAll<HTMLElement>('[data-post-category]');
+  const bindBlogCategories = () => {
+    const categoryBar = document.querySelector<HTMLElement>('.categories');
+    const postList = document.querySelector<HTMLElement>('#blog-posts');
+    if (!categoryBar || !postList || categoryBar.dataset.bound === 'true') return;
 
-  categoryButtons.forEach((button) => {
-    button.addEventListener('click', () => {
+    categoryBar.dataset.bound = 'true';
+    categoryBar.addEventListener('click', (event) => {
+      const button = (event.target as Element).closest<HTMLButtonElement>('[data-category]');
+      if (!button || !categoryBar.contains(button)) return;
+
       const selectedCategory = button.dataset.category;
-
-      categoryButtons.forEach((item) => {
+      categoryBar.querySelectorAll<HTMLButtonElement>('[data-category]').forEach((item) => {
         const isActive = item === button;
         item.classList.toggle('active', isActive);
         item.setAttribute('aria-pressed', String(isActive));
       });
 
-      postCards.forEach((card) => {
+      postList.querySelectorAll<HTMLElement>('[data-post-category]').forEach((card) => {
         card.hidden = card.dataset.postCategory !== selectedCategory;
       });
     });
-  });
+  };
+
+  document.addEventListener('astro:page-load', bindBlogCategories);
+  bindBlogCategories();
 </script>
 
 <style>
