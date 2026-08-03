@@ -11,6 +11,7 @@
     "preview": "astro preview --host 0.0.0.0 --port 1314",
     "check": "astro check",
     "import:markdown": "node tools/markdown-importer/index.mjs",
+    "import:notion": "node tools/notion-importer/index.mjs",
     "upload:file": "python tools/media-uploader/upload.py"
   },
   "dependencies": {
