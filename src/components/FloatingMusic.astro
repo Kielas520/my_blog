@@ -39,13 +39,12 @@ const firstTrack = tracks[0];
 
 <script>
   interface SiteTrack { name: string; link: string }
-  interface MusicWindow extends Window { __siteMusicReady?: boolean }
 
-  const musicWindow = window as MusicWindow;
-
-  if (!musicWindow.__siteMusicReady) {
-    musicWindow.__siteMusicReady = true;
+  const initializeMusicPlayer = () => {
     const root = document.querySelector<HTMLElement>('[data-floating-music]');
+    if (!root || root.dataset.musicInitialized === 'true') return;
+    root.dataset.musicInitialized = 'true';
+
     const audio = root?.querySelector<HTMLAudioElement>('[data-floating-audio]');
     const toggle = root?.querySelector<HTMLButtonElement>('[data-music-toggle]');
     const previous = root?.querySelector<HTMLButtonElement>('[data-music-previous]');
@@ -105,7 +104,10 @@ const firstTrack = tracks[0];
     }) as EventListener);
     window.addEventListener('site-music-request-state', emitState);
     updateDisplay();
-  }
+  };
+
+  initializeMusicPlayer();
+  document.addEventListener('astro:page-load', initializeMusicPlayer);
 </script>
 
 <style>

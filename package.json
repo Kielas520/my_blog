@@ -7,7 +7,7 @@
     "dev": "astro dev --host 0.0.0.0 --port 1314",
     "start": "npm run build && npm run serve",
     "build": "astro check && astro build",
-    "serve": "sirv dist --host 127.0.0.1 --port 1314 --quiet --etag",
+    "serve": "sirv dist --host 127.0.0.1 --port 1314 --quiet --etag --dev",
     "preview": "astro preview --host 0.0.0.0 --port 1314",
     "check": "astro check",
     "import:markdown": "node tools/markdown-importer/index.mjs",
