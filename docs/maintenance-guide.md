@@ -217,6 +217,245 @@ Markdown 中使用：
 ![图片说明](/images/blogs/文章名/example.jpg)
 ```
 
+## 附录：PicGo 与 Cloudflare R2 媒体存储
+
+网站媒体文件使用 Cloudflare R2，通过 PicGo 的 S3 兼容插件上传。仓库不保存 R2
+密钥；Access Key 和 Secret Access Key 只能保存在本机 PicGo 配置中。
+
+### 1. 准备 R2
+
+在 Cloudflare Dashboard 中打开 `R2 Object Storage`，为图片、音频、视频分别准备
+Bucket。建议每种媒体使用独立 Bucket，并为每个 Bucket 绑定对应的自定义域名：
+
+| 类型 | PicGo 配置名 | 公网域名 |
+| --- | --- | --- |
+| 图片 | `kielas-nas-picture` | `https://image.kielasovo.com` |
+| 音频 | `kielas-nas-music` | `https://sound.kielasovo.com` |
+| 视频 | `Kielas-nas-video` | `https://video.kielasovo.com` |
+
+在 R2 的 `Manage R2 API Tokens` 创建密钥，至少授予这三个 Bucket 的对象读写权限。
+只把密钥填入 PicGo，不要写入 Markdown、JSON 或 Git 仓库。
+
+### 2. 安装 PicGo
+
+从 PicGo 官方发布页安装桌面客户端：
+
+```text
+https://github.com/Molunerfinn/PicGo/releases
+```
+
+安装后，在 PicGo 的插件设置中搜索并安装 S3 插件。不同 PicGo 版本的插件名称可能
+显示为 `S3` 或 `picgo-plugin-s3`；选择支持 AWS S3 兼容服务的插件。
+
+### 3. 添加 R2 配置
+
+在 PicGo 的图床设置中选择 S3，分别创建三条配置。字段按以下方式填写：
+
+| PicGo 字段 | Cloudflare R2 填法 |
+| --- | --- |
+| AccessKeyID | R2 API Token 的 Access Key ID |
+| SecretAccessKey | R2 API Token 的 Secret Access Key |
+| Bucket | 对应的 R2 Bucket 名称 |
+| Region / Area | `auto` |
+| Endpoint | `https://<ACCOUNT_ID>.r2.cloudflarestorage.com` |
+| Path | `%Y/%m/` |
+| Custom URL | 对应的 `image`、`sound` 或 `video` 域名 |
+
+`<ACCOUNT_ID>` 替换为 Cloudflare 账户 ID。Endpoint 必须使用 R2 S3 API 地址，不能
+填写自定义域名；Custom URL 才填写 `https://image.kielasovo.com` 等公开访问域名。
+
+三条配置的 Bucket 和 Custom URL 必须一一对应，配置名称必须保持大小写完全一致。
+### 3.1 环境变量说明
+
+R2 的 `Endpoint`、`AccessKeyID` 和 `SecretAccessKey` 才是需要保存的连接信息。
+R2 的公网 URL 由上传脚本按媒体类型固定校验，不需要通过环境变量保存：
+
+```text
+image.kielasovo.com
+sound.kielasovo.com
+video.kielasovo.com
+```
+
+如果采用环境变量方案，真正需要保存的是 R2 的连接地址和凭据：
+
+```bash
+export R2_ENDPOINT="https://<ACCOUNT_ID>.r2.cloudflarestorage.com"
+export R2_ACCESS_KEY_ID="..."
+export R2_SECRET_ACCESS_KEY="..."
+```
+
+`R2_BUCKET` 仍然需要按图片、音频、视频分别映射，不能用一个变量准确表达三套
+配置；`R2_CUSTOM_URL` 不需要保存。当前版本的上传器还没有读取这些 `R2_*` 变量，
+所以它们目前只能作为环境变量预留，实际运行仍从 PicGo S3 配置读取 Endpoint 和
+Access Key。
+#### macOS / Linux（zsh，永久写入当前用户）
+
+```bash
+cat >> ~/.zshrc <<'EOF'
+
+export R2_ENDPOINT="https://<ACCOUNT_ID>.r2.cloudflarestorage.com"
+export R2_ACCESS_KEY_ID="..."
+export R2_SECRET_ACCESS_KEY="..."
+EOF
+
+source ~/.zshrc
+```
+
+#### Linux（bash，永久写入当前用户）
+
+```bash
+cat >> ~/.bashrc <<'EOF'
+
+export R2_ENDPOINT="https://<ACCOUNT_ID>.r2.cloudflarestorage.com"
+export R2_ACCESS_KEY_ID="..."
+export R2_SECRET_ACCESS_KEY="..."
+EOF
+
+source ~/.bashrc
+```
+
+#### Windows PowerShell（永久写入当前用户）
+
+```powershell
+[Environment]::SetEnvironmentVariable("R2_ENDPOINT", "https://<ACCOUNT_ID>.r2.cloudflarestorage.com", "User")
+[Environment]::SetEnvironmentVariable("R2_ACCESS_KEY_ID", "...", "User")
+[Environment]::SetEnvironmentVariable("R2_SECRET_ACCESS_KEY", "...", "User")
+```
+
+执行后关闭并重新打开 PowerShell。
+
+以上命令只负责永久保存 `R2_*` 变量。当前项目上传器仍不会读取这些变量，实际
+上传仍必须在 PicGo 的 S3 配置中填写；不要因为变量已保存就删除 PicGo 配置。
+
+项目会读取的环境变量是 Notion Token 和代理变量。
+
+#### macOS / Linux（zsh，当前终端）
+
+```bash
+export NOTION_API_KEY="ntn_xxx"
+export HTTPS_PROXY="http://127.0.0.1:7897"
+export HTTP_PROXY="http://127.0.0.1:7897"
+```
+
+#### macOS / Linux（zsh，永久写入当前用户）
+
+```bash
+printf '\nexport NOTION_API_KEY="ntn_xxx"\n' >> ~/.zshrc
+printf '\nexport HTTPS_PROXY="http://127.0.0.1:7897"\n' >> ~/.zshrc
+printf 'export HTTP_PROXY="http://127.0.0.1:7897"\n' >> ~/.zshrc
+source ~/.zshrc
+```
+
+如果变量已经存在，建议编辑 `~/.zshrc` 修改原值，不要反复追加相同变量。
+
+#### Linux（bash，永久写入当前用户）
+
+```bash
+printf '\nexport NOTION_API_KEY="ntn_xxx"\n' >> ~/.bashrc
+printf '\nexport HTTPS_PROXY="http://127.0.0.1:7897"\n' >> ~/.bashrc
+printf 'export HTTP_PROXY="http://127.0.0.1:7897"\n' >> ~/.bashrc
+source ~/.bashrc
+```
+
+#### Windows PowerShell（当前终端）
+
+```powershell
+$env:NOTION_API_KEY = "ntn_xxx"
+$env:HTTPS_PROXY = "http://127.0.0.1:7897"
+$env:HTTP_PROXY = "http://127.0.0.1:7897"
+```
+
+#### Windows PowerShell（永久写入当前用户）
+
+```powershell
+[Environment]::SetEnvironmentVariable("NOTION_API_KEY", "ntn_xxx", "User")
+[Environment]::SetEnvironmentVariable("HTTPS_PROXY", "http://127.0.0.1:7897", "User")
+[Environment]::SetEnvironmentVariable("HTTP_PROXY", "http://127.0.0.1:7897", "User")
+```
+
+执行后关闭并重新打开 PowerShell。当前已经打开的进程不会自动获得新变量。
+
+#### Windows CMD（当前窗口）
+
+```cmd
+set "NOTION_API_KEY=ntn_xxx"
+set "HTTPS_PROXY=http://127.0.0.1:7897"
+set "HTTP_PROXY=http://127.0.0.1:7897"
+```
+
+代理不是必填项。不使用代理时不要设置这些变量；Notion 导入器也支持用
+`--proxy` 临时指定代理，或用 `--no-proxy` 强制直连。
+
+不要把 R2 Secret Access Key 或 Notion Token 提交到 Git、Markdown、JSON 或公开的
+`.env` 文件中。
+
+### 4. 首次验证
+
+先在 PicGo 图形界面选择图片配置上传一个小文件，确认返回的 URL 类似：
+
+```text
+https://image.kielasovo.com/2026/09/example.jpg
+```
+
+然后在浏览器直接打开该 URL。必须能直接读取文件，而不是返回 `403` 或 R2 XML
+错误。音频和视频还应确认浏览器可以播放和拖动进度。
+
+### 5. 使用项目上传命令
+
+Windows PowerShell：
+
+```powershell
+npm run upload:file -- --type image --source ".\photo.png"
+npm run upload:file -- --type sound --source ".\music.mp3"
+npm run upload:file -- --type video --source ".\movie.mp4"
+```
+
+macOS / Linux：
+
+```bash
+npm run upload:file -- --type image --source "./photo.png"
+npm run upload:file -- --type sound --source "./music.mp3"
+npm run upload:file -- --type video --source "./movie.mp4"
+```
+
+上传成功后，命令会打印公网 URL，并追加写入 `tools/media-uploader/upload.log`。
+
+### 6. 在网站中使用
+
+图片可以直接写入 Markdown：
+
+```markdown
+![照片](https://image.kielasovo.com/2026/09/example.jpg)
+```
+
+音乐写入 `src/data/music.json`：
+
+```json
+[
+  {
+    "name": "example",
+    "link": "https://sound.kielasovo.com/2026/09/example.mp3"
+  }
+]
+```
+
+Markdown 导入器会自动上传本地图片：
+
+```bash
+npm run import:markdown -- --source "./待导入正文.md" ...
+```
+
+如果使用 `--skip-images`，则会保留原始图片 URL，不上传本地图片。
+
+### 7. macOS / Linux 注意事项
+
+当前 `tools/media-uploader/upload.py` 使用 Windows 的 PicGo 配置路径和 `.cmd`
+启动文件。PicGo 图形界面在 macOS / Linux 上可以单独使用，但项目提供的
+`npm run upload:file` 在这些系统上还不能视为已支持。需要跨平台命令上传时，应先
+修改该脚本的配置路径和 PicGo CLI 查找方式；不要把 Windows 的 `data.json` 路径
+直接复制到 macOS / Linux 文档中。
+
+
 ## 八、JSON 修改规则
 
 JSON 格式严格，最常见的错误是漏逗号、多逗号或引号不完整。注意：
