@@ -1,6 +1,8 @@
 # Media Uploader
 
-使用本机 PicGo 的三个 S3 配置上传文件。成功时在终端输出最终 URL，并追加记录到同目录的 `upload.log`。
+使用本机 PicGo 的三个 S3 配置上传文件。支持 Windows、macOS 和 Linux，并可用
+`R2_ENDPOINT`、`R2_ACCESS_KEY_ID`、`R2_SECRET_ACCESS_KEY` 临时覆盖所选 PicGo 配置
+中的 R2 连接参数。成功时输出最终 URL，并追加记录到 `upload.log`。
 
 ```powershell
 npm run upload:file -- --type image --source ".\photo.png"

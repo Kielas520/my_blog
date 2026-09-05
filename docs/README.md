@@ -6,6 +6,7 @@ Kielasovo 是一个基于 Astro SSG 的静态个人站点。主页采用克制�
 ## 文档目录
 
 - [数据管理、开发与 Pages 发布（日常维护手册）](./maintenance-guide.md)
+- [Cloudflare R2 与 PicGo 环境配置](./media-storage-setup.md)
 - [安装与运行](./getting-started.md)
 - [项目架构](./architecture.md)
 - [Blog 内容管理](./content-guide.md)

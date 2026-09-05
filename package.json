@@ -12,7 +12,9 @@
     "check": "astro check",
     "import:markdown": "node tools/markdown-importer/index.mjs",
     "import:notion": "node tools/notion-importer/index.mjs",
-    "upload:file": "python tools/media-uploader/upload.py"
+    "upload:file": "node tools/media-uploader/run-python.mjs tools/media-uploader/upload.py",
+    "setup:picgo": "node tools/media-uploader/run-python.mjs tools/media-uploader/setup_picgo.py",
+    "cleanup:r2-test": "node tools/media-uploader/cleanup_r2_test.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",

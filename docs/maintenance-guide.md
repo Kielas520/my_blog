@@ -284,10 +284,9 @@ export R2_ACCESS_KEY_ID="..."
 export R2_SECRET_ACCESS_KEY="..."
 ```
 
-`R2_BUCKET` 仍然需要按图片、音频、视频分别映射，不能用一个变量准确表达三套
-配置；`R2_CUSTOM_URL` 不需要保存。当前版本的上传器还没有读取这些 `R2_*` 变量，
-所以它们目前只能作为环境变量预留，实际运行仍从 PicGo S3 配置读取 Endpoint 和
-Access Key。
+`R2_BUCKET` 仍然需要在 PicGo 的三套配置中分别填写；`R2_CUSTOM_URL` 不需要保存，
+公网域名由上传脚本按媒体类型校验。上传器会读取上述三个 `R2_*` 变量，并在变量
+完整设置时覆盖所选 PicGo 配置的 Endpoint 和 Access Key；未设置时使用 PicGo 原值。
 #### macOS / Linux（zsh，永久写入当前用户）
 
 ```bash
@@ -324,10 +323,10 @@ source ~/.bashrc
 
 执行后关闭并重新打开 PowerShell。
 
-以上命令只负责永久保存 `R2_*` 变量。当前项目上传器仍不会读取这些变量，实际
-上传仍必须在 PicGo 的 S3 配置中填写；不要因为变量已保存就删除 PicGo 配置。
+以上命令会永久保存 `R2_*` 变量。上传器会在启动时读取它们；如果只设置其中一部分，
+会直接报错。Bucket 和 Custom URL 仍然必须保留在 PicGo 的三套配置中。
 
-项目会读取的环境变量是 Notion Token 和代理变量。
+项目还会读取 Notion Token 和代理变量。
 
 #### macOS / Linux（zsh，当前终端）
 
