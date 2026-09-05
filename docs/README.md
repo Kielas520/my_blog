@@ -10,6 +10,7 @@ Kielasovo 是一个基于 Astro SSG 的静态个人站点。主页采用克制�
 - [项目架构](./architecture.md)
 - [Blog 内容管理](./content-guide.md)
 - [名言、链接、媒体与 Tools 配置](./configuration.md)
+- [Notion API 配置与文章导入](./notion-importer.md)
 - [GitHub 与 Cloudflare Pages 部署](./deployment.md)
 - [常见问题](./troubleshooting.md)
 

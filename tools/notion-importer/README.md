@@ -2,6 +2,8 @@
 
 从 Notion 页面直接导入 `src/content/blogs`。工具使用 Notion Enhanced Markdown API 获取正文，将图片、音频和视频的临时 URL 转存到现有 R2 配置，然后调用 `markdown-importer` 生成 frontmatter 和目标文件。
 
+跨平台的 API Token 配置和导入教程见 [`docs/notion-importer.md`](../../docs/notion-importer.md)。
+
 ## 配置 Notion
 
 1. 在 Notion 创建一个 Integration，并启用读取内容（`read_content`）权限。
