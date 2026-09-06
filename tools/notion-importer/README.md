@@ -20,16 +20,31 @@ Token 只从环境变量读取，不应写进仓库或放在 CLI 参数中。
 
 `--page` 可以是浏览器中的完整 Notion URL，也可以是带横线或不带横线的 32 位页面 ID。
 
+```bash
+npm run import:notion -- \
+  --page "https://app.notion.com/p/kielas520/3d3a064aa1788033bf92c83ae1e4efca" \
+  --title "三个月的过渡期" \
+  --description "精神压力" \
+  --category thoghts \
+  --published-at 2026-09-06 \
+  --file-name look-for-offers \
+  --draft false \
+  --tags "忆" \
+  --type article
+```
+
+PowerShell 使用反引号 `` ` `` 换行：
+
 ```powershell
 npm run import:notion -- `
-  --page "https://kielas520.notion.site/3b1a064aa178805ba73fd624787d2954" `
-  --title "具身智能" `
-  --description "我认为的具身智能方向" `
+  --page "https://app.notion.com/p/kielas520/3d3a064aa1788033bf92c83ae1e4efca" `
+  --title "三个月的过渡期" `
+  --description "精神压力" `
   --category thoghts `
-  --published-at 2026-08-03 `
-  --file-name embodied-future `
+  --published-at 2026-09-06 `
+  --file-name look-for-offers `
   --draft false `
-  --tags "具身智能" `
+  --tags "忆" `
   --type article
 ```
 
