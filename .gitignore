@@ -6,3 +6,4 @@ dist/
 .astro-dev.log
 .astro-serve.log
 .web-service.pid
+.cache

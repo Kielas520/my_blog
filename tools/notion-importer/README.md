@@ -25,7 +25,7 @@ npm run import:notion -- \
   --page "https://app.notion.com/p/kielas520/3d3a064aa1788033bf92c83ae1e4efca" \
   --title "三个月的过渡期" \
   --description "精神压力" \
-  --category thoghts \
+  --category dairy \
   --published-at 2026-09-06 \
   --file-name look-for-offers \
   --draft false \
