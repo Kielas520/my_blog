@@ -1,7 +1,7 @@
 ---
 title: "三个月的过渡期"
 description: "精神压力"
-category: "thoghts"
+category: "dairy"
 publishedAt: 2026-09-06
 draft: false
 tags: ["忆"]
