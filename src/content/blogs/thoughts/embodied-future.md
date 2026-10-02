@@ -1,7 +1,7 @@
 ---
 title: "具身智能"
 description: "我认为的具身智能方向"
-category: "thoughts"
+category: "notes"
 publishedAt: 2026-08-03
 draft: false
 tags: ["具身智能"]

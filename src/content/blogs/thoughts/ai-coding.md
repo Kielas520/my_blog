@@ -1,7 +1,7 @@
 ---
 title: AiCoding
 description: 从数据驱动和 Agent 工作方式出发，讨论 AI Coding 带来的效率、风险与软件质量问题。
-category: thoughts
+category: notes
 publishedAt: 2026-07-06
 draft: false
 tags: [AI编程, 观点]

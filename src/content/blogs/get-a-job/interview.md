@@ -1,7 +1,7 @@
 ---
 title: 面试
 description: 整理 HR 面、技术面和到岗薪资沟通等面试环节及准备重点。
-category: get-a-job
+category: notes
 publishedAt: 2026-05-20
 draft: false
 tags: [经验]

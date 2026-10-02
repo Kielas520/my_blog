@@ -13,7 +13,7 @@ const defaults: SiteConfig = {
   siteName: 'Hi There',
   icon: '/images/kiana.jpg',
   avatar: '/images/kiana.jpg',
-  backgroundImage: '/images/frutiger_aero.jpg',
+  backgroundImage: '',
   cursor: '/cursors/vista-glass.svg',
 };
 

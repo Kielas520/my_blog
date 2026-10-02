@@ -155,7 +155,7 @@ npm run import:notion -- \
   --page "https://kielas520.notion.site/3b1a064aa178805ba73fd624787d2954" \
   --title "具身智能" \
   --description "我认为的具身智能方向" \
-  --category thoughts \
+  --category notes \
   --published-at 2026-08-03 \
   --file-name embodied-future \
   --draft false \
@@ -170,7 +170,7 @@ npm run import:notion -- `
   --page "https://kielas520.notion.site/3b1a064aa178805ba73fd624787d2954" `
   --title "具身智能" `
   --description "我认为的具身智能方向" `
-  --category thoughts `
+  --category notes `
   --published-at 2026-08-03 `
   --file-name embodied-future `
   --draft false `
@@ -181,7 +181,7 @@ npm run import:notion -- `
 Windows CMD 可以写成单行：
 
 ```cmd
-npm run import:notion -- --page "https://kielas520.notion.site/3b1a064aa178805ba73fd624787d2954" --title "具身智能" --description "我认为的具身智能方向" --category thoughts --published-at 2026-08-03 --file-name embodied-future --draft false --tags "具身智能" --type article
+npm run import:notion -- --page "https://kielas520.notion.site/3b1a064aa178805ba73fd624787d2954" --title "具身智能" --description "我认为的具身智能方向" --category notes --published-at 2026-08-03 --file-name embodied-future --draft false --tags "具身智能" --type article
 ```
 
 导入结果写入：
@@ -199,7 +199,8 @@ src/content/blogs/<category>/<file-name>.md
 - `--published-at`
 - `--file-name`
 
-注意：`--category thoughts` 的拼写必须正确，不要写成 `thoghts`。
+`--category` 只接受 `journal` 或 `notes`，不接受旧值或拼写别名。新文章写入对应目录；
+已有文章保留原地址，更新正文时需手动更新原文件，不能重新导入同名文章到新目录造成重复。
 
 ## 六、媒体和代理
 

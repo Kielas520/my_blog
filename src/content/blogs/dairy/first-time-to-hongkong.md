@@ -1,7 +1,7 @@
 ---
 title: "香港"
 description: "第一次出境，第一次去香港"
-category: "dairy"
+category: "journal"
 publishedAt: 2026-08-01
 draft: false
 tags: ["忆"]

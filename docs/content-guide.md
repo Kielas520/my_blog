@@ -12,33 +12,25 @@
 
 不要把求职档案、工作日志或私人记忆直接批量发布。
 
-## Notion 分类
+## 日志与技术笔记
 
-`category` 必须使用以下值之一：
+`category` 只接受以下两个值：
 
-| Notion 资料库 | 页面名称 | Frontmatter 值 | 适合内容 |
-| --- | --- | --- | --- |
-| 记 | `dairy` | `dairy` | 精选日记和回忆 |
-| Thoughts | `Thoughts` | `thoughts` | 观点与思考 |
-| TICKTICK | `TICKTICK` | `ticktick` | 方法、规范和知识整理 |
-| 求职 | `getAjob` | `get-a-job` | 求职经验与准备 |
+| 栏目 | Frontmatter 值 | 适合内容 |
+| --- | --- | --- |
+| 日志 | `journal` | 心境、生活、比赛与求职经历 |
+| 技术笔记 | `notes` | 技术理解、观点、开发规范与求职实用资料 |
 
-建议使用与分类一致的子目录：
+列表默认显示日志，按年月倒序排列；`/blogs?category=notes` 显示技术笔记，
+`/blogs?category=all` 显示全部。刷新和返回文章列表会保留所选栏目。
+标签可选，不要求按情绪再分类。
 
-```text
-src/content/blogs/
-├─ dairy/
-├─ thoughts/
-├─ ticktick/
-└─ get-a-job/
-```
+新文章推荐放入 `journal/` 或 `notes/`。已有文章的目录是永久 URL slug，不是栏目：
+修改分类只改 frontmatter，不移动文件。原来的 `/blogs/thoughts/ai-coding`
+等地址仍有效，其页面显示技术笔记，不保留旧分类别名。
 
-目录会成为文章 URL 的一部分。例如：
-
-```text
-src/content/blogs/thoughts/ai-coding.md
-→ /blogs/thoughts/ai-coding
-```
+正文面板宽度最多 740px；有二、三级标题的文章自动生成折叠目录。
+文章页音乐盒默认收起，手机阅读时移至页尾，不覆盖正文。
 
 ## 创建文章
 
@@ -46,12 +38,12 @@ src/content/blogs/thoughts/ai-coding.md
 
 ```powershell
 New-Item -ItemType Directory `
-  -Path .\src\content\blogs\thoughts `
+  -Path .\src\content\blogs\notes `
   -Force
 
 Copy-Item `
   .\src\content\blogs\_template.md `
-  .\src\content\blogs\thoughts\new-article.md
+  .\src\content\blogs\notes\new-article.md
 ```
 
 填写 Frontmatter：
@@ -60,7 +52,7 @@ Copy-Item `
 ---
 title: 新文章标题
 description: 用一两句话概括文章内容，供列表和 SEO 使用。
-category: thoughts
+category: notes
 publishedAt: 2026-08-01
 updatedAt: 2026-08-03
 draft: false
@@ -75,7 +67,7 @@ type: article
 | --- | --- | --- |
 | `title` | 是 | 文章标题 |
 | `description` | 是 | 列表和 SEO 使用的摘要 |
-| `category` | 是 | Notion 一级分类 |
+| `category` | 是 | `journal` 或 `notes`，与永久文章目录独立 |
 | `publishedAt` | 是 | 发布日期，格式为 `YYYY-MM-DD` |
 | `updatedAt` | 否 | 最近更新日期 |
 | `draft` | 否 | 默认为 `false`；`true` 时不生成公开路由 |

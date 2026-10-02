@@ -173,22 +173,24 @@ https://kielasovo.com/me
 
 ## 七、管理 Blog
 
-文章目录：
+新文章推荐目录：
 
 ```text
 src/content/blogs/
-├─ dairy/
-├─ thoughts/
-├─ ticktick/
-└─ get-a-job/
+├─ journal/
+└─ notes/
 ```
+
+分类只接受 `journal`（日志）与 `notes`（技术笔记，含实用资料）。
+已有文章保留原目录和 URL；调整栏目只修改 frontmatter，不移动文件。
 
 新文章可以复制模板：
 
 ```powershell
+New-Item -ItemType Directory .\src\content\blogs\notes -Force
 Copy-Item `
   .\src\content\blogs\_template.md `
-  .\src\content\blogs\thoughts\new-article.md
+  .\src\content\blogs\notes\new-article.md
 ```
 
 至少填写：
@@ -197,7 +199,7 @@ Copy-Item `
 ---
 title: 文章标题
 description: 文章摘要
-category: thoughts
+category: notes
 publishedAt: 2026-08-01
 draft: false
 tags: [标签]

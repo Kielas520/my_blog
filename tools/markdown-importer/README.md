@@ -1,12 +1,12 @@
 # Markdown Importer
 
-为 `src/content/blogs` 创建带有合法 frontmatter 的 Markdown 文档。新分类目录会自动创建，目标文件默认不会被覆盖。
+为 `src/content/blogs` 创建带有合法 frontmatter 的 Markdown 文档。分类只接受 `journal`（日志）或 `notes`（技术与实用笔记），目标文件默认不会被覆盖。
 
 ```powershell
 npm run import:markdown -- `
   --title "一张纸" `
   --description "一次回家时，在父亲四平方米的办公室里看到一张练字纸。" `
-  --category dairy `
+  --category journal `
   --published-at 2026-06-18 `
   --file-name a-sheet `
   --draft false `
@@ -16,6 +16,9 @@ npm run import:markdown -- `
 ```
 
 `--source` 文件如果带有自己的 `---` frontmatter，导入时会将它移除，只保留正文。也可以用 `--content "正文"` 直接提供内容；两者都不传时会创建正文为空的文章。
+
+新文章写入 `src/content/blogs/<category>/<file-name>.md`。已有文章目录决定永久 URL，
+不随分类变动；更新旧文章应编辑原文件，避免导入到新目录产生重复。
 
 Notion 导出文件如果以一级标题和 `DATE`、`TAG` 开头，导入器会自动移除这段重复头部。例如：
 

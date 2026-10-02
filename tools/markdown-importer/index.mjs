@@ -8,6 +8,7 @@ import { spawnSync } from 'node:child_process';
 
 const BLOGS_ROOT = path.resolve(process.cwd(), 'src', 'content', 'blogs');
 const MEDIA_UPLOADER = path.resolve(process.cwd(), 'tools', 'media-uploader', 'upload.py');
+const VALID_CATEGORIES = new Set(['journal', 'notes']);
 const VALID_TYPES = new Set(['article', 'series', 'project', 'note']);
 
 const help = `
@@ -15,13 +16,13 @@ Markdown Importer
 
 用法：
   npm run import:markdown -- --title "一张纸" --description "摘要" \\
-    --category dairy --published-at 2026-06-18 --file-name a-sheet \\
+    --category journal --published-at 2026-06-18 --file-name a-sheet \\
     --tags "忆,家庭" --type article --source ./article.md
 
 必填参数：
   --title           文档标题
   --description     文档卡片摘要
-  --category        分类目录；不存在时自动创建
+  --category        journal（日志）或 notes（技术与实用笔记）
   --published-at    发布日期，格式 YYYY-MM-DD
   --file-name       Markdown 文件名，可省略 .md
 
@@ -38,6 +39,10 @@ Markdown Importer
   --skip-images     不上传和替换正文中的本地图片
   --force           允许覆盖已经存在的目标文件
   --help            显示帮助
+
+说明：
+  新文章写入 src/content/blogs/<category>/<file-name>.md。
+  文件路径决定永久 URL；以后调整分类只修改 frontmatter，不移动已有文件。
 `;
 
 function parseArgs(argv) {
@@ -236,7 +241,9 @@ async function main() {
   const missing = required.filter((field) => !args[field]);
   if (missing.length) throw new Error(`缺少必填参数：${missing.map((field) => `--${field.replaceAll('_', '-')}`).join(', ')}`);
 
-  validateSegment(args.category, 'category');
+  if (!VALID_CATEGORIES.has(args.category)) {
+    throw new Error(`category 必须是：${[...VALID_CATEGORIES].join(', ')}`);
+  }
   let fileName = args.file_name.endsWith('.md') ? args.file_name.slice(0, -3) : args.file_name;
   validateSegment(fileName, 'file_name');
   validateDate(args.published_at, 'publishedAt');
@@ -287,7 +294,7 @@ async function main() {
   const markdown = `---\n${fields.join('\n')}\n---\n${body ? `\n${body}\n` : '\n'}`;
   await writeFile(destination, markdown, 'utf8');
   console.log(`已创建：${path.relative(process.cwd(), destination)}`);
-  console.log(`页面路径：/blogs/${args.category}/${fileName}`);
+  console.log(`永久页面路径：/blogs/${args.category}/${fileName}`);
 }
 
 main().catch((error) => {

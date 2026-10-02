@@ -25,7 +25,7 @@ npm run import:notion -- \
   --page "https://app.notion.com/p/kielas520/panic-3dba064aa17880a29e78e2d3371d7664" \
   --title "wuji 很大，但我很小" \
   --description "我可能有强迫症吧" \
-  --category dairy \
+  --category journal \
   --published-at 2026-09-14 \
   --file-name panic \
   --draft false \
@@ -40,7 +40,7 @@ npm run import:notion -- `
   --page "https://app.notion.com/p/kielas520/3d3a064aa1788033bf92c83ae1e4efca" `
   --title "三个月的过渡期" `
   --description "精神压力" `
-  --category thoghts `
+  --category journal `
   --published-at 2026-09-06 `
   --file-name look-for-offers `
   --draft false `
@@ -54,7 +54,7 @@ npm run import:notion -- `
 ---
 title: "被牵着走"
 description: "端午回家、陪母亲骑行，以及在成长中愈发强烈的念家。"
-category: "dairy"
+category: "journal"
 publishedAt: 2026-06-20
 draft: false
 tags: ["忆"]
@@ -67,6 +67,10 @@ type: article
 - 必填：`--title`、`--description`、`--category`、`--published-at`、`--file-name`
 - 可选：`--draft`、`--tags`、`--type`、`--updated-at`、`--series`、`--order`
 - 控制：`--keep-source-header`、`--skip-images`、`--force`
+
+`--category` 只接受 `journal`（日志）或 `notes`（技术与实用笔记），非法分类在访问 API
+前拒绝。新文件写入对应目录；旧文章目录为永久 URL，更新旧文章应编辑原文件，
+而不是重新导入到新目录。
 
 `--source` 和 `--content` 被 `--page` 取代。完整帮助：
 

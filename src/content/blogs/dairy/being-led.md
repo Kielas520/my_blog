@@ -1,7 +1,7 @@
 ---
 title: 被牵着走
 description: 端午回家、陪母亲骑行，以及在成长中愈发强烈的念家。
-category: dairy
+category: journal
 publishedAt: 2026-06-20
 draft: false
 tags: [忆]

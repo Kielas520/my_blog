@@ -1,7 +1,7 @@
 ---
 title: "we suffer，we stronger"
 description: "记录入职具身智能公司三个月里的压抑、荒诞与成长。"
-category: "dairy"
+category: "journal"
 publishedAt: 2026-08-22
 draft: false
 tags: ["忆"]

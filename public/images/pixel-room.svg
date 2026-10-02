@@ -1,0 +1,243 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="448" viewBox="0 0 720 448" shape-rendering="crispEdges" role="img" aria-labelledby="title description">
+  <title id="title">窗外下雪的奶油粉像素小窝</title>
+  <desc id="description">原创像素插画。暖粉墙纸的房间里有星星串灯、雪景窗户、粉色沙发和抱枕、木书桌上的电脑与书、盆栽、台灯、茶杯，以及趴在地毯上的小猫。</desc>
+  <defs>
+    <pattern id="wallpaper" width="32" height="32" patternUnits="userSpaceOnUse">
+      <rect width="32" height="32" fill="#edc9c2"/>
+      <rect x="0" width="4" height="32" fill="#e8c0ba"/>
+      <path d="M20 10h4v4h4v4h-4v4h-4v-4h-4v-4h4z" fill="#f5dcd0"/>
+      <rect x="20" y="14" width="4" height="4" fill="#d6a7a9"/>
+    </pattern>
+    <pattern id="floor" width="160" height="48" patternUnits="userSpaceOnUse">
+      <rect width="160" height="48" fill="#bc8d6f"/>
+      <path d="M0 0h160v4H0zM0 24h160v4H0zM76 0h4v24h-4zM20 24h4v24h-4z" fill="#9d705d"/>
+      <path d="M0 4h76v4H0zM80 4h80v4H80zM24 28h136v4H24zM0 28h20v4H0z" fill="#d1a383"/>
+      <path d="M12 12h44v4H12zM92 16h48v4H92zM44 36h48v4H44zM116 40h36v4h-36z" fill="#b18165"/>
+    </pattern>
+    <pattern id="snow" width="56" height="52" patternUnits="userSpaceOnUse">
+      <rect x="8" y="8" width="4" height="4" fill="#f9f3ea"/>
+      <rect x="36" y="28" width="4" height="4" fill="#fffaf1"/>
+      <rect x="12" y="40" width="4" height="4" fill="#dce5e9"/>
+    </pattern>
+    <pattern id="rug" width="24" height="24" patternUnits="userSpaceOnUse">
+      <rect width="24" height="24" fill="#ead2b0"/>
+      <path d="M4 8h4v-4h8v4h4v8h-4v4H8v-4H4z" fill="#d7b296"/>
+      <rect x="8" y="8" width="8" height="8" fill="#f7e4c2"/>
+    </pattern>
+    <g id="star">
+      <path d="M8 0h4v8h8v4h-8v8H8v-8H0V8h8z" fill="#ba896c"/>
+      <path d="M8 4h4v4h4v4h-4v4H8v-4H4V8h4z" fill="#ffe8a4"/>
+      <rect x="8" y="8" width="4" height="4" fill="#fff8ce"/>
+    </g>
+    <g id="pine">
+      <rect x="28" y="64" width="8" height="20" fill="#7d8290"/>
+      <path d="M28 0h8v8h8v8h8v12h-8v4h12v12h8v16H48v4H16v-4H0V44h8V32h12v-4H8V16h12V8h8z" fill="#738a94"/>
+      <path d="M28 0h8v8h8v8h8v8H40v-4H24v4H8v-8h12V8h8zM20 28h24v4h12v8H40v-4H24v4H8v-8h12zM8 44h16v4h16v-4h16v8h8v8H44v-4H20v4H0v-8h8z" fill="#e2e5e8"/>
+      <path d="M24 24h16v4H24zM20 40h24v4H20zM24 60h16v4H24z" fill="#536f80"/>
+    </g>
+    <g id="book">
+      <rect width="12" height="32" fill="#be8091"/>
+      <rect x="4" y="4" width="4" height="24" fill="#d7a3ad"/>
+      <path d="M0 4h12v4H0zM0 24h12v4H0z" fill="#f1d7be"/>
+    </g>
+    <g id="leaf">
+      <path d="M0 0h12v4h8v12h-8v-4H4V8H0z" fill="#72886c"/>
+      <path d="M4 0h8v4h4v8h-4V8H8V4H4z" fill="#9ba77d"/>
+    </g>
+  </defs>
+
+  <!-- Layered room shell and timber floor. -->
+  <rect width="720" height="448" fill="#d5aa9b"/>
+  <rect x="12" y="12" width="696" height="272" fill="url(#wallpaper)"/>
+  <rect x="12" y="284" width="696" height="152" fill="url(#floor)"/>
+  <rect x="12" y="264" width="696" height="8" fill="#b88c79"/>
+  <rect x="12" y="272" width="696" height="8" fill="#f4ddc7"/>
+  <rect x="12" y="280" width="696" height="8" fill="#976f61"/>
+  <path d="M0 0h720v12H0zM0 12h12v436H0zM708 12h12v436h-12zM12 436h696v12H12z" fill="#ac7c70"/>
+  <path d="M12 12h696v4H12zM12 16h4v420h-4z" fill="#f3d9c5"/>
+  <path d="M20 20h8v244h-8zM692 20h8v244h-8z" fill="#d7aea8"/>
+
+  <!-- Window: snowy hillside, pines, snowflakes and a moon. -->
+  <rect x="72" y="64" width="252" height="160" fill="#bd9484"/>
+  <rect x="76" y="60" width="244" height="160" fill="#f6dfc5"/>
+  <rect x="84" y="68" width="228" height="140" fill="#747f9b"/>
+  <rect x="88" y="72" width="220" height="48" fill="#8793ad"/>
+  <rect x="88" y="120" width="220" height="48" fill="#a7b4c6"/>
+  <rect x="264" y="80" width="20" height="20" fill="#f0e5d8"/>
+  <path d="M260 84h4v12h-4zM268 76h12v4h-12zM284 84h4v12h-4zM268 100h12v4h-12z" fill="#e4d9d4"/>
+  <path d="M88 176h24v-4h36v-4h48v4h44v-8h44v4h24v40H88z" fill="#d5dce2"/>
+  <use href="#pine" x="92" y="112"/>
+  <use href="#pine" x="240" y="108"/>
+  <use href="#pine" x="168" y="128" transform="translate(74 54) scale(.75)"/>
+  <rect x="88" y="72" width="220" height="136" fill="url(#snow)"/>
+  <path d="M88 196h32v-4h36v8h52v-4h64v-8h20v4h16v16H88z" fill="#eff0ed"/>
+  <rect x="192" y="68" width="8" height="140" fill="#f5dfc6"/>
+  <rect x="84" y="132" width="228" height="8" fill="#f5dfc6"/>
+  <path d="M200 68h4v64h-4zM200 140h4v68h-4zM84 140h108v4H84zM204 140h108v4H204z" fill="#bea092"/>
+  <rect x="76" y="208" width="244" height="8" fill="#fff0d8"/>
+  <rect x="64" y="216" width="268" height="8" fill="#c79b85"/>
+  <rect x="64" y="212" width="268" height="4" fill="#ffe4c7"/>
+  <!-- Gathered checked curtains. -->
+  <rect x="56" y="52" width="280" height="4" fill="#91685d"/>
+  <rect x="52" y="48" width="8" height="12" fill="#b79071"/>
+  <rect x="332" y="48" width="8" height="12" fill="#b79071"/>
+  <path d="M64 56h48v40h-8v36h-8v44H80v24H64zM288 56h40v144h-16v-24h-16v-44h-8z" fill="#b67f93"/>
+  <path d="M68 60h8v128h-8zM84 60h8v108h-8zM100 60h8v36h-8zM292 60h8v68h-8zM308 60h8v120h-8zM324 60h4v136h-4z" fill="#d4a4ad"/>
+  <path d="M64 80h48v4H64zM64 112h40v4H64zM64 148h32v4H64zM288 80h40v4h-40zM296 112h32v4h-32zM304 148h24v4h-24z" fill="#e3b8bd"/>
+  <rect x="64" y="160" width="32" height="8" fill="#e8ca9d"/>
+  <rect x="304" y="160" width="24" height="8" fill="#e8ca9d"/>
+
+  <!-- Warm festoon string, individually suspended stars. -->
+  <path d="M36 28h72v4h64v4h72v4h80v-4h88v-4h84v-4h92v-4h96v4h-96v4h-92v4h-84v4h-88v4h-80v-4h-72v-4h-64v-4H36z" fill="#9c7770"/>
+  <path d="M88 32h4v12h-4zM180 40h4v12h-4zM280 44h4v16h-4zM388 40h4v16h-4zM484 36h4v12h-4zM584 32h4v16h-4zM672 28h4v16h-4z" fill="#aa816f"/>
+  <use href="#star" x="80" y="44"/><use href="#star" x="172" y="52"/>
+  <use href="#star" x="272" y="60"/><use href="#star" x="380" y="56"/>
+  <use href="#star" x="476" y="48"/><use href="#star" x="576" y="48"/>
+  <use href="#star" x="664" y="44"/>
+
+  <!-- A tiny gallery and a wall shelf, with books and trailing plant. -->
+  <rect x="360" y="88" width="56" height="64" fill="#ae7f6c"/>
+  <rect x="364" y="92" width="48" height="56" fill="#f9e8d2"/>
+  <rect x="368" y="96" width="40" height="48" fill="#d2a5ae"/>
+  <path d="M376 132h24v-8h-8v-8h-8v8h-8z" fill="#ece2cb"/>
+  <rect x="384" y="104" width="12" height="12" fill="#f7d598"/>
+  <rect x="424" y="112" width="36" height="40" fill="#ad8171"/>
+  <rect x="428" y="116" width="28" height="32" fill="#f9e6ce"/>
+  <path d="M436 124h4v4h4v-4h4v12h-4v4h-4v-4h-4z" fill="#be8497"/>
+  <rect x="480" y="128" width="184" height="8" fill="#9e7760"/>
+  <rect x="476" y="124" width="192" height="4" fill="#e1b393"/>
+  <path d="M492 136h8v12h-8zM644 136h8v12h-8z" fill="#ba8e77"/>
+  <use href="#book" x="488" y="92"/>
+  <use href="#book" x="504" y="92"/>
+  <rect x="520" y="100" width="12" height="24" fill="#849b97"/>
+  <path d="M524 104h4v16h-4zM520 104h12v4h-12z" fill="#c9d5bb"/>
+  <rect x="544" y="108" width="32" height="16" fill="#d3a982"/>
+  <rect x="548" y="104" width="24" height="4" fill="#f7ddae"/>
+  <rect x="556" y="112" width="8" height="8" fill="#fff0c8"/>
+  <path d="M612 100h32v8h-4v16h-24v-16h-4z" fill="#b9827b"/>
+  <rect x="616" y="104" width="8" height="16" fill="#dba796"/>
+  <path d="M624 80h4v20h-4zM636 84h4v16h-4zM640 108h8v24h-4v20h-4v-4h-8v-8h8z" fill="#6f8769"/>
+  <use href="#leaf" x="608" y="76"/><use href="#leaf" x="628" y="72"/>
+  <use href="#leaf" x="640" y="124"/><use href="#leaf" x="624" y="140"/>
+
+  <!-- Plump sofa, pixel seams, two cushions and knitted throw. -->
+  <rect x="56" y="320" width="272" height="12" fill="#936c5d"/>
+  <rect x="72" y="328" width="16" height="12" fill="#7f5c53"/>
+  <rect x="304" y="328" width="16" height="12" fill="#7f5c53"/>
+  <path d="M72 232h232v8h12v60H60v-60h12z" fill="#aa7186"/>
+  <rect x="80" y="236" width="100" height="60" fill="#d5a0a8"/>
+  <rect x="188" y="236" width="108" height="60" fill="#d5a0a8"/>
+  <path d="M84 240h92v4H84zM192 240h100v4H192zM84 248h4v36h-4zM192 248h4v36h-4z" fill="#e8b6b7"/>
+  <rect x="72" y="292" width="240" height="28" fill="#c8909d"/>
+  <rect x="76" y="292" width="108" height="8" fill="#e2afb3"/>
+  <rect x="192" y="292" width="116" height="8" fill="#e2afb3"/>
+  <rect x="72" y="316" width="240" height="8" fill="#a36d83"/>
+  <path d="M52 268h32v56H52zM300 268h32v56h-32z" fill="#ba8597"/>
+  <path d="M56 268h24v8H56zM304 268h24v8h-24zM56 276h4v40h-4zM304 276h4v40h-4z" fill="#deb0b6"/>
+  <path d="M108 256h40v4h4v28h-4v4h-40v-4h-4v-28h4z" fill="#f3d7b1"/>
+  <path d="M112 260h32v4h-32zM112 264h4v20h-4z" fill="#fff0cb"/>
+  <path d="M124 268h4v4h8v4h-8v8h-4v-8h-8v-4h8z" fill="#d8a492"/>
+  <path d="M208 252h40v4h4v32h-4v4h-40v-4h-4v-32h4z" fill="#8da195"/>
+  <path d="M212 256h32v4h-32zM212 260h4v20h-4z" fill="#b8c4ad"/>
+  <rect x="264" y="268" width="28" height="60" fill="#e5c6af"/>
+  <path d="M268 268h4v60h-4zM280 268h4v60h-4zM264 276h28v4h-28zM264 288h28v4h-28zM264 300h28v4h-28zM264 312h28v4h-28zM264 328h4v8h-4zM276 328h4v8h-4zM288 328h4v8h-4z" fill="#c59692"/>
+
+  <!-- Floor lamp, little side table, potted monstera. -->
+  <rect x="368" y="172" width="8" height="148" fill="#95705f"/>
+  <rect x="352" y="320" width="40" height="8" fill="#95705f"/>
+  <rect x="364" y="180" width="4" height="128" fill="#ddc0a0"/>
+  <path d="M348 136h48v8h4v16h4v16h-64v-16h4v-16h4z" fill="#c9a478"/>
+  <path d="M352 140h40v12h4v20h-48v-20h4z" fill="#ffe2a5"/>
+  <rect x="356" y="144" width="8" height="24" fill="#fff1c8"/>
+  <rect x="400" y="312" width="56" height="8" fill="#ab7b60"/>
+  <rect x="404" y="308" width="48" height="4" fill="#edc498"/>
+  <path d="M404 320h8v40h-8zM444 320h8v40h-8zM412 344h32v4h-32z" fill="#956a55"/>
+  <rect x="420" y="284" width="16" height="24" fill="#ded0b7"/>
+  <rect x="416" y="284" width="24" height="4" fill="#f7e6c7"/>
+  <rect x="424" y="264" width="4" height="20" fill="#6b8469"/>
+  <use href="#leaf" x="408" y="260"/><use href="#leaf" x="424" y="252"/>
+
+  <!-- Desk with old-school monitor, music screen, notebook and task light. -->
+  <rect x="480" y="272" width="200" height="12" fill="#a77860"/>
+  <rect x="476" y="264" width="208" height="8" fill="#e2b793"/>
+  <rect x="480" y="272" width="200" height="4" fill="#f0c9a3"/>
+  <rect x="488" y="284" width="12" height="84" fill="#9e705a"/>
+  <rect x="492" y="284" width="4" height="80" fill="#c99874"/>
+  <rect x="628" y="284" width="44" height="80" fill="#b18165"/>
+  <rect x="632" y="288" width="36" height="28" fill="#cb9c78"/>
+  <rect x="632" y="320" width="36" height="36" fill="#c19270"/>
+  <rect x="644" y="296" width="12" height="4" fill="#876650"/>
+  <rect x="644" y="332" width="12" height="4" fill="#876650"/>
+  <path d="M520 192h88v8h4v44h-4v4h-88v-4h-4v-44h4z" fill="#8b777a"/>
+  <rect x="524" y="196" width="80" height="44" fill="#e2cec0"/>
+  <rect x="528" y="200" width="72" height="36" fill="#8d9ba3"/>
+  <rect x="532" y="204" width="64" height="4" fill="#c2d2ce"/>
+  <rect x="532" y="212" width="24" height="20" fill="#dfb3b7"/>
+  <path d="M540 216h4v8h-4zM544 216h4v4h-4zM536 224h8v4h-8z" fill="#fff0d6"/>
+  <path d="M564 212h28v4h-28zM564 220h20v4h-20zM564 228h28v4h-28z" fill="#dce0cd"/>
+  <rect x="556" y="248" width="16" height="8" fill="#9d8785"/>
+  <rect x="544" y="256" width="40" height="4" fill="#c6ada0"/>
+  <rect x="512" y="260" width="88" height="4" fill="#f0dfc8"/>
+  <path d="M520 260h4v4h-4zM528 260h4v4h-4zM536 260h4v4h-4zM544 260h4v4h-4zM552 260h4v4h-4zM560 260h4v4h-4zM568 260h4v4h-4zM576 260h4v4h-4zM584 260h4v4h-4z" fill="#bb9c8a"/>
+  <rect x="608" y="252" width="12" height="8" fill="#dfcbbb"/>
+  <rect x="648" y="220" width="4" height="40" fill="#9c7969"/>
+  <rect x="636" y="256" width="28" height="8" fill="#ac8876"/>
+  <path d="M636 192h28v8h4v20h-36v-20h4z" fill="#baa278"/>
+  <path d="M640 196h20v8h4v12h-28v-12h4z" fill="#ffe5af"/>
+  <rect x="640" y="200" width="4" height="12" fill="#fff6d0"/>
+  <rect x="484" y="248" width="20" height="12" fill="#af8c96"/>
+  <path d="M480 244h28v4h-28zM488 240h16v4h-16z" fill="#f4e3ca"/>
+
+  <!-- Office chair and woven basket beside it. -->
+  <rect x="556" y="296" width="48" height="48" fill="#957c73"/>
+  <rect x="560" y="296" width="40" height="40" fill="#d2b2a1"/>
+  <rect x="564" y="300" width="32" height="4" fill="#ead0b7"/>
+  <rect x="552" y="336" width="56" height="12" fill="#a4897a"/>
+  <rect x="556" y="336" width="48" height="4" fill="#dec0a7"/>
+  <rect x="576" y="348" width="8" height="36" fill="#7f6d63"/>
+  <rect x="556" y="380" width="48" height="4" fill="#7f6d63"/>
+  <path d="M552 384h12v8h-12zM596 384h12v8h-12z" fill="#665b56"/>
+  <rect x="640" y="380" width="40" height="32" fill="#b79573"/>
+  <rect x="636" y="376" width="48" height="8" fill="#d9b58a"/>
+  <path d="M644 384h4v24h-4zM656 384h4v24h-4zM668 384h4v24h-4zM640 388h40v4h-40zM640 400h40v4h-40z" fill="#e2bd90"/>
+  <rect x="648" y="368" width="28" height="8" fill="#dbb4bc"/>
+
+  <!-- Layered tasseled carpet and low tea table. -->
+  <rect x="144" y="352" width="356" height="64" fill="#916956"/>
+  <path d="M152 340h336v8h12v56h-12v12H152v-8h-12v-56h12z" fill="#be8f83"/>
+  <rect x="156" y="348" width="328" height="60" fill="#f5dfba"/>
+  <rect x="164" y="356" width="312" height="44" fill="url(#rug)"/>
+  <path d="M152 348h-12v4h-12v4h24zM152 364h-12v4h-12v4h24zM152 384h-12v4h-12v4h24zM152 400h-12v4h-12v4h24zM488 348h12v4h12v4h-24zM488 364h12v4h12v4h-24zM488 384h12v4h12v4h-24zM488 400h12v4h12v4h-24z" fill="#ebc9a6"/>
+  <rect x="220" y="352" width="144" height="28" fill="#ac8167"/>
+  <path d="M224 352h12v40h-12zM344 352h12v40h-12z" fill="#906754"/>
+  <rect x="208" y="332" width="168" height="20" fill="#ab7b60"/>
+  <path d="M216 324h152v4h8v8H208v-8h8z" fill="#dfb089"/>
+  <rect x="220" y="328" width="144" height="4" fill="#f1c8a0"/>
+  <rect x="236" y="308" width="24" height="16" fill="#faf0cf"/>
+  <rect x="240" y="304" width="16" height="4" fill="#b99077"/>
+  <path d="M260 308h8v12h-8v-4h4v-4h-4z" fill="#f0dabb"/>
+  <path d="M244 288h4v4h-4zM248 280h4v8h-4zM244 276h4v4h-4z" fill="#edddd2"/>
+  <rect x="288" y="312" width="52" height="12" fill="#9c8e95"/>
+  <rect x="292" y="312" width="44" height="8" fill="#e7d9c0"/>
+  <rect x="312" y="312" width="4" height="8" fill="#c29b98"/>
+  <rect x="336" y="308" width="8" height="4" fill="#d2a192"/>
+
+  <!-- Curled-up cat, floor plant, and the last little room details. -->
+  <path d="M396 368h40v4h12v8h8v12h-60v-4h-8v-12h8z" fill="#b9987c"/>
+  <path d="M396 360h8v8h12v-8h8v20h-28z" fill="#e7c29b"/>
+  <rect x="424" y="372" width="24" height="16" fill="#e6bd91"/>
+  <path d="M400 372h4v4h-4zM412 372h4v4h-4zM404 380h8v4h-8z" fill="#8e6c5a"/>
+  <path d="M432 380h8v4h12v-4h4v8h-24z" fill="#a88367"/>
+  <path d="M36 348h36v8h-4v40H40v-40h-4z" fill="#b98072"/>
+  <rect x="40" y="352" width="8" height="36" fill="#dca28a"/>
+  <rect x="48" y="300" width="4" height="48" fill="#697f62"/>
+  <rect x="60" y="312" width="4" height="36" fill="#697f62"/>
+  <use href="#leaf" x="32" y="296"/><use href="#leaf" x="48" y="284"/>
+  <use href="#leaf" x="48" y="308"/><use href="#leaf" x="60" y="300"/>
+  <use href="#leaf" x="28" y="320"/><use href="#leaf" x="52" y="324"/>
+  <rect x="80" y="404" width="28" height="8" fill="#cda7a0"/>
+  <rect x="116" y="404" width="28" height="8" fill="#cda7a0"/>
+  <path d="M84 400h16v4H84zM120 400h16v4h-16z" fill="#eed2bf"/>
+  <rect x="80" y="412" width="28" height="4" fill="#aa827a"/>
+  <rect x="116" y="412" width="28" height="4" fill="#aa827a"/>
+</svg>

@@ -14,6 +14,7 @@ const MEDIA_UPLOADER = path.resolve(process.cwd(), 'tools', 'media-uploader', 'u
 const PICGO_CONFIG = path.join(os.homedir(), 'AppData', 'Roaming', 'picgo', 'data.json');
 const DEFAULT_TOKEN_ENV = 'NOTION_API_KEY';
 const REQUIRED_IMPORTER_FIELDS = ['title', 'description', 'category', 'published_at', 'file_name'];
+const VALID_CATEGORIES = new Set(['journal', 'notes']);
 const FETCH_ATTEMPTS = 4;
 const FETCH_RETRY_DELAYS_MS = [1_000, 2_000, 4_000];
 
@@ -66,7 +67,7 @@ Notion Importer
 用法：
   npm run import:notion -- --page "Notion 页面 URL 或 ID" \\
     --title "被牵着走" --description "端午回家、陪母亲骑行，以及在成长中愈发强烈的念家。" \\
-    --category dairy --published-at 2026-06-20 --file-name being-led \\
+    --category journal --published-at 2026-06-20 --file-name being-led \\
     --draft false --tags "忆" --type article
 
 Notion 参数：
@@ -81,7 +82,7 @@ Notion 参数：
 沿用 markdown-importer 的参数：
   --title               文档标题（必填）
   --description         文档卡片摘要（必填）
-  --category            分类目录（必填；不存在时自动创建）
+  --category            journal（日志）或 notes（技术与实用笔记），必填
   --published-at        发布日期 YYYY-MM-DD（必填）
   --file-name           Markdown 文件名（必填；可省略 .md）
   --draft               true 或 false，默认 false
@@ -98,6 +99,7 @@ Notion 参数：
 说明：
   --source 和 --content 由 --page 取代，其他文章参数会原样交给 markdown-importer。
   Token 不接受命令行明文参数，避免出现在 shell 历史和进程列表中。
+  新文章写入 journal/ 或 notes/；已有文件路径是永久 URL slug，不随分类改变。
 `;
 
 function normalizeKey(rawKey) {
@@ -492,6 +494,9 @@ async function main() {
   const missing = REQUIRED_IMPORTER_FIELDS.filter((field) => !importerOptions.get(field));
   if (missing.length) {
     throw new Error(`缺少必填参数：${missing.map((field) => `--${field.replaceAll('_', '-')}`).join(', ')}`);
+  }
+  if (!VALID_CATEGORIES.has(importerOptions.get('category'))) {
+    throw new Error(`category 必须是：${[...VALID_CATEGORIES].join(', ')}`);
   }
 
   const token = process.env[notion.tokenEnv];

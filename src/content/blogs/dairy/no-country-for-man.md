@@ -1,7 +1,7 @@
 ---
 title: "老无所依"
 description: "You can’t stop what’s coming."
-category: "dairy"
+category: "journal"
 publishedAt: 2026-08-03
 draft: false
 tags: ["影"]

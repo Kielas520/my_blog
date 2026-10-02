@@ -1,7 +1,7 @@
 # Kielasovo 使用文档
 
-Kielasovo 是一个基于 Astro SSG 的静态个人站点。主页采用克制的 Frutiger Aero
-风格，内容按照 Notion `INDEX` 的分类方式管理。
+Kielasovo 是一个基于 Astro SSG 的静态个人站点。界面采用暖粉奶油色的 QQ空间与原创
+像素小窝风格，文章只分「日志」与「技术笔记」，分别记录心境经历与技术、实用资料。
 
 ## 文档目录
 
@@ -52,3 +52,12 @@ git push origin main
 | Tools 页面 | `src/pages/tools/` |
 | 全局样式 | `src/styles/global.css` |
 | 域名和端口 | `astro.config.mjs`、`package.json` |
+
+## 空间皮肤与音乐
+
+- 首页场景：`public/images/pixel-room.svg`，原创像素小屋；头像仍由 `public/config.json` 配置。
+- `backgroundImage` 为空表示使用全局 CSS 平铺背景；填写图片地址可切换自定义背景。
+- 相册错落布局在 `astro:page-load` 时初始化，每次站内返回都会恢复随机排列和旋转；同一页面节点只初始化一次。
+- 音乐盒初版使用 `public/audio/window-music-box.wav` 的本地合成原创短曲，替换原有混合歌单。点击播放后可跨站内页面继续播放，不自动播放。
+- `/music` 保留两个 B站参考视频入口，第二个链接固定第 82 集。原视频 BGM 曲名未确认，未转载视频、插画或音轨。
+- 修改歌单仍编辑 `src/data/music.json`，每项为 `name` 和可播放的 `link`；正式替换音乐前确认使用权限。

@@ -1,7 +1,7 @@
 ---
 title: 软件开发规范与架构设计
 description: 从项目目标、数据链路到模块接口，整理一套软件开发与架构设计方法。
-category: ticktick
+category: notes
 publishedAt: 2026-07-18
 draft: false
 tags: [软件工程]

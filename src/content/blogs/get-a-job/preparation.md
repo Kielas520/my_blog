@@ -1,7 +1,7 @@
 ---
 title: 求职准备
 description: 从技术积累、方向判断到岗位定位，整理一套求职前的准备方法。
-category: get-a-job
+category: notes
 publishedAt: 2026-05-17
 draft: false
 tags: [经验]

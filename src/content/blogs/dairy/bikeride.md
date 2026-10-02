@@ -1,7 +1,7 @@
 ---
 title: "那个下午"
 description: "骑一次单车去散心"
-category: "dairy"
+category: "journal"
 publishedAt: 2026-06-18
 draft: false
 tags: ["忆"]

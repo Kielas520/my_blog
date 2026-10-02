@@ -20,12 +20,13 @@ const pictures = pictureData as string[];
   </section>
 </BaseLayout>
 
-<script is:inline>
-  (() => {
-    const stage = document.querySelector('#picture-stage');
-    if (!stage) return;
+<script>
+  const initializePictureLayout = () => {
+    const stage = document.querySelector<HTMLElement>('#picture-stage');
+    if (!stage || stage.dataset.layoutInitialized === 'true') return;
+    stage.dataset.layoutInitialized = 'true';
 
-    const shuffle = (values) => {
+    const shuffle = <T,>(values: T[]) => {
       for (let index = values.length - 1; index > 0; index -= 1) {
         const randomIndex = Math.floor(Math.random() * (index + 1));
         [values[index], values[randomIndex]] = [values[randomIndex], values[index]];
@@ -33,7 +34,7 @@ const pictures = pictureData as string[];
       return values;
     };
 
-    const photos = shuffle(Array.from(stage.querySelectorAll('[data-photo]')));
+    const photos = shuffle(Array.from(stage.querySelectorAll<HTMLElement>('[data-photo]')));
     const alignments = shuffle(['left', 'center', 'right']);
 
     photos.forEach((photo, index) => {
@@ -44,7 +45,10 @@ const pictures = pictureData as string[];
       photo.style.setProperty('--delay', `${Math.min(index * 70, 490)}ms`);
       stage.append(photo);
     });
-  })();
+  };
+
+  initializePictureLayout();
+  document.addEventListener('astro:page-load', initializePictureLayout);
 </script>
 
 <style>

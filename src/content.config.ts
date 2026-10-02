@@ -5,7 +5,7 @@ import { glob } from 'astro/loaders';
 const postSchema = z.object({
   title: z.string(),
   description: z.string(),
-  category: z.string().min(1),
+  category: z.enum(['journal', 'notes']),
   publishedAt: z.coerce.date(),
   updatedAt: z.coerce.date().optional(),
   draft: z.boolean().default(false),
@@ -16,6 +16,7 @@ const postSchema = z.object({
 });
 
 const blogs = defineCollection({
+  // Directory names are permanent URL slugs, not category values.
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blogs' }),
   schema: postSchema,
 });

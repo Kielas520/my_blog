@@ -35,7 +35,7 @@ Cloudflare Tunnel 均不参与线上服务。完整流程见 [`docs/deployment.m
 
 - 精选文章：`src/content/blogs/`
 - 文章模板：`src/content/blogs/_template.md`（`draft: true`，不会发布）
-- Blog 分类：`dairy`、`thoughts`、`ticktick`、`get-a-job`
+- Blog 分类：`journal`（日志）与 `notes`（技术笔记，含实用资料）；旧文章目录为永久地址，不随分类移动。
 - 工具页面：`src/pages/tools/`
 - 有趣链接：`src/data/intrest-links.json`
 - 图片墙：`src/data/picture.json`

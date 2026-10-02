@@ -15,34 +15,50 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props as { post: Post };
-const { Content } = await render(post);
-const titleLength = Array.from(post.data.title).length;
-const titleClass = titleLength >= 13 ? 'title-long' : titleLength >= 9 ? 'title-medium' : '';
-const categoryName = {
-  'dairy': 'dairy',
-  'thoughts': 'Thoughts',
-  'ticktick': 'TICKTICK',
-  'get-a-job': 'getAjob',
-}[post.data.category] ?? post.data.category;
+const { Content, headings } = await render(post);
+const outline = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+const categoryName = { journal: '日志', notes: '技术笔记' }[post.data.category];
+const backUrl = post.data.category === 'notes' ? '/blogs?category=notes' : '/blogs';
 ---
 
 <BaseLayout title={post.data.title} description={post.data.description}>
-  <article class="container article">
-    <a class="back" href="/blogs">← 返回文章</a>
+  <article class="container article" data-article-category={post.data.category}>
+    <a class="back" data-blog-back href={backUrl}>← 返回{categoryName}</a>
     <header>
       <p class="eyebrow">{categoryName}</p>
-      <h1 class={titleClass}>{post.data.title}</h1>
+      <h1>{post.data.title}</h1>
       <p class="description">{post.data.description}</p>
       <div class="meta">
-        <time datetime={post.data.publishedAt.toISOString()}>{post.data.publishedAt.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+        <time datetime={post.data.publishedAt.toISOString()}>{post.data.publishedAt.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}</time>
         <span>{post.data.tags.map((tag) => `#${tag}`).join('  ')}</span>
       </div>
     </header>
+    {outline.length > 0 && (
+      <details class="article-outline">
+        <summary>文章目录</summary>
+        <ol>
+          {outline.map((heading) => (
+            <li class:list={{ nested: heading.depth === 3 }}><a href={`#${heading.slug}`}>{heading.text}</a></li>
+          ))}
+        </ol>
+      </details>
+    )}
     <div class="prose" data-prose><Content /></div>
   </article>
 </BaseLayout>
 
 <script>
+  const updateBlogBackLink = () => {
+    const back = document.querySelector<HTMLAnchorElement>('[data-blog-back]');
+    if (!back) return;
+    const category = new URL(window.location.href).searchParams.get('category');
+    if (category !== 'journal' && category !== 'notes' && category !== 'all') return;
+    back.href = category === 'journal' ? '/blogs' : `/blogs?category=${category}`;
+    back.textContent = `← 返回${category === 'notes' ? '技术笔记' : category === 'all' ? '全部文章' : '日志'}`;
+  };
+  document.addEventListener('astro:page-load', updateBlogBackLink);
+  updateBlogBackLink();
+
   const appendNotionText = (fragment: DocumentFragment, nodes: Node[]) => {
     let paragraph = document.createElement('p');
 
@@ -240,34 +256,35 @@ const categoryName = {
 </script>
 
 <style>
-  .article { max-width: 900px; padding-top: 60px; }
+  .article { max-width: 900px; padding-top: 28px; }
   .back { color: var(--muted); font-size: .82rem; }
-  header { padding: 82px 0 44px; border-bottom: 1px solid var(--line); }
-  h1 { max-width: 100%; margin: 0; overflow-wrap: anywhere; color: #143f57; font-size: clamp(2.35rem, 6.4vw, 5rem); line-height: 1.05; letter-spacing: -.055em; text-wrap: balance; }
-  h1.title-medium { font-size: clamp(2.2rem, 5.6vw, 4.3rem); letter-spacing: -.045em; }
-  h1.title-long { font-size: clamp(2rem, 4.8vw, 3.65rem); letter-spacing: -.035em; }
-  .description { max-width: 680px; margin: 24px 0 0; color: #46697b; font-size: 1.08rem; line-height: 1.75; text-wrap: pretty; }
-  .meta { display: flex; justify-content: space-between; gap: 20px; margin-top: 36px; color: #6c726e; font: .7rem/1.5 ui-monospace, monospace; }
-  .prose { margin: 38px 0 64px; padding: clamp(26px, 5vw, 54px); color: #234c62; background: rgba(255,255,255,.64); border: 1px solid rgba(255,255,255,.92); border-radius: 22px; box-shadow: 0 16px 38px rgba(34,103,133,.1); font-family: system-ui, "Microsoft YaHei", "PingFang SC", sans-serif; font-size: clamp(1rem, 1.2vw, 1.08rem); line-height: 1.9; }
-  .prose :global(h2) { margin: 2.35em 0 .75em; color: #143f57; font-size: clamp(1.55rem, 3vw, 1.9rem); line-height: 1.3; letter-spacing: -.025em; text-wrap: balance; }
-  .prose :global(h3) { margin: 2em 0 .65em; color: #1b5069; font-size: clamp(1.25rem, 2.5vw, 1.48rem); line-height: 1.35; text-wrap: balance; }
-  .prose :global(h4) { margin: 1.8em 0 .55em; color: #225b73; font-size: 1.12rem; }
-  .prose :global(p), .prose :global(li) { color: #294f62; }
-  .prose :global(p) { margin: 1em 0; text-wrap: pretty; }
+  header { max-width: 740px; margin-inline: auto; padding: 24px 0; border-bottom: 1px solid var(--line); }
+  h1 { margin: 0; overflow-wrap: anywhere; color: var(--text); font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.45; }
+  .description { margin: 14px 0 0; color: var(--muted); font-size: .95rem; line-height: 1.8; }
+  .meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 20px; color: var(--muted); font: .75rem/1.5 ui-monospace, monospace; }
+  .article-outline { max-width: 740px; margin: 20px auto; padding: 14px 20px; border: 1px dashed var(--line); background: var(--surface); font-size: .85rem; }
+  .article-outline summary { cursor: pointer; color: var(--accent); }
+  .article-outline ol { padding-left: 20px; line-height: 1.9; }
+  .article-outline .nested { margin-left: 16px; }
+  .prose { max-width: 740px; margin: 26px auto 64px; padding: 28px 32px; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; box-shadow: 3px 3px 0 #e8cfd1; font-family: system-ui, "Microsoft YaHei", "PingFang SC", sans-serif; font-size: 17px; line-height: 1.9; overflow-wrap: anywhere; }
+  .prose :global(h2) { margin: 2em 0 .75em; color: var(--text); font-size: 1.35rem; line-height: 1.5; }
+  .prose :global(h3) { margin: 1.8em 0 .65em; color: var(--text); font-size: 1.15rem; line-height: 1.5; }
+  .prose :global(h4) { margin: 1.8em 0 .55em; color: var(--text); font-size: 1.05rem; }
+  .prose :global(p) { margin: 1em 0; }
   .prose :global(li) { margin: .38em 0; }
-  .prose :global(strong) { color: #143f57; }
-  .prose :global(a) { color: var(--accent); border-bottom: 1px solid rgba(184,243,90,.35); }
-  .prose :global(code) { padding: .15em .4em; color: var(--accent); background: var(--surface-raised); border-radius: 5px; font-size: .9em; }
-  .prose :global(pre) { overflow: auto; padding: 22px; background: #050606; border: 1px solid var(--line); border-radius: 12px; }
+  .prose :global(strong) { color: var(--text); }
+  .prose :global(a) { color: var(--accent); border-bottom: 1px solid var(--line); }
+  .prose :global(code) { padding: .15em .4em; color: var(--accent); background: var(--surface-raised); border-radius: 3px; font-size: .9em; }
+  .prose :global(pre) { overflow: auto; padding: 20px; background: #302831; border: 1px solid var(--line); border-radius: 4px; }
   .prose :global(pre code) { padding: 0; color: inherit; background: none; }
-  .prose :global(blockquote), .prose :global(aside) { display: block; margin: 2em 0; padding: 16px 20px; color: #355f73; background: rgba(214,243,252,.6); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; }
+  .prose :global(blockquote), .prose :global(aside) { display: block; margin: 2em 0; padding: 14px 18px; color: var(--text); background: #f8e8ec; border-left: 3px solid var(--accent); }
   .prose :global(img) { display: block; width: auto; max-width: 100%; max-height: min(72vh, 760px); margin: 2.2rem auto; object-fit: contain; border: 8px solid rgba(255,255,255,.9); border-radius: 14px; box-shadow: 0 14px 32px rgba(29,87,111,.18); }
   .prose :global(columns) { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: clamp(14px, 2.2vw, 26px); margin: clamp(2.4rem, 5vw, 4rem) 0; }
   .prose :global(column) { display: block; min-width: 0; }
   .prose :global(empty-block) { display: none; }
   .prose :global(.image-gallery) { display: flex; flex-direction: column; gap: clamp(14px, 2.2vw, 26px); margin: clamp(2.4rem, 5vw, 4rem) 0; }
   .prose :global(.gallery-row) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 2.2vw, 26px); align-items: stretch; }
-  .prose :global(.gallery-row p) { display: flex; min-width: 0; min-height: clamp(280px, 30vw, 440px); margin: 0; padding: clamp(14px, 2vw, 22px); background: linear-gradient(145deg, rgba(255,255,255,.76), rgba(238,250,253,.58)); border: 1px solid rgba(255,255,255,.96); border-radius: 18px; box-shadow: 0 13px 28px rgba(29,87,111,.11), inset 0 0 0 1px rgba(190,231,240,.18); align-items: center; justify-content: center; }
+  .prose :global(.gallery-row p) { display: flex; min-width: 0; min-height: clamp(220px, 30vw, 400px); margin: 0; padding: 14px; background: #fff9f1; border: 1px solid var(--line); border-radius: 3px; box-shadow: 2px 2px 0 #e8cfd1; align-items: center; justify-content: center; }
   .prose :global(.image-gallery img) { width: auto; height: auto; max-width: 100%; max-height: min(62vh, 520px); margin: auto; border: 0; border-radius: 10px; box-shadow: 0 8px 18px rgba(29,87,111,.1); object-fit: contain; }
   .prose :global(.gallery-mosaic) { grid-template-rows: repeat(2, minmax(0, 1fr)); }
   .prose :global(.gallery-mosaic > p.gallery-feature) { grid-row: 1 / 3; }
@@ -282,6 +299,15 @@ const categoryName = {
   .prose :global(hr) { height: 1px; margin: 2.6rem 0; background: var(--line); border: 0; }
   .prose :global(table) { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
   .prose :global(th), .prose :global(td) { padding: 10px 12px; border: 1px solid var(--line); text-align: left; }
-  .prose :global(th) { color: #173f56; background: rgba(207,239,250,.65); }
-  @media (max-width: 580px) { header { padding-top: 58px; } .meta { flex-direction: column; } .prose { padding: 24px 20px; border-radius: 17px; } .prose :global(img) { max-height: 68vh; border-width: 5px; } .prose :global(columns), .prose :global(.image-gallery), .prose :global(.gallery-row), .prose :global(.gallery-stack) { grid-template-columns: 1fr !important; grid-template-rows: none; gap: 14px; margin: 2.4rem 0; } .prose :global(.gallery-row p), .prose :global(.gallery-stack p), .prose :global(.gallery-wide p), .prose :global(.gallery-solo p), .prose :global(.gallery-mosaic > p.gallery-feature) { grid-row: auto; grid-column: auto; min-height: 250px; padding: 14px; border-radius: 15px; } .prose :global(.image-gallery img), .prose :global(.gallery-wide img), .prose :global(.gallery-solo img) { max-width: 100%; max-height: 68vh; } }
+  .prose :global(th) { color: var(--text); background: #f8e8ec; }
+  @media (max-width: 580px) {
+    .meta { flex-direction: column; }
+    .prose { padding: 20px 16px; font-size: 16px; }
+    .prose :global(img) { max-height: 68vh; border-width: 5px; }
+    .prose :global(columns), .prose :global(.gallery-row), .prose :global(.gallery-stack) { grid-template-columns: 1fr !important; grid-template-rows: none; }
+    .prose :global(columns), .prose :global(.image-gallery) { margin: 2rem 0; }
+    .prose :global(.gallery-row), .prose :global(.gallery-stack) { gap: 14px; }
+    .prose :global(.gallery-row p), .prose :global(.gallery-stack p), .prose :global(.gallery-wide p), .prose :global(.gallery-solo p), .prose :global(.gallery-mosaic > p.gallery-feature) { grid-row: auto; grid-column: auto; min-height: 220px; padding: 12px; }
+    .prose :global(.image-gallery img), .prose :global(.gallery-wide img), .prose :global(.gallery-solo img) { max-width: 100%; max-height: 68vh; }
+  }
 </style>

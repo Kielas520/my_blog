@@ -1,7 +1,6 @@
 ---
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-import AmbientBubbles from '../components/AmbientBubbles.astro';
 import FloatingMusic from '../components/FloatingMusic.astro';
 import { ClientRouter } from 'astro:transitions';
 import { siteConfig } from '../config/site';
@@ -19,7 +18,8 @@ const {
 const isHome = Astro.url.pathname === '/';
 const pageTitle = title === siteConfig.siteName ? title : `${title} — ${siteConfig.siteName}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const initialStyle = `--site-background-image: url(${JSON.stringify(siteConfig.backgroundImage)}); --site-cursor: url(${JSON.stringify(siteConfig.cursor)}) 4 2, auto;`;
+const backgroundImage = siteConfig.backgroundImage ? `url(${JSON.stringify(siteConfig.backgroundImage)})` : 'none';
+const initialStyle = `--site-background-image: ${backgroundImage}; --site-cursor: url(${JSON.stringify(siteConfig.cursor)}) 4 2, auto;`;
 ---
 
 <!doctype html>
@@ -28,7 +28,7 @@ const initialStyle = `--site-background-image: url(${JSON.stringify(siteConfig.b
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#dff5ff" />
+    <meta name="theme-color" content="#f6e8df" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -39,8 +39,6 @@ const initialStyle = `--site-background-image: url(${JSON.stringify(siteConfig.b
     <title>{pageTitle}</title>
   </head>
   <body>
-    <AmbientBubbles />
-    <div class="edge-glass" aria-hidden="true"></div>
     <header><Nav /></header>
     <main><slot /></main>
     <Footer />
@@ -61,7 +59,9 @@ const initialStyle = `--site-background-image: url(${JSON.stringify(siteConfig.b
             if (config.avatar) {
               document.querySelectorAll('[data-site-avatar]').forEach((image) => image.setAttribute('src', config.avatar));
             }
-            if (config.backgroundImage) root.style.setProperty('--site-background-image', safeCssUrl(config.backgroundImage));
+            if (typeof config.backgroundImage === 'string') {
+              root.style.setProperty('--site-background-image', config.backgroundImage ? safeCssUrl(config.backgroundImage) : 'none');
+            }
             if (config.cursor) root.style.setProperty('--site-cursor', `${safeCssUrl(config.cursor)} 4 2, auto`);
             document.querySelectorAll('[data-site-name]').forEach((node) => { node.textContent = siteName; });
           })

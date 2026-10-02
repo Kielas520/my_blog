@@ -8,19 +8,22 @@ interface Track {
 
 const tracks = musicData as Track[];
 const firstTrack = tracks[0];
+const readingArticle = Astro.url.pathname.startsWith('/blogs/') && Astro.url.pathname !== '/blogs/';
 ---
 
 {firstTrack && (
   <aside
-    class="floating-music"
+    class:list={['floating-music', { collapsed: readingArticle, reading: readingArticle }]}
     data-floating-music
     data-playlist={JSON.stringify(tracks)}
     transition:persist="site-music-player"
   >
     <audio data-floating-audio src={firstTrack.link} preload="metadata"></audio>
-    <div class="music-controls">
+    <button type="button" class="music-fold" data-music-fold aria-expanded={readingArticle ? 'false' : 'true'} aria-controls="space-music-controls" aria-label={readingArticle ? '展开音乐盒' : '收起音乐盒'}>{readingArticle ? '♫' : '−'}</button>
+    <a class="music-caption" href="/music">♫ 空间音乐盒 · 选曲</a>
+    <div class="music-controls" id="space-music-controls">
       <span class="track-name" data-floating-track-name>{firstTrack.name}</span>
-      <button type="button" class="skip" data-music-previous aria-label="上一首" title="上一首">‹</button>
+      {tracks.length > 1 && <button type="button" class="skip" data-music-previous aria-label="上一首" title="上一首">‹</button>}
       <button
         type="button"
         class="music-ball"
@@ -32,7 +35,7 @@ const firstTrack = tracks[0];
         <span class="disc" aria-hidden="true"><i></i></span>
         <span class="state-icon" data-state-icon aria-hidden="true">▶</span>
       </button>
-      <button type="button" class="skip" data-music-next aria-label="下一首" title="下一首">›</button>
+      {tracks.length > 1 && <button type="button" class="skip" data-music-next aria-label="下一首" title="下一首">›</button>}
     </div>
   </aside>
 )}
@@ -40,10 +43,30 @@ const firstTrack = tracks[0];
 <script>
   interface SiteTrack { name: string; link: string }
 
+  const syncMusicFold = () => {
+    const root = document.querySelector<HTMLElement>('[data-floating-music]');
+    const fold = root?.querySelector<HTMLButtonElement>('[data-music-fold]');
+    if (!root || !fold) return;
+    const path = window.location.pathname.replace(/\/$/, '');
+    const collapsed = path.startsWith('/blogs/');
+    root.classList.toggle('collapsed', collapsed);
+    root.classList.toggle('reading', collapsed);
+    fold.setAttribute('aria-expanded', String(!collapsed));
+    fold.setAttribute('aria-label', collapsed ? '展开音乐盒' : '收起音乐盒');
+    fold.textContent = collapsed ? '♫' : '−';
+  };
+
   const initializeMusicPlayer = () => {
     const root = document.querySelector<HTMLElement>('[data-floating-music]');
     if (!root || root.dataset.musicInitialized === 'true') return;
     root.dataset.musicInitialized = 'true';
+    const fold = root.querySelector<HTMLButtonElement>('[data-music-fold]');
+    fold?.addEventListener('click', () => {
+      const collapsed = root.classList.toggle('collapsed');
+      fold.setAttribute('aria-expanded', String(!collapsed));
+      fold.setAttribute('aria-label', collapsed ? '展开音乐盒' : '收起音乐盒');
+      fold.textContent = collapsed ? '♫' : '−';
+    });
 
     const audio = root?.querySelector<HTMLAudioElement>('[data-floating-audio]');
     const toggle = root?.querySelector<HTMLButtonElement>('[data-music-toggle]');
@@ -107,19 +130,27 @@ const firstTrack = tracks[0];
   };
 
   initializeMusicPlayer();
-  document.addEventListener('astro:page-load', initializeMusicPlayer);
+  syncMusicFold();
+  document.addEventListener('astro:page-load', () => {
+    initializeMusicPlayer();
+    syncMusicFold();
+  });
 </script>
 
 <style>
-  .floating-music { position: fixed; right: clamp(16px, 3vw, 34px); bottom: clamp(18px, 3vw, 34px); z-index: 50; filter: drop-shadow(0 10px 18px rgba(28,82,105,.24)); animation: music-arrive 520ms cubic-bezier(.2,.8,.2,1) both; }
-  .music-controls { display: flex; align-items: center; padding: 5px; background: rgba(245,253,255,.9); border: 1px solid rgba(255,255,255,.95); border-radius: 38px; backdrop-filter: blur(12px); }
-  .track-name { max-width: 0; overflow: hidden; color: #24586d; opacity: 0; white-space: nowrap; font: 700 .65rem/1.2 system-ui,sans-serif; transition: max-width 220ms ease, padding 220ms ease, opacity 160ms ease; }
-  .floating-music:hover .track-name, .floating-music:focus-within .track-name { max-width: min(220px,45vw); padding: 0 10px; opacity: 1; }
+  .floating-music { position: fixed; right: 18px; bottom: 18px; z-index: 50; width: min(300px, calc(100vw - 36px)); padding: 7px; color: #674b59; background: #fff9ed; border: 1px solid #bf8d9f; border-radius: 5px; box-shadow: 3px 3px 0 #d9b8be; }
+  .music-caption { display: block; padding: 3px 30px 6px 6px; border-bottom: 1px dashed #dbb8c6; font-size: 11px; color: #a34e71; }
+  .music-fold { position: absolute; right: 8px; top: 7px; width: 25px; height: 25px; padding: 0; color: #a34e71; background: #f7dfe8; border: 1px solid #c895ab; border-radius: 3px; font: 16px/1 Tahoma, sans-serif; }
+  .floating-music.collapsed { width: 44px; height: 44px; padding: 0; }
+  .collapsed .music-caption, .collapsed .music-controls { display: none; }
+  .collapsed .music-fold { inset: 0; width: 100%; height: 100%; border: 0; background: transparent; font-size: 22px; }
+  .music-controls { display: flex; align-items: center; gap: 4px; padding-top: 5px; }
+  .track-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: #674b59; white-space: nowrap; font: 11px/1.5 Tahoma, sans-serif; }
   button { cursor: pointer; }
-  .skip { width: 30px; height: 38px; padding: 0; color: #32677b; background: transparent; border: 0; border-radius: 15px; font: 400 1.45rem/1 system-ui,sans-serif; }
-  .skip:hover { background: rgba(199,235,244,.65); }
-  .music-ball { position: relative; display: grid; width: 54px; height: 54px; flex: 0 0 auto; padding: 0; overflow: hidden; color: #fff; background: #effafd; border: 2px solid #fff; border-radius: 50%; place-items: center; }
-  button:focus-visible { outline: 3px solid rgba(39,125,159,.58); outline-offset: 2px; }
+  .skip { width: 24px; height: 30px; padding: 0; color: #a34e71; background: linear-gradient(#fff,#f6dce6); border: 1px solid #d2a2b5; border-radius: 3px; font: 400 1.3rem/1 system-ui,sans-serif; }
+  .skip:hover { background: #f5cfdf; }
+  .music-ball { position: relative; display: grid; width: 36px; height: 36px; flex: 0 0 auto; padding: 0; overflow: hidden; color: #fff; background: #fff6eb; border: 1px solid #c895ab; border-radius: 50%; place-items: center; }
+  button:focus-visible { outline: 2px solid #a34e71; outline-offset: 3px; }
   .disc { position: absolute; inset: 4px; display: grid; background: repeating-radial-gradient(circle,#244e60 0 2px,#123442 3px 6px,#2c6273 7px 8px); border-radius: 50%; place-items: center; animation: music-spin 8s linear infinite paused; }
   .disc i { width: 34%; aspect-ratio: 1; background: radial-gradient(circle,#f5fbfc 0 14%,#70b9cf 15% 45%,#f3dc7f 46%); border-radius: 50%; }
   .state-icon { position: relative; z-index: 1; display: grid; width: 23px; height: 23px; padding-left: 2px; color: #fff; background: rgba(17,55,70,.68); border-radius: 50%; place-items: center; font: 700 10px/1 system-ui,sans-serif; transition: opacity 160ms ease; }
@@ -127,7 +158,9 @@ const firstTrack = tracks[0];
   .playing .state-icon { opacity: 0; }
   .music-ball:hover .state-icon, .music-ball:focus-visible .state-icon { opacity: 1; }
   @keyframes music-spin { to { transform: rotate(360deg); } }
-  @keyframes music-arrive { from { opacity: 0; transform: translateY(18px) scale(.84); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .floating-music { animation: none; } .disc { animation: none; } }
-  @media (max-width: 580px) { .music-ball { width: 48px; height: 48px; } .skip { width: 27px; } }
+  @media (max-width: 580px) {
+    .floating-music { right: 10px; bottom: 10px; width: 270px; }
+    .floating-music.reading { position: relative; right: auto; bottom: auto; margin: 0 12px 20px auto; }
+  }
 </style>
