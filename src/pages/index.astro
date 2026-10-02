@@ -2,6 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FunWords from '../components/FunWords.astro';
 import { siteConfig } from '../config/site';
+import roomScenes from '../data/room-scenes.json';
+
+const firstScene = roomScenes[0];
 
 const portals = [
   { href: '/blogs', label: '我的日志', note: '把想说的话，慢慢写下来。', icon: '文', detail: '心境与经历' },
@@ -70,16 +73,16 @@ const portals = [
       </aside>
 
       <div class="space-main">
-        <section class="space-panel room-panel" aria-labelledby="room-title">
+        <section class="space-panel room-panel" aria-labelledby="room-title" data-room-scenes={JSON.stringify(roomScenes)} data-room-id={firstScene.id}>
           <div class="panel-heading room-heading">
             <h2 id="room-title"><span aria-hidden="true">☆</span> 我的像素小窝</h2>
-            <span class="room-weather">窗外：雪 / 屋内：暖</span>
+            <span class="room-weather" data-room-weather>{firstScene.weather}</span>
           </div>
           <figure class="room-figure">
             <div class="room-image-wrap">
-              <img src="/images/pixel-room.svg" width="720" height="448" alt="原创像素小房间：窗外是雪松和飘雪，屋里有粉色沙发、木地板、铺着地毯的茶几、书桌、绿植和暖黄色星星灯。" fetchpriority="high" />
+              <img data-room-image src={firstScene.src} width="720" height="448" alt={firstScene.alt} fetchpriority="high" />
             </div>
-            <figcaption><span><span aria-hidden="true">✦</span> 给自己留一盏灯，也给生活留一点温柔。</span><span class="room-caption-tag">原创像素场景</span></figcaption>
+            <figcaption><span><span aria-hidden="true">✦</span> <span data-room-caption>{firstScene.caption}</span></span><span class="room-caption-tag" data-room-name>{firstScene.name}</span></figcaption>
           </figure>
         </section>
 
@@ -105,6 +108,43 @@ const portals = [
     <p class="home-signoff"><span aria-hidden="true">✦</span> 小小空间，认真收藏。 <span aria-hidden="true">✦</span></p>
   </div>
 </BaseLayout>
+
+<script>
+  interface RoomScene { id: string; src: string; name: string; weather: string; caption: string; alt: string }
+
+  const chooseRoom = async () => {
+    const room = document.querySelector<HTMLElement>('[data-room-scenes]');
+    if (!room || room.dataset.roomInitialized === 'true') return;
+    room.dataset.roomInitialized = 'true';
+    const image = room.querySelector<HTMLImageElement>('[data-room-image]');
+    if (!image) return;
+    const scenes: RoomScene[] = JSON.parse(room.dataset.roomScenes || '[]');
+    let previous: string | null = null;
+    try { previous = sessionStorage.getItem('last-room-scene'); } catch {}
+    const alternatives = scenes.filter((scene) => scene.id !== previous);
+    const choices = alternatives.length > 0 ? alternatives : scenes;
+    if (choices.length === 0) return;
+    const scene = choices[Math.floor(Math.random() * choices.length)];
+    const preview = new Image();
+    preview.src = scene.src;
+    try { await preview.decode(); } catch { return; }
+    if (!room.isConnected) return;
+    image.src = scene.src;
+    image.alt = scene.alt;
+    room.dataset.roomId = scene.id;
+    const weather = room.querySelector<HTMLElement>('[data-room-weather]');
+    const caption = room.querySelector<HTMLElement>('[data-room-caption]');
+    const name = room.querySelector<HTMLElement>('[data-room-name]');
+    if (weather) weather.textContent = scene.weather;
+    if (caption) caption.textContent = scene.caption;
+    if (name) name.textContent = scene.name;
+    try { sessionStorage.setItem('last-room-scene', scene.id); } catch {}
+    room.dataset.roomReady = 'true';
+  };
+
+  chooseRoom();
+  document.addEventListener('astro:page-load', chooseRoom);
+</script>
 
 <style>
   .home { padding-top: 22px; padding-bottom: 12px; }

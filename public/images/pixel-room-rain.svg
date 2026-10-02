@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="448" viewBox="0 0 720 448" shape-rendering="crispEdges" role="img" aria-labelledby="title description">
+  <title id="title">雨声里的奶油粉像素书房</title>
+  <desc id="description">原创像素小屋。蓝紫色雨云笼罩窗外的屋顶与树木，玻璃上挂满雨痕。暖灯照着书桌和打开的书，满满的木书架旁有披着格子毛毯的阅读椅、热茶，以及窝在地毯上的小猫。</desc>
+  <defs>
+    <pattern id="wall" width="40" height="32" patternUnits="userSpaceOnUse">
+      <rect width="40" height="32" fill="#e6cbc4"/>
+      <path d="M0 0h4v32H0zM20 12h4v4h-4zM16 16h4v4h-4zM24 16h4v4h-4z" fill="#dcbab6"/>
+      <rect x="20" y="20" width="4" height="4" fill="#f4ded0"/>
+    </pattern>
+    <pattern id="boards" width="144" height="40" patternUnits="userSpaceOnUse">
+      <rect width="144" height="40" fill="#c49b7f"/>
+      <path d="M0 0h144v4H0zM0 20h144v4H0zM48 0h4v20h-4zM112 20h4v20h-4z" fill="#a47d68"/>
+      <path d="M8 8h28v4H8zM64 12h56v4H64zM12 28h72v4H12zM120 28h16v4h-16z" fill="#d5af90"/>
+    </pattern>
+    <pattern id="rain" width="44" height="52" patternUnits="userSpaceOnUse">
+      <path d="M8 0h4v16H8zM4 16h4v8H4zM28 24h4v16h-4zM24 40h4v8h-4z" fill="#bbc3d7"/>
+      <path d="M12 0h4v12h-4zM32 24h4v12h-4z" fill="#939ebc"/>
+      <path d="M8 16h4v4H8zM28 40h4v4h-4z" fill="#e1dfdf"/>
+    </pattern>
+    <pattern id="rug" width="32" height="24" patternUnits="userSpaceOnUse">
+      <rect width="32" height="24" fill="#a8a7b4"/>
+      <path d="M4 8h8V4h8v4h8v8h-8v4h-8v-4H4z" fill="#d4c9cd"/>
+      <rect x="12" y="8" width="8" height="8" fill="#bdb4bf"/>
+    </pattern>
+    <pattern id="knit" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="#dfc8ad"/>
+      <path d="M0 4h20v4H0zM4 0h4v20H4z" fill="#bf9599"/>
+      <path d="M0 12h20v4H0zM12 0h4v20h-4z" fill="#f3dfbf"/>
+    </pattern>
+    <g id="book">
+      <rect width="12" height="36" fill="#af8292"/>
+      <rect x="4" y="4" width="4" height="28" fill="#cba1aa"/>
+      <path d="M0 8h12v4H0zM0 28h12v4H0z" fill="#ead5b8"/>
+    </g>
+    <g id="sage-book">
+      <rect width="16" height="40" fill="#81978e"/>
+      <rect x="4" y="4" width="4" height="32" fill="#a7b6a1"/>
+      <path d="M0 8h16v4H0zM0 32h16v4H0z" fill="#e0d6b7"/>
+    </g>
+    <g id="leaf">
+      <path d="M0 4h4V0h12v4h4v8h-4v4H8v-4H4V8H0z" fill="#849477"/>
+      <path d="M4 4h8v4h4v4h-4V8H8v4H4z" fill="#b2b697"/>
+    </g>
+  </defs>
+  <!-- Paneled room, substantial skirting and staggered timber boards. -->
+  <rect width="720" height="448" fill="#a47b70"/>
+  <rect x="12" y="12" width="696" height="276" fill="url(#wall)"/>
+  <rect x="12" y="288" width="696" height="148" fill="url(#boards)"/>
+  <path d="M12 260h696v8H12zM12 284h696v8H12z" fill="#aa8170"/>
+  <rect x="12" y="268" width="696" height="16" fill="#ebd1b9"/>
+  <path d="M12 272h696v4H12zM12 12h696v4H12zM12 16h4v420h-4z" fill="#f7e3ce"/>
+  <path d="M24 20h672v4H24zM24 24h4v232h-4zM692 24h4v232h-4z" fill="#d4afa9"/>
+  <!-- Tall recessed bookcase with mixed bindings, keepsakes and a clock. -->
+  <rect x="36" y="48" width="176" height="240" fill="#9a7360"/>
+  <rect x="44" y="56" width="160" height="224" fill="#b38d75"/>
+  <rect x="52" y="60" width="144" height="212" fill="#866c62"/>
+  <path d="M44 104h160v8H44zM44 160h160v8H44zM44 216h160v8H44zM44 272h160v8H44z" fill="#d4ac88"/>
+  <path d="M44 112h160v4H44zM44 168h160v4H44zM44 224h160v4H44z" fill="#6e5954"/>
+  <path d="M40 52h4v224h-4zM200 56h4v220h-4zM48 104h152v4H48zM48 160h152v4H48zM48 216h152v4H48z" fill="#ebc6a0"/>
+  <use href="#book" x="56" y="68"/><use href="#book" x="72" y="68"/>
+  <use href="#sage-book" x="88" y="64"/>
+  <rect x="108" y="76" width="12" height="28" fill="#c6a77c"/>
+  <path d="M112 80h4v16h-4zM108 96h12v4h-12z" fill="#f2d9ad"/>
+  <path d="M128 76h8v-8h32v8h8v24h-48z" fill="#c9a48d"/>
+  <rect x="136" y="72" width="32" height="28" fill="#f2dfbe"/>
+  <path d="M148 76h4v12h12v4h-16z" fill="#92746a"/>
+  <rect x="148" y="84" width="4" height="4" fill="#c48f96"/>
+  <rect x="56" y="140" width="40" height="20" fill="#c1a28a"/>
+  <rect x="60" y="144" width="32" height="12" fill="#e7ccb2"/>
+  <rect x="68" y="148" width="12" height="4" fill="#ad8680"/>
+  <use href="#book" x="104" y="124"/><use href="#sage-book" x="120" y="120"/>
+  <rect x="144" y="128" width="16" height="32" fill="#b8a1b4"/>
+  <path d="M148 132h4v24h-4zM144 144h16v4h-16z" fill="#e1cbd3"/>
+  <path d="M164 128h12v8h4v24h-12v-24h-4z" fill="#d9b18b"/>
+  <path d="M56 204h56v12H56zM60 192h48v12H60zM56 184h52v8H56z" fill="#ab8d98"/>
+  <path d="M60 208h48v4H60zM64 196h40v4H64zM60 184h44v4H60z" fill="#efe0c7"/>
+  <use href="#sage-book" x="124" y="176"/><use href="#book" x="144" y="180"/>
+  <rect x="168" y="192" width="20" height="24" fill="#c68f85"/>
+  <rect x="164" y="188" width="28" height="8" fill="#e0aea0"/>
+  <rect x="176" y="168" width="4" height="20" fill="#7c8a70"/>
+  <use href="#leaf" x="156" y="160"/><use href="#leaf" x="176" y="156"/>
+  <rect x="56" y="240" width="60" height="32" fill="#c6aa86"/>
+  <path d="M60 248h52v4H60zM60 260h52v4H60zM64 240h4v32h-4zM80 240h4v32h-4zM96 240h4v32h-4z" fill="#e4c79d"/>
+  <rect x="72" y="240" width="20" height="8" fill="#a48171"/>
+  <use href="#book" x="128" y="236"/><use href="#book" x="144" y="236"/>
+  <use href="#sage-book" x="160" y="232"/>
+  <!-- Wide rainy window: distant town, rain-dark garden, then wet glass. -->
+  <rect x="284" y="44" width="352" height="196" fill="#a3837a"/>
+  <rect x="288" y="40" width="344" height="196" fill="#f0dcc4"/>
+  <rect x="296" y="48" width="328" height="172" fill="#8e96b2"/>
+  <path d="M296 60h36v-8h48v8h44v8h-32v8h-72v-8h-24zM460 56h48v-8h72v8h44v20h-36v8h-92v-8h-36z" fill="#7d859f"/>
+  <path d="M296 100h64v-8h68v8h52v8h64v-8h80v36H296z" fill="#a3a7be"/>
+  <path d="M312 172v-32h8v-8h8v-8h8v-8h12v8h8v8h8v8h8v32zM392 164v-32h8v-8h48v8h8v32zM504 168v-24h8v-8h8v-8h8v-8h16v8h8v8h8v8h8v24z" fill="#73758e"/>
+  <rect x="320" y="148" width="44" height="32" fill="#b9a4ad"/>
+  <path d="M328 156h8v12h-8zM348 156h8v12h-8zM404 140h12v12h-12zM428 140h12v12h-12zM528 148h12v16h-12z" fill="#e4cdb6"/>
+  <path d="M296 192h20v-12h28v8h40v-8h40v-8h36v8h40v-8h48v12h40v-8h36v44H296z" fill="#7b8f8d"/>
+  <path d="M580 184v-64h8v-16h8v16h8v64zM556 152h24v-8h16v8h20v16h-20v8h-16v-8h-24z" fill="#667f83"/>
+  <path d="M296 204h64v4h-64zM388 196h60v4h-60zM468 212h80v4h-80zM568 196h56v4h-56z" fill="#b7b9bc"/>
+  <rect x="296" y="48" width="328" height="172" fill="url(#rain)"/>
+  <path d="M316 80h4v44h-4v12h-4v12h-4v-16h4v-12h4zM492 64h4v48h-4v20h-4v8h-4v-16h4v-16h4zM600 108h4v48h-4v20h-4v12h-4v-16h4v-20h4z" fill="#d6d4de"/>
+  <path d="M312 76h8v4h-8zM488 60h8v4h-8zM596 104h8v4h-8zM364 180h4v8h-4zM548 88h4v12h-4z" fill="#ede6e5"/>
+  <path d="M400 48h8v172h-8zM512 48h8v172h-8zM296 124h328v8H296z" fill="#eddbc7"/>
+  <path d="M408 48h4v172h-4zM520 48h4v172h-4zM296 132h328v4H296z" fill="#b29e96"/>
+  <rect x="288" y="220" width="344" height="8" fill="#fff0d5"/>
+  <rect x="276" y="228" width="368" height="8" fill="#c49c86"/>
+  <rect x="276" y="228" width="368" height="4" fill="#f4dcc0"/>
+  <!-- Loose linen panels with stepped gathered edges. -->
+  <rect x="268" y="28" width="392" height="4" fill="#99776b"/>
+  <path d="M276 32h40v48h-8v52h-8v64h-24zM620 32h32v164h-20v-64h-8V80h-4z" fill="#bea5b4"/>
+  <path d="M280 36h8v148h-8zM296 36h8v76h-8zM624 36h8v80h-8zM640 36h8v148h-8z" fill="#dcc3cd"/>
+  <path d="M276 160h24v8h-24zM632 160h20v8h-20z" fill="#e6c69f"/>
+  <!-- A small botanical picture between window and books. -->
+  <rect x="228" y="76" width="36" height="60" fill="#ad8371"/>
+  <rect x="232" y="80" width="28" height="52" fill="#f4e2cc"/>
+  <path d="M244 92h4v28h-4zM236 96h8v8h-8zM248 108h8v8h-8z" fill="#92a08b"/>
+  <rect x="240" y="120" width="12" height="4" fill="#c19592"/>
+  <!-- Warm reading chair with seams, pillow, and a draped knitted blanket. -->
+  <rect x="44" y="332" width="160" height="16" fill="#8f6c60"/>
+  <path d="M56 344h12v20H56zM184 344h12v20h-12z" fill="#775b53"/>
+  <path d="M60 228h124v8h12v92H48v-92h12z" fill="#a77e90"/>
+  <rect x="64" y="236" width="112" height="68" fill="#cda4ae"/>
+  <path d="M68 240h104v4H68zM68 244h4v52h-4zM116 248h4v44h-4z" fill="#e4bec2"/>
+  <rect x="60" y="304" width="124" height="28" fill="#bb8f9f"/>
+  <rect x="64" y="304" width="116" height="8" fill="#deb4ba"/>
+  <path d="M40 280h28v56H40zM180 280h28v56h-28z" fill="#b3889a"/>
+  <path d="M44 280h20v8H44zM184 280h20v8h-20zM44 288h4v40h-4z" fill="#dfb8bf"/>
+  <path d="M88 260h44v4h4v28h-4v4H88v-4h-4v-28h4z" fill="#f0dabb"/>
+  <path d="M92 264h36v4H92zM92 268h4v20h-4zM108 272h8v8h-8z" fill="#fff0cf"/>
+  <path d="M148 272h28v36h12v44h-40z" fill="url(#knit)"/>
+  <path d="M148 352h4v8h-4zM160 352h4v8h-4zM172 352h4v8h-4zM184 352h4v8h-4z" fill="#e8cfb3"/>
+  <!-- Tea stool next to the chair, with a warm steaming mug. -->
+  <rect x="224" y="308" width="60" height="8" fill="#d8b18e"/>
+  <rect x="220" y="316" width="68" height="8" fill="#a78066"/>
+  <path d="M228 324h8v40h-8zM272 324h8v40h-8zM236 348h36v4h-36z" fill="#97735f"/>
+  <rect x="240" y="284" width="24" height="24" fill="#f0e0c8"/>
+  <rect x="240" y="284" width="24" height="4" fill="#b28b71"/>
+  <path d="M264 288h12v16h-12v-4h8v-8h-8z" fill="#e4c7b0"/>
+  <rect x="244" y="288" width="4" height="16" fill="#fff1d8"/>
+  <path d="M248 276h4v-8h4v-12h-4v-8h4v8h4v12h-4v8h-4v4h-4z" fill="#f4e2d1"/>
+  <!-- Desk placed beneath the rainy window; warm task lamp at its corner. -->
+  <rect x="328" y="280" width="336" height="12" fill="#a37c62"/>
+  <rect x="320" y="272" width="352" height="8" fill="#dfb795"/>
+  <rect x="328" y="280" width="332" height="4" fill="#f0cdaa"/>
+  <rect x="336" y="292" width="12" height="88" fill="#a17961"/>
+  <rect x="340" y="296" width="4" height="80" fill="#d3a786"/>
+  <rect x="596" y="292" width="60" height="84" fill="#aa8268"/>
+  <path d="M600 296h52v32h-52zM600 332h52v36h-52z" fill="#c69d7d"/>
+  <path d="M616 308h20v4h-20zM616 344h20v4h-20z" fill="#8f6f5d"/>
+  <path d="M600 296h52v4h-52zM600 332h52v4h-52z" fill="#e3ba95"/>
+  <path d="M356 248h44v8h-44zM352 256h52v8h-52zM356 264h48v8h-48z" fill="#a78a9a"/>
+  <path d="M360 248h36v4h-36zM356 256h44v4h-44zM360 264h40v4h-40z" fill="#f2e1c7"/>
+  <path d="M428 248h52v4h52v20h-52v-4h-52z" fill="#b58e82"/>
+  <path d="M432 248h44v4h4v16h-4v-4h-44zM484 252h44v12h-44z" fill="#f8e9d0"/>
+  <path d="M436 252h28v4h-28zM436 260h32v4h-32zM492 256h28v4h-28z" fill="#c5b3a1"/>
+  <rect x="480" y="248" width="4" height="24" fill="#d2b494"/>
+  <rect x="508" y="252" width="4" height="20" fill="#c28c99"/>
+  <rect x="552" y="248" width="20" height="24" fill="#93a19b"/>
+  <rect x="548" y="248" width="28" height="4" fill="#c7d1b9"/>
+  <path d="M556 228h4v20h-4zM564 232h4v16h-4z" fill="#b68a70"/>
+  <rect x="556" y="228" width="4" height="4" fill="#d4b295"/>
+  <rect x="608" y="224" width="8" height="40" fill="#aa8568"/>
+  <rect x="592" y="264" width="40" height="8" fill="#b38b6c"/>
+  <path d="M592 196h40v8h4v12h4v12h-56v-12h4v-12h4z" fill="#d5b581"/>
+  <path d="M596 200h32v8h4v16h-40v-16h4z" fill="#ffdea0"/>
+  <rect x="600" y="204" width="8" height="16" fill="#fff0c4"/>
+  <rect x="588" y="228" width="48" height="4" fill="#f5d49b"/>
+  <!-- Stool, woven wastebasket, and a folded umbrella leaning by the wall. -->
+  <rect x="448" y="316" width="72" height="12" fill="#b69a89"/>
+  <rect x="452" y="312" width="64" height="8" fill="#e0c6b0"/>
+  <path d="M456 328h8v56h-8zM504 328h8v56h-8zM464 356h40v4h-40z" fill="#9b7a65"/>
+  <rect x="620" y="392" width="48" height="28" fill="#b9977a"/>
+  <rect x="616" y="384" width="56" height="8" fill="#dcc09b"/>
+  <path d="M624 392h4v28h-4zM636 392h4v28h-4zM648 392h4v28h-4zM660 392h4v28h-4zM620 400h48v4h-48zM620 412h48v4h-48z" fill="#e4c5a0"/>
+  <path d="M632 380v-8h8v4h12v8h-20z" fill="#eee1d0"/>
+  <path d="M680 252h4v-16h8v4h-4v12h-4v12h-4z" fill="#856f69"/>
+  <path d="M676 264h12v76h-4v12h-4v-12h-4z" fill="#8e95aa"/>
+  <path d="M680 272h4v64h-4z" fill="#bec0d0"/>
+  <!-- Wide woven rug with tasseled edges and sleeping cream cat. -->
+  <rect x="68" y="388" width="344" height="32" fill="#a08074"/>
+  <rect x="72" y="368" width="336" height="48" fill="#e0c6b8"/>
+  <rect x="80" y="376" width="320" height="32" fill="url(#rug)"/>
+  <path d="M60 376h12v4H60zM60 388h12v4H60zM60 400h12v4H60zM408 376h12v4h-12zM408 388h12v4h-12zM408 400h12v4h-12z" fill="#eddbbf"/>
+  <rect x="224" y="396" width="84" height="8" fill="#8f8a9c"/>
+  <path d="M236 372h12v-8h32v8h16v8h8v16h-72v-8h-8v-12h12z" fill="#d7b695"/>
+  <path d="M240 376h12v-8h24v8h12v16h-48z" fill="#f1d4b0"/>
+  <path d="M280 380v-16h8v8h8v-8h8v28h-28v-12z" fill="#e9c9a6"/>
+  <path d="M284 368h4v8h-4zM300 368h4v8h-4z" fill="#cba0a0"/>
+  <path d="M284 384h4v4h-4zM296 384h4v4h-4zM288 388h8v4h-8z" fill="#9b7970"/>
+  <path d="M228 380h8v12h28v-4h8v8h-8v4h-32v-4h-4z" fill="#bd997d"/>
+  <path d="M252 368h4v8h-4zM264 368h4v8h-4z" fill="#d0ab88"/>
+  <rect x="28" y="416" width="32" height="4" fill="#ab8370"/>
+  <path d="M0 0h720v12H0zM0 12h12v436H0zM708 12h12v436h-12zM12 436h696v12H12z" fill="#aa8074"/>
+</svg>

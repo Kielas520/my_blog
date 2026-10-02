@@ -1,0 +1,7 @@
+[
+  {"id":"snow","src":"/images/pixel-room.svg","name":"雪夜的小窝","weather":"窗外：雪 / 屋内：暖","caption":"给自己留一盏灯，也给生活留一点温柔。","alt":"原创像素雪夜小屋：雪松窗景、粉色沙发、木书桌、地毯上的小猫和暖黄色星星灯。"},
+  {"id":"rain","src":"/images/pixel-room-rain.svg","name":"雨天的书房","weather":"窗外：雨 / 屋内：茶香","caption":"雨落在窗上，今天可以慢一点。","alt":"原创像素雨天书房：雨窗、书架、暖台灯、阅读椅、毛毯、茶杯和猫。"},
+  {"id":"spring","src":"/images/pixel-room-spring.svg","name":"春日的花房","weather":"窗外：春 / 屋内：花开","caption":"把窗打开，让春天坐一会儿。","alt":"原创像素春日花房：明亮花园窗景、花架、嫩绿盆栽、藤椅、茶点和兔子。"},
+  {"id":"summer","src":"/images/pixel-room-summer.svg","name":"夏夜的海风","weather":"窗外：海 / 屋内：晚风","caption":"今晚不赶路，只听海和旧收音机。","alt":"原创像素夏夜海边房间：星月海景、薄窗帘、风扇、沙发、冰饮和收音机。"},
+  {"id":"autumn","src":"/images/pixel-room-autumn.svg","name":"秋日的小厨房","weather":"窗外：秋 / 屋内：面包香","caption":"等面包烤好，也等一个平凡的好下午。","alt":"原创像素秋日厨房：金橙树叶窗景、木橱柜、炉具、茶壶、面包、格纹餐桌和小狗。"}
+]

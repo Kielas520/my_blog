@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="448" viewBox="0 0 720 448" shape-rendering="crispEdges" role="img" aria-labelledby="title description">
+  <title id="title">海风与月光的夏夜像素小屋</title>
+  <desc id="description">原创像素插画。奶油粉的小屋向海边阳台敞开，星光和月亮映在蓝紫海面上。轻薄窗帘旁有电风扇，浅色沙发、贝壳、唱片收音机、冰饮、书本与花草陪伴着慵懒的小猫。</desc>
+  <defs>
+    <pattern id="wall" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#efd4c7"/><path d="M0 0h4v40H0z" fill="#e6c5bc"/><path d="M20 12h4v4h-4zM24 16h4v4h-4zM20 20h4v4h-4z" fill="#f7e5d6"/></pattern>
+    <pattern id="floor" width="144" height="40" patternUnits="userSpaceOnUse"><rect width="144" height="40" fill="#c69e83"/><path d="M0 0h144v4H0zM0 20h144v4H0zM72 0h4v20h-4zM24 20h4v20h-4z" fill="#a9816d"/><path d="M4 4h64v4H4zM80 4h60v4H80zM32 24h104v4H32zM0 24h20v4H0z" fill="#ddb99a"/><path d="M20 12h28v4H20zM104 12h20v4h-20zM52 32h44v4H52z" fill="#bb9277"/></pattern>
+    <pattern id="mat" width="24" height="16" patternUnits="userSpaceOnUse"><rect width="24" height="16" fill="#d6c5a7"/><path d="M0 0h24v4H0zM0 8h24v4H0zM4 0h4v8H4zM16 8h4v8h-4z" fill="#efe0c2"/></pattern>
+    <pattern id="speaker" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#a28174"/><rect x="2" y="2" width="4" height="4" fill="#c7ad94"/></pattern>
+    <g id="spark"><path d="M4 0h4v4h4v4H8v4H4V8H0V4h4z" fill="#f7e6bd"/></g>
+    <g id="leaf"><path d="M0 4h4V0h12v4h4v8h-8v4H4v-4H0z" fill="#809b88"/><path d="M4 4h12v4H8v4H4z" fill="#a9bca0"/></g>
+    <g id="shell"><path d="M8 0h12v4h8v4h4v12H0V8h4V4h4z" fill="#e6b2a6"/><path d="M8 4h4v12H8zM16 4h4v12h-4zM24 8h4v8h-4zM4 16h24v4H4z" fill="#ffe5cc"/><path d="M12 20h12v4H12z" fill="#c59388"/></g>
+  </defs>
+  <!-- Pale room, broad plank floor, and a cool pool of reflected moonlight. -->
+  <rect width="720" height="448" fill="#ac8377"/>
+  <rect x="12" y="12" width="696" height="288" fill="url(#wall)"/>
+  <rect x="12" y="300" width="696" height="136" fill="url(#floor)"/>
+  <path d="M12 284h696v8H12z" fill="#bd9580"/><path d="M12 292h696v8H12z" fill="#fae5ce"/><path d="M12 300h696v4H12z" fill="#987666"/>
+  <path d="M468 304h176v12h-24v12h-24v12h-28v12h-32v12h-36v12h-64v-12h20v-12h8v-12h4z" fill="#d5b6a2"/>
+  <path d="M512 304h8v12h-8zM568 304h8v36h-8zM604 312h8v16h-8z" fill="#ecd0b7"/>
+  <path d="M0 0h720v12H0zM0 12h12v436H0zM708 12h12v436h-12zM12 436h696v12H12z" fill="#a57e71"/><path d="M12 12h696v4H12zM12 16h4v420h-4z" fill="#fae6d2"/>
+  <!-- Open French window: layered sea, a distant island, moon path, and balcony. -->
+  <rect x="420" y="44" width="256" height="248" fill="#bc9682"/>
+  <rect x="424" y="40" width="248" height="248" fill="#f7e2ca"/>
+  <rect x="436" y="52" width="224" height="224" fill="#777b99"/>
+  <rect x="436" y="112" width="224" height="48" fill="#9696ad"/>
+  <rect x="436" y="160" width="224" height="112" fill="#8cabb0"/>
+  <rect x="436" y="184" width="224" height="32" fill="#7b9fa8"/>
+  <rect x="436" y="216" width="224" height="56" fill="#688b98"/>
+  <path d="M436 160h28v-4h16v-4h28v4h16v4h12v4H436z" fill="#707f91"/>
+  <path d="M572 72h24v4h8v8h4v16h-4v8h-8v4h-24v-4h-8v-8h-4V84h4v-8h8z" fill="#f6e7c1"/>
+  <path d="M584 72h12v4h8v8h4v16h-4v8h-8v4h-12v-8h-8V80h8z" fill="#777b99"/>
+  <use href="#spark" x="452" y="76"/><use href="#spark" x="524" y="92"/><use href="#spark" x="624" y="64"/>
+  <path d="M488 60h4v4h-4zM508 124h4v4h-4zM644 124h4v4h-4zM600 136h4v4h-4zM460 132h4v4h-4z" fill="#e6d7c4"/>
+  <path d="M568 168h32v4h-32zM560 180h44v4h-44zM576 192h24v4h-24zM552 204h52v4h-52zM568 220h40v4h-40zM540 236h72v4h-72z" fill="#c8c7bf"/>
+  <path d="M440 176h48v4h-48zM496 188h28v4h-28zM616 184h36v4h-36zM452 208h44v4h-44zM508 224h24v4h-24zM620 228h32v4h-32zM460 244h60v4h-60z" fill="#aec3be"/>
+  <path d="M476 136h4v24h-4z" fill="#6f7788"/><path d="M480 140h20v4h-20v4h-12v4h-8v4h20z" fill="#e9dac2"/><path d="M464 160h40v4h-4v4h-32v-4h-4z" fill="#aa8f88"/>
+  <rect x="436" y="256" width="224" height="20" fill="#bdac9d"/>
+  <path d="M436 264h224v4H436zM436 276h224v4H436zM468 256h4v24h-4zM548 256h4v24h-4zM628 256h4v24h-4z" fill="#988e89"/>
+  <rect x="436" y="218" width="224" height="8" fill="#e1c8b3"/><rect x="436" y="226" width="224" height="4" fill="#8a7977"/>
+  <path d="M444 230h8v28h-8zM484 230h8v28h-8zM524 230h8v28h-8zM564 230h8v28h-8zM604 230h8v28h-8zM644 230h8v28h-8z" fill="#ddc8b9"/>
+  <path d="M424 40h12v248h-12zM660 40h12v248h-12zM544 52h8v224h-8zM436 148h224v8H436z" fill="#f8e4cc"/>
+  <path d="M436 52h4v224h-4zM552 52h4v224h-4z" fill="#c19e8d"/>
+  <path d="M412 284h272v8H412z" fill="#fce8ce"/><path d="M412 292h272v8H412z" fill="#b58c78"/>
+  <!-- Airy curtains are stepped silhouettes, with stitched folds instead of curves. -->
+  <rect x="408" y="32" width="280" height="4" fill="#9b7c71"/><path d="M404 28h8v12h-8zM684 28h8v12h-8z" fill="#c3a087"/>
+  <path d="M416 36h44v48h-4v44h-4v48h-4v40h-8v32h-24zM644 36h36v216h-24v-36h-4v-64h-4V92h-4z" fill="#eee4d5"/>
+  <path d="M420 40h4v200h-4zM432 40h4v176h-4zM444 40h4v124h-4zM452 40h4v56h-4zM648 40h4v92h-4zM660 40h4v192h-4zM672 40h4v208h-4z" fill="#d8d5cd"/>
+  <path d="M416 244h24v4h-24zM656 248h24v4h-24z" fill="#fff2de"/>
+  <!-- Left wall: a framed seascape, shelves, and a little record collection. -->
+  <rect x="52" y="56" width="100" height="76" fill="#ac8573"/><rect x="56" y="60" width="92" height="68" fill="#f8e5cf"/><rect x="64" y="68" width="76" height="52" fill="#b8bdbe"/>
+  <path d="M64 100h76v20H64z" fill="#91b1b0"/><path d="M64 108h36v4H64zM108 112h32v4h-32z" fill="#dde0cf"/><path d="M112 80h12v12h-12z" fill="#f6ddae"/><path d="M80 96h4v16h-4zM84 96h12v4H84v4h8v4H84z" fill="#fbebd5"/>
+  <rect x="188" y="88" width="168" height="8" fill="#ae846b"/><rect x="184" y="84" width="176" height="4" fill="#e4bea0"/><path d="M196 96h8v12h-8zM340 96h8v12h-8z" fill="#c1997f"/>
+  <path d="M196 56h12v28h-12z" fill="#b48b98"/><path d="M212 52h12v32h-12z" fill="#92a6a0"/><path d="M228 60h12v24h-12z" fill="#d6b180"/><path d="M200 60h4v16h-4zM216 56h4v20h-4zM232 64h4v12h-4z" fill="#f0dcc1"/>
+  <use href="#shell" x="252" y="60"/>
+  <path d="M312 60h28v24h-28z" fill="#ce9e94"/><path d="M308 60h36v4h-36z" fill="#ecd0b7"/><path d="M324 36h4v24h-4zM336 44h4v16h-4z" fill="#788e78"/><use href="#leaf" x="308" y="32"/><use href="#leaf" x="328" y="36"/>
+  <rect x="52" y="172" width="236" height="12" fill="#a7806b"/><rect x="48" y="168" width="244" height="8" fill="#e1b899"/>
+  <path d="M60 184h12v64H60zM268 184h12v64h-12zM72 224h196v8H72z" fill="#b28b73"/>
+  <path d="M72 228h184v4H72z" fill="#e3bea0"/>
+  <path d="M84 196h12v28H84zM100 192h16v32h-16zM120 200h12v24h-12zM140 196h16v28h-16z" fill="#af8792"/>
+  <path d="M88 200h4v20h-4zM104 196h8v4h-8zM124 204h4v16h-4zM144 200h8v4h-8z" fill="#ecd5ba"/>
+  <rect x="176" y="204" width="68" height="20" fill="#d2b194"/><path d="M180 204h60v4h-60zM192 212h28v4h-28z" fill="#f1d6b8"/>
+  <!-- Wood-cased radio and open record player. -->
+  <rect x="60" y="124" width="96" height="40" fill="#a27d6c"/><rect x="64" y="128" width="88" height="32" fill="#d7b497"/><rect x="68" y="132" width="44" height="24" fill="url(#speaker)"/>
+  <rect x="120" y="132" width="24" height="8" fill="#7f8f8f"/><path d="M124 132h4v8h-4zM136 132h4v8h-4z" fill="#ddd9bf"/><path d="M120 148h8v8h-8zM136 148h8v8h-8z" fill="#957b70"/>
+  <path d="M76 120h64v4H76zM76 116h4v8h-4zM136 116h4v8h-4z" fill="#8a7268"/>
+  <rect x="184" y="116" width="92" height="32" fill="#a98279"/><rect x="188" y="120" width="84" height="24" fill="#d3b7ad"/>
+  <rect x="184" y="148" width="92" height="20" fill="#b9917b"/><rect x="188" y="148" width="84" height="12" fill="#e9ccb0"/>
+  <path d="M208 148h28v4h8v4h-8v4h-28v-4h-8v-4h8z" fill="#737278"/><rect x="216" y="152" width="12" height="4" fill="#d4a1aa"/><path d="M256 148h4v8h-16v4h-4v-8h16z" fill="#927e72"/>
+  <!-- Light linen sofa sits sideways beneath the gallery. -->
+  <path d="M44 332h224v12H44zM56 344h12v12H56zM244 344h12v12h-12z" fill="#957362"/>
+  <path d="M52 244h196v8h12v68H44v-68h8z" fill="#c5ada0"/>
+  <rect x="60" y="248" width="88" height="60" fill="#f0dfc9"/><rect x="156" y="248" width="84" height="60" fill="#edd8c2"/>
+  <path d="M64 252h80v4H64zM160 252h76v4h-76zM64 260h4v40h-4zM160 260h4v40h-4z" fill="#fff0d8"/>
+  <rect x="52" y="308" width="204" height="24" fill="#e4cbb5"/><path d="M56 308h92v8H56zM156 308h96v8h-96zM52 328h204v4H52z" fill="#c9ab98"/>
+  <rect x="36" y="280" width="28" height="56" fill="#d8beaa"/><rect x="244" y="280" width="28" height="56" fill="#d8beaa"/><path d="M40 280h20v8H40zM248 280h20v8h-20z" fill="#f8e6ce"/>
+  <path d="M84 264h40v4h4v28h-4v4H84v-4h-4v-28h4z" fill="#b4c4b8"/><path d="M88 268h32v4H88zM92 280h20v4H92z" fill="#d8dfc9"/>
+  <path d="M180 272h32v4h4v24h-40v-24h4z" fill="#d4a3ac"/><path d="M184 276h24v4h-24zM184 284h8v8h-8zM200 284h8v8h-8z" fill="#efd0c5"/>
+  <rect x="220" y="296" width="20" height="52" fill="#a0b5b5"/><path d="M220 304h20v4h-20zM220 320h20v4h-20zM220 336h20v4h-20zM224 348h4v8h-4zM236 348h4v8h-4z" fill="#e1ddc8"/>
+  <!-- Old pedestal fan: stepped cage, individual blades, switches and a cord. -->
+  <path d="M328 148h32v4h12v8h8v12h4v32h-4v12h-8v8h-12v4h-32v-4h-12v-8h-8v-12h-4v-32h4v-12h8v-8h12z" fill="#a2a9a3"/>
+  <path d="M332 152h24v4h12v8h8v12h4v24h-4v12h-8v8h-12v4h-24v-4h-12v-8h-8v-12h-4v-24h4v-12h8v-8h12z" fill="#e5ddc9"/>
+  <path d="M336 164h16v20h-12v-8h-4zM352 184h20v16h-8v-4h-12zM332 192h12v20h-16v-8h4z" fill="#a4bbb2"/>
+  <path d="M324 160h4v56h-4zM340 156h4v64h-4zM356 160h4v56h-4zM372 172h4v28h-4zM316 172h60v4h-60zM312 188h64v4h-64zM316 204h60v4h-60z" fill="#bdc6b7"/>
+  <rect x="336" y="184" width="16" height="12" fill="#e7c8ae"/><rect x="340" y="188" width="8" height="4" fill="#bc9d86"/>
+  <rect x="340" y="228" width="8" height="96" fill="#a1aaa0"/><rect x="344" y="232" width="4" height="88" fill="#d9d9c2"/><path d="M320 320h48v4h8v8h-64v-8h8z" fill="#adb7aa"/><path d="M320 324h48v4h-48zM328 328h4v4h-4zM340 328h4v4h-4z" fill="#eee2c9"/>
+  <path d="M376 332h12v16h16v4h-20v-16h-8z" fill="#92796c"/>
+  <!-- Woven rug, low tray table, cold lemon drink and an open paperback. -->
+  <rect x="112" y="360" width="348" height="56" fill="#a58e79"/><rect x="108" y="356" width="348" height="56" fill="#eddcc1"/><rect x="120" y="364" width="324" height="40" fill="url(#mat)"/>
+  <path d="M112 412h4v8h-4zM128 412h4v8h-4zM144 412h4v8h-4zM420 412h4v8h-4zM436 412h4v8h-4zM452 412h4v8h-4z" fill="#f5e6cd"/>
+  <path d="M288 360h12v36h-12zM400 360h12v36h-12z" fill="#a27b66"/>
+  <rect x="280" y="344" width="140" height="20" fill="#bd967a"/><rect x="276" y="340" width="148" height="8" fill="#ebc6a2"/><path d="M284 348h132v4H284z" fill="#f7dabc"/>
+  <path d="M304 312h24v28h-24z" fill="#a4bfbb"/><path d="M308 316h16v20h-16z" fill="#d7e0cd"/><rect x="308" y="328" width="16" height="8" fill="#e5c59a"/>
+  <path d="M312 316h8v4h-8zM316 324h8v4h-8z" fill="#f8f0da"/><path d="M320 304h4v28h-4zM324 300h8v4h-8z" fill="#b38693"/><path d="M300 312h32v4h-32z" fill="#eee4ce"/>
+  <path d="M304 320h8v8h-8z" fill="#efd39c"/><rect x="304" y="324" width="8" height="4" fill="#fff0c5"/>
+  <path d="M348 324h24v4h24v12h-24v-4h-24z" fill="#9c8979"/><path d="M348 320h24v4h24v12h-24v-4h-24z" fill="#fff1d6"/><path d="M372 324h4v12h-4zM352 324h12v4h-12zM380 328h12v4h-12z" fill="#ccbda5"/>
+  <use href="#shell" x="360" y="350"/>
+  <!-- Balcony planter and sleepy kitten, with small floor-life details. -->
+  <path d="M612 280h52v8h-4v40h-44v-40h-4z" fill="#c79588"/><path d="M620 288h8v32h-8zM652 288h4v32h-4z" fill="#e9baa4"/>
+  <path d="M632 232h4v48h-4zM648 236h4v44h-4zM624 256h4v24h-4z" fill="#6e8b76"/>
+  <use href="#leaf" x="616" y="228"/><use href="#leaf" x="636" y="220"/><use href="#leaf" x="644" y="240"/><use href="#leaf" x="612" y="252"/>
+  <path d="M636 216h4v-8h8v-4h8v4h4v8h-4v4h-8v4h-8v-8z" fill="#dbacb3"/><rect x="648" y="212" width="4" height="4" fill="#f6deb1"/>
+  <rect x="508" y="378" width="136" height="24" fill="#b28f7a"/><path d="M512 374h128v24H512z" fill="#e4bdaf"/><path d="M520 378h112v4H520zM520 390h112v4H520z" fill="#efcfbd"/>
+  <path d="M536 360h12v-8h12v8h8v-4h36v4h12v8h8v12h-80v-4h-8z" fill="#d5ab86"/><path d="M540 352h8v12h-8zM556 352h4v12h-4z" fill="#bb8e7d"/>
+  <path d="M564 360h32v4h12v8h-40zM544 364h16v8h-16z" fill="#efd3ac"/><path d="M544 368h4v4h-4zM556 368h4v4h-4z" fill="#796b64"/><path d="M548 376h8v4h-8z" fill="#bd8990"/>
+  <path d="M612 360h16v4h8v12h-8v4h-16v-4h12v-8h-12z" fill="#d5ab86"/>
+  <path d="M468 404h24v4h4v8h-28v-4h-4v-4h4zM500 408h24v4h4v8h-28v-4h-4v-4h4z" fill="#9eb3ad"/><path d="M472 404h12v4h-12zM504 408h12v4h-12z" fill="#d5d9bf"/>
+  <path d="M60 388h28v4h8v8H56v-8h4z" fill="#c19b85"/><use href="#shell" x="60" y="368"/>
+  <path d="M664 356h12v8h-12zM660 364h20v24h-20z" fill="#b7c2ad"/><path d="M664 368h12v4h-12zM664 380h12v4h-12z" fill="#f0e4c8"/>
+</svg>

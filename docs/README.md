@@ -55,9 +55,10 @@ git push origin main
 
 ## 空间皮肤与音乐
 
-- 首页场景：`public/images/pixel-room.svg`，原创像素小屋；头像仍由 `public/config.json` 配置。
+- 首页场景目录：`src/data/room-scenes.json`，共五张原创 SVG（雪夜、雨天书房、春日花房、夏夜海边、秋日厨房），文件位于 `public/images/pixel-room*.svg`。每次进入或刷新首页随机选择，图片、天气、场景名与小句子同步更新；当前会话内避免连续重复。禁用 JavaScript 时显示原雪夜小屋。
 - `backgroundImage` 为空表示使用全局 CSS 平铺背景；填写图片地址可切换自定义背景。
 - 相册错落布局在 `astro:page-load` 时初始化，每次站内返回都会恢复随机排列和旋转；同一页面节点只初始化一次。
-- 音乐盒初版使用 `public/audio/window-music-box.wav` 的本地合成原创短曲，替换原有混合歌单。点击播放后可跨站内页面继续播放，不自动播放。
+- 音乐盒使用四首本地合成原创短曲，位于 `public/audio/`，支持选曲、上一首、下一首和首尾循环切换。点击播放后可跨站内页面继续播放，不自动播放。
+- 新增三首短曲的旋律和合成器保存在 `scripts/generate-space-audio.mjs`；运行 `node scripts/generate-space-audio.mjs` 可重建雨天、春日、海边音频，不使用第三方采样。原雪夜曲保留 `window-music-box.wav`。
 - `/music` 保留两个 B站参考视频入口，第二个链接固定第 82 集。原视频 BGM 曲名未确认，未转载视频、插画或音轨。
 - 修改歌单仍编辑 `src/data/music.json`，每项为 `name` 和可播放的 `link`；正式替换音乐前确认使用权限。
