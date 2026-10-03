@@ -14,7 +14,7 @@ const defaults: SiteConfig = {
   icon: '/images/kiana.jpg',
   avatar: '/images/kiana.jpg',
   backgroundImage: '',
-  cursor: '/cursors/vista-glass.svg',
+  cursor: '/cursors/pixel-star.png',
 };
 
 function readSiteConfig(): SiteConfig {

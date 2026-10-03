@@ -80,7 +80,10 @@ const portals = [
           </div>
           <figure class="room-figure">
             <div class="room-image-wrap">
-              <img data-room-image src={firstScene.src} width="720" height="448" alt={firstScene.alt} fetchpriority="high" />
+              <picture>
+                <source data-room-poster media="(prefers-reduced-motion: reduce)" srcset={firstScene.poster} />
+                <img data-room-image src={firstScene.src} width="720" height="448" alt={firstScene.alt} fetchpriority="high" />
+              </picture>
             </div>
             <figcaption><span><span aria-hidden="true">✦</span> <span data-room-caption>{firstScene.caption}</span></span><span class="room-caption-tag" data-room-name>{firstScene.name}</span></figcaption>
           </figure>
@@ -110,7 +113,7 @@ const portals = [
 </BaseLayout>
 
 <script>
-  interface RoomScene { id: string; src: string; name: string; weather: string; caption: string; alt: string }
+  interface RoomScene { id: string; src: string; poster: string; name: string; weather: string; caption: string; alt: string }
 
   const chooseRoom = async () => {
     const room = document.querySelector<HTMLElement>('[data-room-scenes]');
@@ -126,9 +129,11 @@ const portals = [
     if (choices.length === 0) return;
     const scene = choices[Math.floor(Math.random() * choices.length)];
     const preview = new Image();
-    preview.src = scene.src;
+    preview.src = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? scene.poster : scene.src;
     try { await preview.decode(); } catch { return; }
     if (!room.isConnected) return;
+    const poster = room.querySelector<HTMLSourceElement>('[data-room-poster]');
+    if (poster) poster.srcset = scene.poster;
     image.src = scene.src;
     image.alt = scene.alt;
     room.dataset.roomId = scene.id;

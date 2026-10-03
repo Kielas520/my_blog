@@ -22,5 +22,9 @@
     "astro": "^7.1.6",
     "sirv-cli": "^3.0.1",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "gifenc": "^1.0.3"
   }
 }

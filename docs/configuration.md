@@ -14,13 +14,15 @@ public/config.json
   "icon": "/images/kiana.jpg",
   "avatar": "/images/kiana.jpg",
   "backgroundImage": "/images/frutiger_aero.jpg",
-  "cursor": "/cursors/vista-glass.svg"
+  "cursor": "/cursors/pixel-star.png"
 }
 ```
 
 `siteName` 是浏览器标签页名称，也用于导航左上角；`icon` 是标签页图标；`avatar` 是主页头像；
 `backgroundImage` 是所有页面共用的背景；`cursor` 是网页光标。以 `/` 开头的路径都相对于
 `public/`，例如 `/images/a.jpg` 对应 `public/images/a.jpg`。
+默认光标为 20×20 的奶油粉像素箭头配星星，热点在左上角 `(0, 0)`。编辑 `public/cursors/pixel-star.svg` 后，运行 `node scripts/generate-room-gifs.mjs` 重建实际使用的 PNG；SVG 保持 32×32 绘制坐标，PNG 按 20×20 输出。该命令也会重建首页小窝 GIF。
+
 
 页面会以 `no-store` 方式重新读取这份配置。正式网站由 Pages 托管，因此必须修改
 `public/config.json`，再通过 GitHub 提交和发布；不要直接修改自动生成的 `dist/config.json`。

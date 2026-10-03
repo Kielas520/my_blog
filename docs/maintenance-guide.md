@@ -50,7 +50,7 @@ public/config.json
   "icon": "/images/kiana.jpg",
   "avatar": "/images/kiana.jpg",
   "backgroundImage": "/images/frutiger_aero.jpg",
-  "cursor": "/cursors/vista-glass.svg"
+  "cursor": "/cursors/pixel-star.png"
 }
 ```
 
