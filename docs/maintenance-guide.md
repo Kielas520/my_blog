@@ -28,7 +28,7 @@ dist/      npm run build 自动生成的正式网站
 | 图片墙列表 | `src/data/picture.json` | 必须构建 |
 | 音乐列表 | `src/data/music.json` | 必须构建 |
 | Blog 文章 | `src/content/blogs/` | 必须构建 |
-| 本地图片及其他静态文件 | `public/images/` 等 | 必须构建，或手动同步到 `dist/` |
+| 图片、头像、背景与光标 | `image.kielasovo.com` 外链 | 上传后更新 URL，再构建发布；图片不入库 |
 | Tools 页面代码 | `src/pages/tools/` | 必须构建 |
 
 统一规则是：修改源文件后执行 `npm run build`，再提交并推送到 GitHub。Cloudflare Pages 上的
@@ -47,26 +47,22 @@ public/config.json
 ```json
 {
   "siteName": "Hi There",
-  "icon": "/images/kiana.jpg",
-  "avatar": "/images/kiana.jpg",
-  "backgroundImage": "/images/frutiger_aero.jpg",
-  "cursor": "/cursors/pixel-star.png"
+  "icon": "https://image.kielasovo.com/2026/10/8de4e3a07a08c071fe4f6bee2ba5bce6.jpg",
+  "avatar": "https://image.kielasovo.com/2026/10/8de4e3a07a08c071fe4f6bee2ba5bce6.jpg",
+  "backgroundImage": "",
+  "cursor": "https://image.kielasovo.com/2026/10/85a5e0ade6ca166e36e53b0ff1f710c5.png"
 }
 ```
 
-路径以网站根目录 `/` 开头。例如：
+图片配置全部使用完整的 HTTPS 图床地址；空的 `backgroundImage` 保留当前 CSS 背景。
 
-```text
-/images/kiana.jpg
+图片在仓库外准备，再通过已有上传工具上传：
+
+```powershell
+npm run upload:file -- --type image --source "D:/Pictures/avatar.jpg"
 ```
 
-对应本地文件：
-
-```text
-public/images/kiana.jpg
-```
-
-不要在网页路径里写 `public`，也不要使用 Windows 反斜杠路径。
+把返回的 `image.kielasovo.com` 地址填入配置，随后构建发布。仓库不保留图片副本；原图片到外链的迁移清单见 `docs/README.md`。
 
 ## 四、管理随机名言
 
@@ -145,15 +141,12 @@ https://kielasovo.com/me
 
 ```json
 [
-  "/images/kiana.jpg",
-  "https://image.example.com/photo.jpg"
+  "https://image.kielasovo.com/2026/10/8de4e3a07a08c071fe4f6bee2ba5bce6.jpg",
+  "https://image.kielasovo.com/2026/10/74dda161d680068d59eeaf8a499de547.gif"
 ]
 ```
 
-支持两类图片：
-
-- 本地图片：文件放入 `public/images/`，JSON 填写 `/images/文件名.jpg`。
-- 远程图片：JSON 直接填写完整的 `https://` URL。
+图片仅使用远程 HTTPS 地址。先通过 `upload:file` 上传仓库外的图片，再把返回的完整 URL 写入 JSON；不要把图片复制进仓库。
 
 ### Music
 
@@ -208,16 +201,10 @@ type: article
 ---
 ```
 
-设为 `draft: true` 的文章不会生成公开页面。文章图片建议放在：
-
-```text
-public/images/blogs/<文章名>/
-```
-
-Markdown 中使用：
+设为 `draft: true` 的文章不会生成公开页面。文章配图也必须先上传到图床，Markdown 使用完整的 HTTPS 地址：
 
 ```markdown
-![图片说明](/images/blogs/文章名/example.jpg)
+![图片说明](https://image.kielasovo.com/2026/10/74dda161d680068d59eeaf8a499de547.gif)
 ```
 
 ## 附录：PicGo 与 Cloudflare R2 媒体存储

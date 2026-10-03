@@ -7,3 +7,8 @@ dist/
 .astro-serve.log
 .web-service.pid
 .cache
+
+# Images are hosted on image.kielasovo.com, not stored in this repository.
+public/images/
+public/cursors/
+public/favicon.svg

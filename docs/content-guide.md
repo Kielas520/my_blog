@@ -93,12 +93,12 @@ order: 1
 
 Notion 导出的附件不应继续引用临时 Notion 地址。建议：
 
-- 与文章强相关的小图片放在 `public/images/blogs/<slug>/`。
+- 图片在仓库外保存，先通过 `upload:file` 上传到 `image.kielasovo.com`，不提交本地图片。
 - 大文件、音频和原始数据放在独立资源站。
-- Markdown 使用站点绝对路径引用：
+- Markdown 使用上传后的完整 HTTPS 地址：
 
 ```markdown
-![手眼标定示意图](/images/blogs/hand-eye/calibration.png)
+![像素小窝示意图](https://image.kielasovo.com/2026/10/8d5edfa09a0e9b3bb6d8f5dbe645d235.svg)
 ```
 
 ## 发布检查

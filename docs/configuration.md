@@ -11,17 +11,17 @@ public/config.json
 ```json
 {
   "siteName": "Hi There",
-  "icon": "/images/kiana.jpg",
-  "avatar": "/images/kiana.jpg",
-  "backgroundImage": "/images/frutiger_aero.jpg",
-  "cursor": "/cursors/pixel-star.png"
+  "icon": "https://image.kielasovo.com/2026/10/8de4e3a07a08c071fe4f6bee2ba5bce6.jpg",
+  "avatar": "https://image.kielasovo.com/2026/10/8de4e3a07a08c071fe4f6bee2ba5bce6.jpg",
+  "backgroundImage": "",
+  "cursor": "https://image.kielasovo.com/2026/10/85a5e0ade6ca166e36e53b0ff1f710c5.png"
 }
 ```
 
 `siteName` 是浏览器标签页名称，也用于导航左上角；`icon` 是标签页图标；`avatar` 是主页头像；
-`backgroundImage` 是所有页面共用的背景；`cursor` 是网页光标。以 `/` 开头的路径都相对于
-`public/`，例如 `/images/a.jpg` 对应 `public/images/a.jpg`。
-默认光标为 20×20 的奶油粉像素箭头配星星，热点在左上角 `(0, 0)`。编辑 `public/cursors/pixel-star.svg` 后，运行 `node scripts/generate-room-gifs.mjs` 重建实际使用的 PNG；SVG 保持 32×32 绘制坐标，PNG 按 20×20 输出。该命令也会重建首页小窝 GIF。
+`backgroundImage` 是所有页面共用的背景，空字符串表示使用 CSS 平铺背景；`cursor` 是网页光标。
+所有图片字段都使用上传到 `image.kielasovo.com` 的完整 HTTPS URL，不再填写本地公开路径或将图片放入仓库。
+默认光标为 20×20 的奶油粉像素箭头配星星，热点在左上角 `(0, 0)`。SVG 原稿也存放在图床，下载到仓库外编辑后重新上传。运行 `node scripts/generate-room-gifs.mjs <仓库外输出目录>` 可从远程 SVG 重建 PNG 和首页小窝 GIF；SVG 保持 32×32 绘制坐标，PNG 按 20×20 输出，生成器不向仓库写图片。
 
 
 页面会以 `no-store` 方式重新读取这份配置。正式网站由 Pages 托管，因此必须修改
@@ -156,13 +156,12 @@ src/data/picture.json
 
 ```json
 [
-  "/images/kiana.jpg",
-  "https://image.kielasovo.com/example.jpg"
+  "https://image.kielasovo.com/2026/10/8de4e3a07a08c071fe4f6bee2ba5bce6.jpg",
+  "https://image.kielasovo.com/2026/10/62f8b3ad985b145f9c3cf40210d86ad7.gif"
 ]
 ```
 
-这里既可以填写完整的远程 URL，也可以填写本地公开路径。本地图片放在 `public/images/` 后，填写
-`/images/文件名.jpg`；不要把 `public` 写进 URL。
+这里只填写完整的远程 HTTPS URL。新图片在仓库外准备，使用 `npm run upload:file -- --type image --source <图片文件>` 上传后，把返回的 `image.kielasovo.com` 地址写入列表；不提交本地图片。
 
 `/picture` 是一级导航页面，会在浏览器中随机排列图片，并为相框随机设置左、中、右位置和轻微旋转。
 

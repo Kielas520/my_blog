@@ -1,10 +1,27 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Resvg } from '@resvg/resvg-js';
 import gifenc from 'gifenc';
 
 const { GIFEncoder, quantize, applyPalette } = gifenc;
 
-const root = new URL('../public/', import.meta.url);
+const repository = fileURLToPath(new URL('../', import.meta.url));
+if (!process.argv[2]) throw new Error('Usage: node scripts/generate-room-gifs.mjs <output-directory-outside-repository>');
+const outputDirectory = resolve(process.argv[2]);
+const outputRelative = relative(repository, outputDirectory);
+if (outputRelative === '' || (outputRelative !== '..' && !outputRelative.startsWith(`..${sep}`) && !isAbsolute(outputRelative))) {
+  throw new Error('Generated images must be saved outside the repository.');
+}
+await mkdir(outputDirectory, { recursive: true });
+const roomScenes = JSON.parse(await readFile(new URL('../src/data/room-scenes.json', import.meta.url), 'utf8'));
+const cursorSource = 'https://image.kielasovo.com/2026/10/4c9667b7b1d1461363851ef6886caddf.svg';
+
+async function downloadSource(url) {
+  const response = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0', Referer: 'https://kielasovo.com/' } });
+  if (!response.ok) throw new Error(`Unable to download ${url}: HTTP ${response.status}`);
+  return response.text();
+}
 const frameCount = 40;
 const pixel = (value) => Math.round(value / 2) * 2;
 
@@ -76,7 +93,8 @@ const scenes = [
 ];
 
 for (const scene of scenes) {
-  const source = await readFile(new URL(`images/${scene.file}.svg`, root), 'utf8');
+  const id = scene.file === 'pixel-room' ? 'snow' : { 'pixel-room-rain': 'rain', 'pixel-room-spring': 'spring', 'pixel-room-summer': 'summer', 'pixel-room-autumn': 'autumn' }[scene.file];
+  const source = await downloadSource(roomScenes.find((room) => room.id === id).poster);
   const gif = GIFEncoder();
   let palette;
   for (let frame = 0; frame < frameCount; frame++) {
@@ -92,10 +110,10 @@ for (const scene of scenes) {
   }
   gif.finish();
   const bytes = gif.bytes();
-  await writeFile(new URL(`images/${scene.file}.gif`, root), bytes);
+  await writeFile(join(outputDirectory, `${scene.file}.gif`), bytes);
   console.log(`${scene.file}.gif: ${frameCount} frames, 4 seconds, ${bytes.length} bytes`);
 }
 
-const cursor = await readFile(new URL('cursors/pixel-star.svg', root), 'utf8');
-await writeFile(new URL('cursors/pixel-star.png', root), new Resvg(cursor, { fitTo: { mode: 'width', value: 20 } }).render().asPng());
+const cursor = await downloadSource(cursorSource);
+await writeFile(join(outputDirectory, 'pixel-star.png'), new Resvg(cursor, { fitTo: { mode: 'width', value: 20 } }).render().asPng());
 console.log('pixel-star.png: 20 × 20, hotspot at arrow tip (0, 0)');

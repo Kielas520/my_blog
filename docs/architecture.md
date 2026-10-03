@@ -7,8 +7,8 @@ kielasWEB/
 ├─ docs/                       使用文档
 ├─ public/
 │  ├─ fun_words/words.json    运行时随机名言
-│  ├─ images/kiana.jpg        主页头像
-│  └─ favicon.svg
+│  ├─ config.json             站名与头像、图标、光标外链
+│  └─ audio/                  本次图片迁移未改动的音频源文件
 ├─ src/
 │  ├─ components/
 │  │  ├─ Nav.astro
@@ -31,6 +31,8 @@ kielasWEB/
 ├─ package.json
 └─ dist/                       自动生成的静态站点
 ```
+
+图片素材（含 GIF、头像、光标和 SVG 原稿）全部存放在 `image.kielasovo.com`，仓库只保存图片 URL、代码及说明，不再包含本地图片目录。迁移清单与恢复链接见 `docs/README.md`；图片生成器读取远程 SVG，并要求输出到仓库外。
 
 ## 页面关系
 
