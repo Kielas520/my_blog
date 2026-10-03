@@ -2,6 +2,7 @@
 title: "香港"
 description: "第一次出境，第一次去香港"
 category: "journal"
+slug: "dairy/first-time-to-hongkong"
 publishedAt: 2026-08-01
 draft: false
 tags: ["忆"]

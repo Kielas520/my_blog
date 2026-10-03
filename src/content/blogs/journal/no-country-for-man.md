@@ -2,6 +2,7 @@
 title: "老无所依"
 description: "You can’t stop what’s coming."
 category: "journal"
+slug: "dairy/no-country-for-man"
 publishedAt: 2026-08-03
 draft: false
 tags: ["影"]

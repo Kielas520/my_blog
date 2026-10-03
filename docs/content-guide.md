@@ -25,9 +25,9 @@
 `/blogs?category=all` 显示全部。刷新和返回文章列表会保留所选栏目。
 标签可选，不要求按情绪再分类。
 
-新文章推荐放入 `journal/` 或 `notes/`。已有文章的目录是永久 URL slug，不是栏目：
-修改分类只改 frontmatter，不移动文件。原来的 `/blogs/thoughts/ai-coding`
-等地址仍有效，其页面显示技术笔记，不保留旧分类别名。
+文章目录与栏目统一为 `journal/` 和 `notes/`。已发布文章通过 frontmatter `slug` 保留原地址：
+例如 `notes/ai-coding.md` 中的 `slug: "thoughts/ai-coding"` 仍生成 `/blogs/thoughts/ai-coding`。
+移动已发布文章时保持 `slug` 不变；新文章不填 `slug` 时默认按目录和文件名生成地址。
 
 正文面板宽度最多 740px；有二、三级标题的文章自动生成折叠目录。
 文章页音乐盒默认收起，手机阅读时移至页尾，不覆盖正文。
@@ -67,7 +67,8 @@ type: article
 | --- | --- | --- |
 | `title` | 是 | 文章标题 |
 | `description` | 是 | 列表和 SEO 使用的摘要 |
-| `category` | 是 | `journal` 或 `notes`，与永久文章目录独立 |
+| `category` | 是 | `journal` 或 `notes`，与所在目录保持一致 |
+| `slug` | 否 | 固定发布地址（不含 `/blogs/`）；迁移后的旧文章已填写，移动或更新时保留 |
 | `publishedAt` | 是 | 发布日期，格式为 `YYYY-MM-DD` |
 | `updatedAt` | 否 | 最近更新日期 |
 | `draft` | 否 | 默认为 `false`；`true` 时不生成公开路由 |

@@ -2,6 +2,7 @@
 title: 上班的感觉还真不一样
 description: 第一次实习带来的焦虑、落差，以及对工作节奏的重新认识。
 category: journal
+slug: "dairy/work-feels-different"
 publishedAt: 2026-05-22
 draft: false
 tags: [忆]

@@ -6,6 +6,7 @@ const postSchema = z.object({
   title: z.string(),
   description: z.string(),
   category: z.enum(['journal', 'notes']),
+  slug: z.string().optional(),
   publishedAt: z.coerce.date(),
   updatedAt: z.coerce.date().optional(),
   draft: z.boolean().default(false),
@@ -16,7 +17,7 @@ const postSchema = z.object({
 });
 
 const blogs = defineCollection({
-  // Directory names are permanent URL slugs, not category values.
+  // Explicit frontmatter slugs keep published URLs stable when files move between categories.
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blogs' }),
   schema: postSchema,
 });

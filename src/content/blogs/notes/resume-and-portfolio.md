@@ -2,6 +2,7 @@
 title: 简历和作品集
 description: 围绕个人信息、技能树和项目经历，整理简历与作品集的基本结构。
 category: notes
+slug: "get-a-job/resume-and-portfolio"
 publishedAt: 2026-05-18
 draft: false
 tags: [经验]

@@ -2,6 +2,7 @@
 title: 怎么投递
 description: 从平台选择、招呼语到发送简历，记录求职投递的实用方法。
 category: notes
+slug: "get-a-job/how-to-apply"
 publishedAt: 2026-05-19
 draft: false
 tags: [经验]

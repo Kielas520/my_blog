@@ -69,8 +69,8 @@ type: article
 - 控制：`--keep-source-header`、`--skip-images`、`--force`
 
 `--category` 只接受 `journal`（日志）或 `notes`（技术与实用笔记），非法分类在访问 API
-前拒绝。新文件写入对应目录；旧文章目录为永久 URL，更新旧文章应编辑原文件，
-而不是重新导入到新目录。
+前拒绝。文章目录统一为 `journal/` 和 `notes/`；已发布文章通过 frontmatter `slug`
+保留原 URL。按当前目录与原文件名使用 `--force` 更新时会保留已有 `slug`。
 
 `--source` 和 `--content` 被 `--page` 取代。完整帮助：
 

@@ -2,6 +2,7 @@
 title: "具身智能"
 description: "我认为的具身智能方向"
 category: "notes"
+slug: "thoughts/embodied-future"
 publishedAt: 2026-08-03
 draft: false
 tags: ["具身智能"]

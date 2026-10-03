@@ -2,6 +2,7 @@
 title: 谢婧
 description: 关于高中时代一个难以忘记的女生，以及那段珍贵的青春回忆。
 category: journal
+slug: "dairy/xie-jing"
 publishedAt: 2026-05-14
 draft: false
 tags: [忆]

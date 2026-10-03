@@ -37,12 +37,12 @@ Markdown Importer
   --content         直接传入 Markdown 正文
   --keep-source-header  保留 Notion 导出的标题、DATE 和 TAG 头部
   --skip-images     不上传和替换正文中的本地图片
-  --force           允许覆盖已经存在的目标文件
+  --force           允许覆盖已经存在的目标文件，并保留已有 slug
   --help            显示帮助
 
 说明：
   新文章写入 src/content/blogs/<category>/<file-name>.md。
-  文件路径决定永久 URL；以后调整分类只修改 frontmatter，不移动已有文件。
+  目录与分类对齐；已有文章通过 frontmatter slug 保留发布地址，移动文件时保持 slug 不变。
 `;
 
 function parseArgs(argv) {
@@ -261,9 +261,14 @@ async function main() {
 
   const categoryDirectory = path.join(BLOGS_ROOT, args.category);
   const destination = path.join(categoryDirectory, `${fileName}.md`);
-  if (!args.force && await exists(destination)) {
+  const destinationExists = await exists(destination);
+  if (!args.force && destinationExists) {
     throw new Error(`目标文件已经存在：${path.relative(process.cwd(), destination)}（如需覆盖请添加 --force）`);
   }
+  const existingFrontmatter = destinationExists
+    ? (await readFile(destination, 'utf8')).match(/^---\s*\r?\n([\s\S]*?)\r?\n---/)?.[1]
+    : undefined;
+  const existingSlug = existingFrontmatter?.split(/\r?\n/).find((line) => /^slug\s*:/.test(line));
 
   let body = args.content ?? '';
   const sourcePath = args.source ? path.resolve(args.source) : undefined;
@@ -283,6 +288,7 @@ async function main() {
     `category: ${yamlString(args.category)}`,
     `publishedAt: ${args.published_at}`,
   ];
+  if (existingSlug) fields.push(existingSlug);
   if (args.updated_at) fields.push(`updatedAt: ${args.updated_at}`);
   fields.push(`draft: ${draft}`);
   fields.push(`tags: [${tags.map(yamlString).join(', ')}]`);
@@ -294,7 +300,9 @@ async function main() {
   const markdown = `---\n${fields.join('\n')}\n---\n${body ? `\n${body}\n` : '\n'}`;
   await writeFile(destination, markdown, 'utf8');
   console.log(`已创建：${path.relative(process.cwd(), destination)}`);
-  console.log(`永久页面路径：/blogs/${args.category}/${fileName}`);
+  console.log(existingSlug
+    ? `永久页面 slug：${existingSlug.slice(existingSlug.indexOf(':') + 1).trim()}`
+    : `永久页面路径：/blogs/${args.category}/${fileName}`);
 }
 
 main().catch((error) => {

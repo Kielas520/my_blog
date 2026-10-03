@@ -2,6 +2,7 @@
 title: 一张纸
 description: 一次回家时，在父亲四平方米的办公室里看到一张练字纸。
 category: journal
+slug: "dairy/a-sheet"
 publishedAt: 2026-06-18
 draft: false
 tags: [忆]

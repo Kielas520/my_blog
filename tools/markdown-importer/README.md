@@ -17,8 +17,8 @@ npm run import:markdown -- `
 
 `--source` 文件如果带有自己的 `---` frontmatter，导入时会将它移除，只保留正文。也可以用 `--content "正文"` 直接提供内容；两者都不传时会创建正文为空的文章。
 
-新文章写入 `src/content/blogs/<category>/<file-name>.md`。已有文章目录决定永久 URL，
-不随分类变动；更新旧文章应编辑原文件，避免导入到新目录产生重复。
+新文章写入 `src/content/blogs/<category>/<file-name>.md`。已发布文章通过 frontmatter
+`slug` 固定 URL；移动文件时保持 `slug`，`--force` 更新已有文件也会保留它。
 
 Notion 导出文件如果以一级标题和 `DATE`、`TAG` 开头，导入器会自动移除这段重复头部。例如：
 

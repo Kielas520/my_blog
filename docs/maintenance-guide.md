@@ -182,7 +182,8 @@ src/content/blogs/
 ```
 
 分类只接受 `journal`（日志）与 `notes`（技术笔记，含实用资料）。
-已有文章保留原目录和 URL；调整栏目只修改 frontmatter，不移动文件。
+文章已统一放入以上两目录。已发布文章通过 frontmatter `slug` 保留原 URL；
+调整栏目时移动文件并更新 `category`，但不要修改 `slug`。导入器使用 `--force` 更新已有文件时保留其 `slug`。
 
 新文章可以复制模板：
 

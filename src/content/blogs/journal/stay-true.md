@@ -2,6 +2,7 @@
 title: 不忘初心
 description: 拿到 offer 后面对学校与工作的拉扯，重新选择坦然和顺其自然。
 category: journal
+slug: "dairy/stay-true"
 publishedAt: 2026-05-14
 draft: false
 tags: [忆]

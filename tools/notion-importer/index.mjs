@@ -93,13 +93,13 @@ Notion 参数：
   --order               系列顺序
   --keep-source-header  保留来源正文开头的标题/元数据
   --skip-images         不转存图片；Notion 临时图片链接以后可能失效
-  --force               允许覆盖已经存在的目标文件
+  --force               允许覆盖已经存在的目标文件，并保留已有 slug
   --help                显示帮助
 
 说明：
   --source 和 --content 由 --page 取代，其他文章参数会原样交给 markdown-importer。
   Token 不接受命令行明文参数，避免出现在 shell 历史和进程列表中。
-  新文章写入 journal/ 或 notes/；已有文件路径是永久 URL slug，不随分类改变。
+  新文章写入 journal/ 或 notes/；已有文章通过 frontmatter slug 保留发布地址。
 `;
 
 function normalizeKey(rawKey) {

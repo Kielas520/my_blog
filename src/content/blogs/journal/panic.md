@@ -2,6 +2,7 @@
 title: "WUJI 很大，但我很小"
 description: "我可能有强迫症吧"
 category: "journal"
+slug: "dairy/panic"
 publishedAt: 2026-09-14
 draft: false
 tags: ["忆"]

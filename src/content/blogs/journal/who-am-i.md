@@ -2,6 +2,7 @@
 title: 我是谁
 description: 一次阶段性的自我解释：放松、极客精神、脆弱、社交、独处与追求。
 category: journal
+slug: "dairy/who-am-i"
 publishedAt: 2026-07-05
 draft: false
 tags: [忆]
