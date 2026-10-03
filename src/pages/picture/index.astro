@@ -5,19 +5,25 @@ import pictureData from '../../data/picture.json';
 const pictures = pictureData as string[];
 ---
 
-<BaseLayout title="Picture" description="Kielasovo 的随机图片墙。">
+<BaseLayout title="相册" description="韩系少女插画与旧网像素场景，收藏窗边、四季与日常的片刻。">
   <header class="container page-head picture-head">
-    <p class="eyebrow">Loose frames</p>
-    <h1>Picture</h1>
+    <p class="eyebrow">Memories from the old web</p>
+    <h1>相册</h1>
   </header>
 
-  <section class="container picture-stage" id="picture-stage" aria-label="随机图片墙">
+  <section class="container picture-stage" id="picture-stage" aria-label="相册图片墙">
     {pictures.map((link, index) => (
       <figure class="photo-frame" data-photo>
-        <img src={link} alt={`Picture ${index + 1}`} loading="lazy" decoding="async" />
+        <img src={link} alt={index < 11 ? `韩系少女插画 ${index + 1}` : `旧网像素场景 ${index - 10}`} loading="lazy" decoding="async" />
       </figure>
     ))}
   </section>
+  <p class="container picture-sources">
+    画面来源：
+    <a href="https://www.bilibili.com/video/BV1zbhm62Evo/" target="_blank" rel="noopener noreferrer">RuiakaNeil · 少女插画视频</a>
+    <span aria-hidden="true"> / </span>
+    <a href="https://www.bilibili.com/video/BV1uYAFzrEHJ/?p=82" target="_blank" rel="noopener noreferrer">孤單小星星 · 旧网像素场景合集</a>
+  </p>
 </BaseLayout>
 
 <script>
@@ -53,6 +59,7 @@ const pictures = pictureData as string[];
 
 <style>
   .picture-head { padding-bottom: 34px; }
+  .picture-sources { color: var(--muted); font-size: .75rem; line-height: 1.8; padding-bottom: 28px; overflow-wrap: anywhere; }
   .picture-stage { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: start; gap: clamp(28px, 7vw, 76px) 0; padding: 24px 0 100px; }
   .photo-frame { --rotation: 0deg; --delay: 0ms; grid-column: 3 / 11; width: min(100%, 650px); margin: 0; padding: clamp(10px, 1.5vw, 16px); opacity: 0; background: #fffefa; border: 1px solid rgba(71,108,119,.22); border-radius: 4px; box-shadow: 0 18px 36px rgba(31,83,101,.2), 0 3px 8px rgba(31,83,101,.12); transform: rotate(var(--rotation)) translateY(14px); animation: settle 600ms cubic-bezier(.2,.8,.2,1) var(--delay) forwards; }
   .photo-frame[data-align="left"] { grid-column: 1 / 9; justify-self: start; }
@@ -62,5 +69,5 @@ const pictures = pictureData as string[];
   .photo-frame img { display: block; width: 100%; max-height: 75vh; object-fit: contain; background: #edf5f6; }
   @keyframes settle { to { opacity: 1; transform: rotate(var(--rotation)) translateY(0); } }
   @media (prefers-reduced-motion: reduce) { .photo-frame { opacity: 1; transform: rotate(var(--rotation)); animation: none; } }
-  @media (max-width: 640px) { .picture-stage { gap: 42px; } .photo-frame, .photo-frame[data-align] { grid-column: 1 / -1; width: min(94%, 520px); justify-self: center; } }
+  @media (max-width: 640px) { .picture-stage { gap: 42px 0; } .photo-frame, .photo-frame[data-align] { grid-column: 1 / -1; width: min(94%, 520px); min-width: 0; justify-self: center; } }
 </style>
