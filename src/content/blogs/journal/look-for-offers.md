@@ -1,6 +1,6 @@
 ---
 title: "三个月的过渡期"
-description: "从比赛结束，到第一次实习，再到离职和拿到新的 offer。"
+description: "在告别与启程之间"
 category: "journal"
 slug: "dairy/look-for-offers"
 publishedAt: 2026-09-06

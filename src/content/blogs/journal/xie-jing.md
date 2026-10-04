@@ -1,6 +1,6 @@
 ---
 title: 谢婧
-description: 关于高中时代一个难以忘记的女生，以及那段珍贵的青春回忆。
+description: 我最珍视的她和时光
 category: journal
 slug: "dairy/xie-jing"
 publishedAt: 2026-05-14

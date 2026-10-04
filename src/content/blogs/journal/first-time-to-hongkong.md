@@ -1,6 +1,6 @@
 ---
 title: "香港"
-description: "第一次出境，第一次去香港"
+description: "海的那边，第一次与我有关"
 category: "journal"
 slug: "dairy/first-time-to-hongkong"
 publishedAt: 2026-08-01

@@ -1,6 +1,6 @@
 ---
 title: "we suffer，we stronger"
-description: "记录入职具身智能公司三个月里的压抑、荒诞与成长。"
+description: "熬过漫长的日子，长出自己的骨头"
 category: "journal"
 slug: "dairy/we-suffer-we-stronger"
 publishedAt: 2026-08-22

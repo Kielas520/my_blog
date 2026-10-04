@@ -1,6 +1,6 @@
 ---
 title: "WUJI 很大，但我很小"
-description: "我可能有强迫症吧"
+description: "世界很大，心事无处安放"
 category: "journal"
 slug: "dairy/panic"
 publishedAt: 2026-09-14

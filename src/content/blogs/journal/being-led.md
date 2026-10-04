@@ -1,6 +1,6 @@
 ---
 title: 被牵着走
-description: 端午回家、陪母亲骑行，以及在成长中愈发强烈的念家。
+description: 走得越远，越想被家牵着
 category: journal
 slug: "dairy/being-led"
 publishedAt: 2026-06-20

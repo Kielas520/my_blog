@@ -1,6 +1,6 @@
 ---
 title: "那个下午"
-description: "骑一次单车去散心"
+description: "把心事交给午后的风"
 category: "journal"
 slug: "dairy/bikeride"
 publishedAt: 2026-06-18
