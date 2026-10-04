@@ -12,3 +12,5 @@ dist/
 public/images/
 public/cursors/
 public/favicon.svg
+
+.obsidian
