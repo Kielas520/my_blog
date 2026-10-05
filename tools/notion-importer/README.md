@@ -22,12 +22,12 @@ Token 只从环境变量读取，不应写进仓库或放在 CLI 参数中。
 
 ```bash
 npm run import:notion -- \
-  --page "https://app.notion.com/p/kielas520/panic-3dba064aa17880a29e78e2d3371d7664" \
-  --title "wuji 很大，但我很小" \
-  --description "我可能有强迫症吧" \
+  --page "https://app.notion.com/p/kielas520/3efa064aa17880a19bd2c503d4c505bb" \
+  --title "短暂的长假" \
+  --description "最好的家" \
   --category journal \
-  --published-at 2026-09-14 \
-  --file-name panic \
+  --published-at 2026-10-04 \
+  --file-name short-vacation \
   --draft false \
   --tags "忆" \
   --type article
@@ -37,12 +37,12 @@ PowerShell 使用反引号 `` ` `` 换行：
 
 ```powershell
 npm run import:notion -- `
-  --page "https://app.notion.com/p/kielas520/3d3a064aa1788033bf92c83ae1e4efca" `
-  --title "三个月的过渡期" `
-  --description "精神压力" `
+  --page "https://app.notion.com/p/kielas520/3efa064aa17880a19bd2c503d4c505bb" `
+  --title "短暂的长假" `
+  --description "最好的家" `
   --category journal `
-  --published-at 2026-09-06 `
-  --file-name look-for-offers `
+  --published-at 2026-10-04 `
+  --file-name short-vacation `
   --draft false `
   --tags "忆" `
   --type article
