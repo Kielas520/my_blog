@@ -7,24 +7,9 @@
       "motion": "fade"
     },
     {
-      "text": "Definition → NuLL",
-      "align": "random",
-      "motion": "left"
-    },
-    {
       "text": "互联网是一片有潮汐的海。",
       "align": "random",
       "motion": "up"
-    },
-    {
-      "text": "未定义，也是一种定义。",
-      "align": "random",
-      "motion": "up"
-    },
-    {
-      "text": "666，这个入是桂。",
-      "align": "random",
-      "motion": "left"
     },
     {
       "text": "无聊的时候，可以睡觉。",
@@ -32,24 +17,9 @@
       "motion": "fade"
     },
     {
-      "text": "你是凑企鹅，你是谁呀？",
-      "align": "random",
-      "motion": "right"
-    },
-    {
-      "text": "咕咕嘎嘎",
-      "align": "random",
-      "motion": "left"
-    },
-    {
-      "text": "你每天都会忘记上千件事，为什么不把这个也忘了？",
+      "text": "嘈杂的世界，混沌的自己",
       "align": "random",
       "motion": "fade"
-    },
-    {
-      "text": "？强强？",
-      "align": "random",
-      "motion": "left"
     }
   ]
 }
