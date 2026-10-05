@@ -13,7 +13,7 @@ interface Props {
 
 const {
   title = siteConfig.siteName,
-  description = 'Kielasovo：来自早期互联网的一小块私人空间。',
+  description = '日志、技术笔记、相册与音乐。',
 } = Astro.props;
 const isHome = Astro.url.pathname === '/';
 const pageTitle = title === siteConfig.siteName ? title : `${title} — ${siteConfig.siteName}`;

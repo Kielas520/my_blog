@@ -11,18 +11,16 @@ const tracks = musicData as Track[];
 const firstTrack = tracks[0];
 ---
 
-<BaseLayout title="音乐盒" description="留在旧空间里的旋律与像素小屋。">
+<BaseLayout title="音乐盒" description="旧空间里的旋律">
   <header class="container page-head music-head">
-    <p class="eyebrow">My little music box</p>
-    <h1>藏在空间里的旋律</h1>
-    <p>打开一首小曲，像以前挂着 QQ 的下午。</p>
+    <h1>音乐盒</h1>
   </header>
 
   <section class="container player-shell">
     <div class="player-display">
       <div class="disc" aria-hidden="true"><span></span></div>
       <div class="now-playing">
-        <p>空间背景音乐</p>
+        <p>当前曲目</p>
         <h2 id="current-track">{firstTrack?.name ?? 'NO TRACK'}</h2>
         {!firstTrack && <p class="empty">No music here.</p>}
       </div>
@@ -47,7 +45,7 @@ const firstTrack = tracks[0];
     )}
   </section>
   <section class="container memories" aria-labelledby="memories-title">
-    <h2 id="memories-title">那年的画面，那年的声音</h2>
+    <h2 id="memories-title">相关网站</h2>
     <div class="memory-links">
       <a href="https://eond.com/link/63280" target="_blank" rel="noopener noreferrer"><span>01 / 画师足迹</span><strong>Enakei · 旧站记录 ↗</strong></a>
       <a href="http://www.htcyy.com/" target="_blank" rel="noopener noreferrer"><span>02 / 纯音乐与钢琴曲</span><strong>好听纯音乐网 ↗</strong></a>

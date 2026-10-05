@@ -24,7 +24,6 @@ const portals = [
         <h1><span data-site-name>{siteConfig.siteName}</span></h1>
         <p class="signature">深夜的海边，浪声没停过，但你不觉得吵…</p>
       </div>
-      <div class="heading-stamp" aria-hidden="true"><span>私人小窝</span><strong>HOME SWEET HOME</strong><span>奶油色的日常 / 一点点浪漫</span></div>
     </header>
 
     <nav class="space-tabs" aria-label="空间栏目">
@@ -40,7 +39,6 @@ const portals = [
             <div class="portrait-frame">
               <span class="portrait-tape" aria-hidden="true"></span>
               <img data-site-avatar src={siteConfig.avatar} width="200" height="200" alt="空间主人的头像" />
-              <span class="portrait-caption">MY LITTLE PORTRAIT</span>
             </div>
             <p class="owner-name">Kielasovo <span aria-hidden="true">✧</span></p>
             <p class="owner-motto">我想回到过去，让自己变得无知</p>
@@ -66,12 +64,12 @@ const portals = [
         </section>
 
         <section class="space-panel bookmarks-panel" aria-labelledby="bookmark-title">
-          <h2 class="panel-heading" id="bookmark-title"><span aria-hidden="true">☆</span> 随手打开</h2>
+          <h2 class="panel-heading" id="bookmark-title"><span aria-hidden="true">☆</span> 快捷链接</h2>
           <div class="bookmark-links">
-            <a href="/blogs">读一篇日志 <span aria-hidden="true">›</span></a>
-            <a href="/blogs?category=notes">翻一页技术笔记 <span aria-hidden="true">›</span></a>
-            <a href="/music">听一点音乐 <span aria-hidden="true">›</span></a>
-            <a href="/link">找一个坐标 <span aria-hidden="true">›</span></a>
+            <a href="/blogs">日志 <span aria-hidden="true">›</span></a>
+            <a href="/blogs?category=notes">技术笔记 <span aria-hidden="true">›</span></a>
+            <a href="/music">音乐 <span aria-hidden="true">›</span></a>
+            <a href="/link">链接 <span aria-hidden="true">›</span></a>
           </div>
         </section>
       </aside>
@@ -89,7 +87,7 @@ const portals = [
                 <img data-room-image src={firstScene.src} width="720" height="448" alt={firstScene.alt} fetchpriority="high" />
               </picture>
             </div>
-            <figcaption><span><span aria-hidden="true">✦</span> <span data-room-caption>{firstScene.caption}</span></span><span class="room-caption-tag" data-room-name>{firstScene.name}</span></figcaption>
+            <figcaption><span class="room-caption-tag" data-room-name>{firstScene.name}</span></figcaption>
           </figure>
         </section>
 
@@ -107,17 +105,16 @@ const portals = [
         </section>
 
         <section class="space-panel words-panel" aria-labelledby="words-title">
-          <h2 class="panel-heading" id="words-title"><span aria-hidden="true">☆</span> 风送来的一句话 <span class="words-label">随机句子</span></h2>
+          <h2 class="panel-heading" id="words-title"><span aria-hidden="true">☆</span> 随机句子</h2>
           <FunWords />
         </section>
       </div>
     </div>
-    <p class="home-signoff"><span aria-hidden="true">✦</span> 小小空间，认真收藏。 <span aria-hidden="true">✦</span></p>
   </div>
 </BaseLayout>
 
 <script>
-  interface RoomScene { id: string; src: string; poster: string; name: string; weather: string; caption: string; alt: string }
+  interface RoomScene { id: string; src: string; poster: string; name: string; weather: string; alt: string }
 
   const chooseRoom = async () => {
     const room = document.querySelector<HTMLElement>('[data-room-scenes]');
@@ -142,10 +139,8 @@ const portals = [
     image.alt = scene.alt;
     room.dataset.roomId = scene.id;
     const weather = room.querySelector<HTMLElement>('[data-room-weather]');
-    const caption = room.querySelector<HTMLElement>('[data-room-caption]');
     const name = room.querySelector<HTMLElement>('[data-room-name]');
     if (weather) weather.textContent = scene.weather;
-    if (caption) caption.textContent = scene.caption;
     if (name) name.textContent = scene.name;
     try { sessionStorage.setItem('last-room-scene', scene.id); } catch {}
     room.dataset.roomReady = 'true';
@@ -159,11 +154,8 @@ const portals = [
   .home { padding-top: 22px; padding-bottom: 12px; }
   .space-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px 9px 20px; }
   .space-kicker { margin: 0 0 7px; color: #9b6d7f; font-size: .7rem; letter-spacing: .13em; }
-  .space-kicker span { color: #c589a1; }
   h1 { margin: 0; color: #795364; font-size: clamp(1.45rem, 3.6vw, 2.05rem); font-weight: 700; line-height: 1.35; letter-spacing: .035em; text-shadow: 1px 2px #fffaf5; overflow-wrap: anywhere; }
   .signature { margin: 9px 0 0; color: #926f7e; font-size: .77rem; line-height: 1.8; }
-  .heading-stamp { flex-shrink: 0; display: grid; gap: 5px; padding: 12px 20px; text-align: center; border: 1px dashed #cf9eb0; background: #fff8ee9c; transform: rotate(3deg); color: #a16f83; font-size: .66rem; }
-  .heading-stamp strong { font: 700 .61rem/1.5 Georgia, serif; letter-spacing: .1em; color: #895767; }
   .space-tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 7px 9px; margin-bottom: 12px; border: 1px solid #d5acb8; background: linear-gradient(#fff8f2, #f0d7dd); box-shadow: inset 0 1px #fff; }
   .space-tabs a { padding: 5px 16px; color: #7d596a; font-size: .75rem; line-height: 1.6; border: 1px solid transparent; text-decoration: none; }
   .space-tabs a:hover, .space-tabs .current { color: #985674; border-color: #d5a3b6; background: #fff8f4; box-shadow: inset 0 1px #fff, 1px 1px #dbb9c3; }
@@ -177,7 +169,6 @@ const portals = [
   .portrait-frame { position: relative; width: 160px; max-width: 100%; margin: 0 auto; padding: 7px 7px 0; border: 1px solid #dbc1bd; background: #fffdf7; box-shadow: 2px 3px #e6d4cd; transform: rotate(-2deg); }
   .portrait-frame img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border: 1px solid #eedad7; }
   .portrait-tape { position: absolute; z-index: 1; width: 52px; height: 16px; left: calc(50% - 26px); top: -9px; transform: rotate(4deg); background: #eabac79c; border-inline: 1px dashed #fff6; }
-  .portrait-caption { display: block; padding: 7px 0; color: #a28585; font: .48rem/1.2 ui-monospace, monospace; letter-spacing: .12em; }
   .owner-name { margin: 15px 0 4px; color: #84566c; font-weight: 700; font-size: .95rem; }
   .owner-name span { color: #b67c91; }
   .owner-motto { margin: 0 0 15px; color: #a07788; font-size: .68rem; }
@@ -208,22 +199,18 @@ const portals = [
   .portal-icon { display: grid; flex-shrink: 0; width: 25px; height: 28px; place-items: center; border: 1px solid #d0a5b6; color: #a36283; background: linear-gradient(#fff4f5, #e8cbd5); box-shadow: inset 1px 1px #fff; font-size: .78rem; }
   .portal-label { min-width: 0; font-size: .74rem; line-height: 1.5; }
   .portal-arrow { margin-left: auto; color: #b07f94; }
-  .words-label { margin-left: auto; font-size: .59rem; color: #ad8795; font-weight: 400; }
   .words-panel :global(.fun-words) { margin-top: 0; }
   .words-panel :global(.fun-window) { min-height: 80px; padding: 18px 25px; border: 0; border-radius: 0; background: #fffaf4; box-shadow: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none; }
   .words-panel :global(.fun-text) { color: #9a6e83; font: 400 .85rem/1.9 Georgia, 'Songti SC', serif; text-shadow: none; }
-  .home-signoff { margin: 22px 0 6px; text-align: center; color: #ad8592; font-size: .64rem; letter-spacing: .12em; }
   .space-tabs a:focus-visible, .portal-card:focus-visible, .bookmark-links a:focus-visible { outline: 2px solid #bd6385; outline-offset: 3px; }
   @media (max-width: 900px) {
     .space-columns { grid-template-columns: 190px minmax(0, 1fr); }
     .portal-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .space-tabs a { padding-inline: 12px; }
-    .heading-stamp { padding: 10px 12px; }
   }
   @media (max-width: 620px) {
     .home { padding-top: 10px; padding-bottom: 100px; }
     .space-heading { padding: 8px 2px 15px; }
-    .heading-stamp { display: none; }
     .space-kicker { font-size: .6rem; }
     .space-tabs { gap: 3px; padding: 6px; }
     .space-tabs a { padding: 4px 10px; font-size: .68rem; }

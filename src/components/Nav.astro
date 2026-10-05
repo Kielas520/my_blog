@@ -20,7 +20,6 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : href.includ
     <a class="brand" href="/" aria-label={`${siteConfig.siteName} 首页`}>
       <span class="brand-pixel" aria-hidden="true"></span>
       <span data-site-name>{siteConfig.siteName}</span>
-      <small>小窝在线</small>
     </a>
     <div class="links">
       {links.map((link) => (
@@ -65,7 +64,6 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : href.includ
   }
   .brand { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; min-width: 0; font-size: 13px; font-weight: 700; }
   .brand > [data-site-name] { overflow-wrap: anywhere; }
-  .brand small { color: #8b7660; font: 11px/1.4 Tahoma, "Microsoft YaHei", sans-serif; font-weight: 400; }
   .brand-pixel {
     flex: 0 0 auto;
     width: 4px;

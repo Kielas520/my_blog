@@ -19,12 +19,10 @@ for (const post of posts) {
 }
 ---
 
-<BaseLayout title="日志与技术笔记" description="记录心境与经历，也收藏学习和实践中的技术笔记。">
+<BaseLayout title="日志与技术笔记" description="日志、技术笔记与文章归档。">
   <div class="container blog-archive">
     <header class="archive-head">
-      <p class="eyebrow">我的文字收藏</p>
       <h1>日志与技术笔记</h1>
-      <p>记下心境与经历，给平凡的日子留一点回声。</p>
     </header>
     <nav class="categories" aria-label="按分类浏览文章">
       {categories.map(({ key, label, count }) => (
@@ -120,7 +118,7 @@ for (const post of posts) {
   .blog-archive { max-width: 840px; padding-block: 30px 48px; }
   .archive-head { margin-bottom: 20px; }
   .archive-head h1 { margin: 0; color: var(--text); font-size: clamp(1.45rem, 3vw, 1.9rem); line-height: 1.45; }
-  .archive-head > p:last-child, .archive-hint { margin: 9px 0 0; color: var(--muted); font-size: .85rem; }
+  .archive-hint { margin: 9px 0 0; color: var(--muted); font-size: .85rem; }
   .categories { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 28px; }
   .categories a { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; color: var(--text); background: linear-gradient(#fffdf8, #f4e2df); border: 1px solid #cdaab7; border-radius: 3px; box-shadow: inset 1px 1px #fff, 1px 2px #ddbdc6; font-size: .8rem; }
   .categories a:hover, .categories a.active { color: #7e3f58; background: #f4dce5; border-color: var(--accent); }
