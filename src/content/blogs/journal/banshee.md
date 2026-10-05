@@ -1,6 +1,6 @@
 ---
 title: "Banshee"
-description: "没有名字的人，走过真实的时光"
+description: 没有名字的人
 category: "journal"
 slug: "dairy/banshee"
 publishedAt: 2026-10-05

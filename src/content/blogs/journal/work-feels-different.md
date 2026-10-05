@@ -1,6 +1,6 @@
 ---
 title: 上班的感觉还真不一样
-description: 理想落地时，也有陌生的回声
+description: 原来爱好和上班是两码事
 category: journal
 slug: "dairy/work-feels-different"
 publishedAt: 2026-05-22

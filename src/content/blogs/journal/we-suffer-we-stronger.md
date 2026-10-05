@@ -1,6 +1,6 @@
 ---
 title: "we suffer，we stronger"
-description: "熬过漫长的日子，长出自己的骨头"
+description: 真煎熬
 category: "journal"
 slug: "dairy/we-suffer-we-stronger"
 publishedAt: 2026-08-22

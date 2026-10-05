@@ -1,6 +1,6 @@
 ---
 title: 被牵着走
-description: 走得越远，越想被家牵着
+description: 我想停下
 category: journal
 slug: "dairy/being-led"
 publishedAt: 2026-06-20

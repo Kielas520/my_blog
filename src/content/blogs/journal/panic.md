@@ -1,6 +1,6 @@
 ---
 title: "WUJI 很大，但我很小"
-description: "世界很大，心事无处安放"
+description: 身边的人都好厉害
 category: "journal"
 slug: "dairy/panic"
 publishedAt: 2026-09-14

@@ -1,6 +1,6 @@
 ---
 title: "短暂的长假"
-description: "最好的家"
+description: 最好的家
 category: "journal"
 publishedAt: 2026-10-04
 draft: false

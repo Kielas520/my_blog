@@ -1,6 +1,6 @@
 ---
 title: 一张纸
-description: 那张纸上，是父亲慢下来的时光
+description: 恍惚
 category: journal
 slug: "dairy/a-sheet"
 publishedAt: 2026-06-18

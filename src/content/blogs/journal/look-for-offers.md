@@ -1,6 +1,6 @@
 ---
-title: "三个月的过渡期"
-description: "在告别与启程之间"
+title: "过渡期"
+description: 告别与启程
 category: "journal"
 slug: "dairy/look-for-offers"
 publishedAt: 2026-09-06

@@ -1,6 +1,6 @@
 ---
 title: 我是谁
-description: 在人群与独处之间，慢慢认出自己
+description: 我也不知道
 category: journal
 slug: "dairy/who-am-i"
 publishedAt: 2026-07-05

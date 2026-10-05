@@ -1,6 +1,6 @@
 ---
-title: 不忘初心
-description: 纷扰之外，仍想听见自己的心
+title: 保持纯真
+description: 未来和当下
 category: journal
 slug: "dairy/stay-true"
 publishedAt: 2026-05-14
