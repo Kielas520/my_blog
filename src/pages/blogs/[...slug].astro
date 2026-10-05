@@ -294,8 +294,8 @@ const backUrl = post.data.category === 'notes' ? '/blogs?category=notes' : '/blo
   .prose :global(.gallery-wide), .prose :global(.gallery-solo) { grid-template-columns: 1fr; }
   .prose :global(.gallery-wide p) { min-height: clamp(220px, 24vw, 360px); }
   .prose :global(.gallery-wide img) { max-width: min(100%, 980px); max-height: min(52vh, 420px); }
-  .prose :global(.gallery-solo p) { min-height: clamp(300px, 36vw, 520px); }
-  .prose :global(.gallery-solo img) { max-width: min(82%, 980px); max-height: min(68vh, 620px); }
+  .prose :global(.gallery-solo p) { justify-self: center; width: fit-content; max-width: 100%; min-height: 0; }
+  .prose :global(.gallery-solo img) { max-width: 100%; max-height: min(68vh, 620px); }
   .prose :global(hr) { height: 1px; margin: 2.6rem 0; background: var(--line); border: 0; }
   .prose :global(table) { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
   .prose :global(th), .prose :global(td) { padding: 10px 12px; border: 1px solid var(--line); text-align: left; }
@@ -308,6 +308,7 @@ const backUrl = post.data.category === 'notes' ? '/blogs?category=notes' : '/blo
     .prose :global(columns), .prose :global(.image-gallery) { margin: 2rem 0; }
     .prose :global(.gallery-row), .prose :global(.gallery-stack) { gap: 14px; }
     .prose :global(.gallery-row p), .prose :global(.gallery-stack p), .prose :global(.gallery-wide p), .prose :global(.gallery-solo p), .prose :global(.gallery-mosaic > p.gallery-feature) { grid-row: auto; grid-column: auto; min-height: 220px; padding: 12px; }
+    .prose :global(.gallery-solo p) { min-height: 0; }
     .prose :global(.image-gallery img), .prose :global(.gallery-wide img), .prose :global(.gallery-solo img) { max-width: 100%; max-height: 68vh; }
   }
 </style>
