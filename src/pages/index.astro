@@ -7,12 +7,12 @@ import roomScenes from '../data/room-scenes.json';
 const firstScene = roomScenes[0];
 
 const portals = [
-  { href: '/blogs', label: '我的日志', note: '把想说的话，慢慢写下来。', icon: '文', detail: '心境与经历' },
-  { href: '/blogs?category=notes', label: '技术笔记', note: '收藏技术理解、判断和实践方法。', icon: '记', detail: '技术与实用笔记' },
-  { href: '/picture', label: '我的相册', note: '收集好看的画面与小小瞬间。', icon: '画', detail: '随机图片与相框' },
-  { href: '/music', label: '音乐盒', note: '给今天留一首背景音乐。', icon: '音', detail: '音乐与声音收藏' },
-  { href: '/tools', label: '工具抽屉', note: '需要的时候，就来这里翻翻。', icon: '用', detail: '网络与实用工具' },
-  { href: '/link', label: '链接收藏', note: '互联网里值得记下的坐标。', icon: '链', detail: '短链接与坐标' },
+  { href: '/blogs', label: '我的日志', icon: '文' },
+  { href: '/blogs?category=notes', label: '技术笔记', icon: '记' },
+  { href: '/picture', label: '我的相册', icon: '画' },
+  { href: '/music', label: '音乐盒', icon: '音' },
+  { href: '/tools', label: '工具抽屉', icon: '用' },
+  { href: '/link', label: '链接收藏', icon: '链' },
 ];
 ---
 
@@ -57,9 +57,9 @@ const portals = [
           <div class="note-body">
             <p class="note-date">TO：路过这里的你</p>
             <div class="note-message">
+              <p>欢迎！</p>
               <p>这里是我的精神世界。</p>
-              <p>希望路过的人可以留在这到处看看。</p>
-              <p>我的文笔很差，但是这是我最珍贵的财富。</p>
+              <p>我的文笔很差，<br />但是这是我最珍贵的财富。</p>
             </div>
             <p class="note-signature">希望到此的人<br />都能获得一份安宁</p>
           </div>
@@ -99,10 +99,10 @@ const portals = [
             {portals.map((item) => (
               <a class="portal-card" href={item.href}>
                 <span class="portal-icon" aria-hidden="true">{item.icon}</span>
-                <span class="portal-copy"><strong>{item.label}</strong><span>{item.note}</span><small>{item.detail} <span aria-hidden="true">›</span></small></span>
+                <strong class="portal-label">{item.label}</strong>
+                <span class="portal-arrow" aria-hidden="true">›</span>
               </a>
             ))}
-            <div class="collection-note"><span aria-hidden="true">✧</span><p>把世界<br />装进小小的空间里。</p></div>
           </nav>
         </section>
 
@@ -203,16 +203,11 @@ const portals = [
   .room-figure figcaption { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 3px 2px; color: #9d7584; font-size: .65rem; line-height: 1.65; }
   .room-caption-tag { flex-shrink: 0; padding: 1px 6px; border: 1px solid #e5cad0; background: #fff1ee; font-size: .57rem; color: #af8792; }
   .portal-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 10px; }
-  .portal-card { display: flex; align-items: flex-start; gap: 9px; min-width: 0; padding: 12px 9px; color: #865e71; text-decoration: none; border: 1px solid #e2c3cb; background: linear-gradient(135deg, #fffdf7, #faedf0); box-shadow: inset 0 1px #fff; transition: border-color 140ms ease, background 140ms ease; }
+  .portal-card { display: flex; align-items: center; gap: 9px; min-width: 0; padding: 12px 9px; color: #865e71; text-decoration: none; border: 1px solid #e2c3cb; background: linear-gradient(135deg, #fffdf7, #faedf0); box-shadow: inset 0 1px #fff; transition: border-color 140ms ease, background 140ms ease; }
   .portal-card:hover { color: #a94d77; border-color: #bf88a0; background: #fff3f5; }
   .portal-icon { display: grid; flex-shrink: 0; width: 25px; height: 28px; place-items: center; border: 1px solid #d0a5b6; color: #a36283; background: linear-gradient(#fff4f5, #e8cbd5); box-shadow: inset 1px 1px #fff; font-size: .78rem; }
-  .portal-copy { display: grid; gap: 6px; min-width: 0; }
-  .portal-copy strong { font-size: .74rem; line-height: 1.5; }
-  .portal-copy > span { color: #a1818e; font-size: .61rem; line-height: 1.7; }
-  .portal-copy small { color: #b07f94; font-size: .57rem; line-height: 1.6; }
-  .collection-note { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 6px; border: 1px dashed #e2c5cc; color: #b18b98; background: #fcf5ed; }
-  .collection-note > span { color: #c596a4; font-size: 1.6rem; }
-  .collection-note p { margin: 0; font-size: .68rem; line-height: 1.9; }
+  .portal-label { min-width: 0; font-size: .74rem; line-height: 1.5; }
+  .portal-arrow { margin-left: auto; color: #b07f94; }
   .words-label { margin-left: auto; font-size: .59rem; color: #ad8795; font-weight: 400; }
   .words-panel :global(.fun-words) { margin-top: 0; }
   .words-panel :global(.fun-window) { min-height: 80px; padding: 18px 25px; border: 0; border-radius: 0; background: #fffaf4; box-shadow: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none; }
@@ -245,7 +240,6 @@ const portals = [
     .room-figure figcaption { flex-wrap: wrap; gap: 5px; font-size: .6rem; }
     .portal-grid { gap: 6px; padding: 8px; }
     .portal-card { padding: 10px 7px; gap: 7px; }
-    .portal-copy > span { font-size: .59rem; }
   }
   @media (max-width: 360px) {
     .space-sidebar { grid-template-columns: minmax(0, 1fr); }

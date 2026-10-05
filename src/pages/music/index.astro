@@ -24,11 +24,7 @@ const firstTrack = tracks[0];
       <div class="now-playing">
         <p>空间背景音乐</p>
         <h2 id="current-track">{firstTrack?.name ?? 'NO TRACK'}</h2>
-        {firstTrack ? (
-          <p class="player-hint">圣诞小屋的原配乐、少女插画的原声片段，以及四首原创短曲。点击下方歌曲或用音乐盒的上一首、下一首切换；浏览其他页面时继续播放。不自动播放。</p>
-        ) : (
-          <p class="empty">No music here.</p>
-        )}
+        {!firstTrack && <p class="empty">No music here.</p>}
       </div>
     </div>
 
@@ -54,7 +50,7 @@ const firstTrack = tracks[0];
     <h2 id="memories-title">那年的画面，那年的声音</h2>
     <div class="memory-links">
       <a href="https://eond.com/link/63280" target="_blank" rel="noopener noreferrer"><span>01 / 画师足迹</span><strong>Enakei · 旧站记录 ↗</strong></a>
-      <a href="https://www.tumblr.com/pixelscenery" target="_blank" rel="noopener noreferrer"><span>02 / 像素风景</span><strong>Pixel Scenery ↗</strong></a>
+      <a href="http://www.htcyy.com/" target="_blank" rel="noopener noreferrer"><span>02 / 纯音乐与钢琴曲</span><strong>好听纯音乐网 ↗</strong></a>
       <a href="https://www.tumblr.com/tofupixel/tagged/pixel%20art%20gif" target="_blank" rel="noopener noreferrer"><span>03 / 像素画师</span><strong>Tofu · 动图作品 ↗</strong></a>
       <a href="https://musmus.main.jp/music_img1.html" target="_blank" rel="noopener noreferrer"><span>04 / 那年的声音</span><strong>MusMus · 慢慢听 ↗</strong></a>
     </div>
@@ -103,7 +99,6 @@ const firstTrack = tracks[0];
   .now-playing { padding: 24px; }
   .now-playing > p:first-child { margin: 0; color: #a3657c; font-size: 11px; letter-spacing: .1em; }
   h2 { margin: 12px 0; overflow-wrap: anywhere; color: #674b59; font-size: 20px; line-height: 1.5; }
-  .player-hint { color: #896e79; font-size: 12px; line-height: 1.9; }
   .empty { color: var(--muted); }
   .track-list { overflow: hidden; background: #fffaf5; border: 1px solid #caa4ae; border-top: 0; border-radius: 0 0 5px 5px; box-shadow: 3px 3px 0 #e5cbd0; }
   .track { display: grid; grid-template-columns: 32px minmax(0,1fr) auto; gap: 8px; align-items: center; width: 100%; padding: 14px 18px; color: inherit; background: transparent; border: 0; border-bottom: 1px dashed var(--line); text-align: left; cursor: var(--site-cursor); }
