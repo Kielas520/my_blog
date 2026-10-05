@@ -24,6 +24,8 @@ public/config.json
 默认光标为 20×20 的奶油粉像素箭头配星星，热点在左上角 `(0, 0)`。SVG 原稿也存放在图床，下载到仓库外编辑后重新上传。运行 `node scripts/generate-room-gifs.mjs <仓库外输出目录>` 可从远程 SVG 重建 PNG 和首页小窝 GIF；SVG 保持 32×32 绘制坐标，PNG 按 20×20 输出，生成器不向仓库写图片。
 
 
+构建配置通过 `src/config/site.ts` 直接导入 `public/config.json`，让初始 HTML 的站点名称与标题就使用配置值，不依赖浏览器请求完成后再覆盖默认名称。不要用相对 `import.meta.url` 的文件系统读取替代 JSON 导入：打包后模块位置变化会导致读取失败并回退到默认值。
+
 页面首次加载及每次站内导航后，都会以 `no-store` 方式重新读取这份配置，并更新站点名称、页面标题和配置的图片样式，避免切页恢复为构建时的旧值。正式网站由 Pages 托管，因此必须修改
 `public/config.json`，再通过 GitHub 提交和发布；不要直接修改自动生成的 `dist/config.json`。
 

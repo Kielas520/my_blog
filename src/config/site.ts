@@ -1,5 +1,4 @@
-// @ts-expect-error Astro runs this build-time module in Node; the project does not ship Node typings.
-import { readFileSync } from 'node:fs';
+import config from '../../public/config.json';
 
 export interface SiteConfig {
   siteName: string;
@@ -17,14 +16,4 @@ const defaults: SiteConfig = {
   cursor: 'https://image.kielasovo.com/2026/10/85a5e0ade6ca166e36e53b0ff1f710c5.png',
 };
 
-function readSiteConfig(): SiteConfig {
-  try {
-    const path = new URL('../../public/config.json', import.meta.url);
-    const value = JSON.parse(readFileSync(path, 'utf8')) as Partial<SiteConfig>;
-    return { ...defaults, ...value };
-  } catch {
-    return defaults;
-  }
-}
-
-export const siteConfig = readSiteConfig();
+export const siteConfig: SiteConfig = { ...defaults, ...config };
