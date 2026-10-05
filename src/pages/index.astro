@@ -56,8 +56,12 @@ const portals = [
           <h2 class="panel-heading" id="note-title"><span aria-hidden="true">☆</span> 小窝便签</h2>
           <div class="note-body">
             <p class="note-date">TO：路过这里的你</p>
-            <p>这里是我的精神世界。<br />希望路过的人可以留在这到处看看。<br />我的文笔很差，但是这是我最珍贵的财富。</p>
-            <span class="note-signature">希望到此的人都能获得一份安宁</span>
+            <div class="note-message">
+              <p>这里是我的精神世界。</p>
+              <p>希望路过的人可以留在这到处看看。</p>
+              <p>我的文笔很差，但是这是我最珍贵的财富。</p>
+            </div>
+            <p class="note-signature">希望到此的人<br />都能获得一份安宁</p>
           </div>
         </section>
 
@@ -181,10 +185,11 @@ const portals = [
   .profile-details div { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 5px; padding: 5px 0; }
   .profile-details dt { color: #ad8895; }
   .profile-details dd { margin: 0; color: #785d68; overflow-wrap: anywhere; }
-  .note-body { margin: 10px; padding: 10px 8px 13px; background: repeating-linear-gradient(#fff9e8 0 25px, #eedecb 25px 26px); color: #917766; font-size: .73rem; line-height: 26px; }
-  .note-date { margin: 0 0 4px; color: #ad8779; font-size: .61rem; }
-  .note-body p:not(.note-date) { margin: 0; }
-  .note-signature { display: block; margin-top: 5px; text-align: right; font-size: .66rem; }
+  .note-body { margin: 10px; padding: 12px 10px; background: #fff9e8; color: #917766; font-size: .7rem; line-height: 1.85; }
+  .note-date { margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid #eedecb; color: #ad8779; font-size: .61rem; }
+  .note-message { display: grid; gap: 8px; }
+  .note-message p { margin: 0; text-wrap: pretty; }
+  .note-body .note-signature { margin: 14px 0 0; padding-top: 8px; border-top: 1px solid #eedecb; text-align: right; font-size: .64rem; line-height: 1.7; }
   .bookmark-links { display: grid; padding: 5px 10px; }
   .bookmark-links a { display: flex; justify-content: space-between; padding: 8px 2px; font-size: .7rem; color: #94687d; text-decoration: none; }
   .bookmark-links a + a { border-top: 1px dotted #e4ccd0; }
@@ -233,7 +238,7 @@ const portals = [
     .profile-body { padding: 15px 9px 10px; }
     .portrait-frame { width: 130px; }
     .profile-details div { grid-template-columns: 1fr; gap: 2px; }
-    .note-body { margin: 7px; padding: 7px; font-size: .65rem; }
+    .note-body { margin: 7px; padding: 10px 8px; font-size: .65rem; }
     .note-date { font-size: .55rem; }
     .panel-heading { font-size: .7rem; padding-inline: 8px; }
     .room-figure { padding: 6px; }
