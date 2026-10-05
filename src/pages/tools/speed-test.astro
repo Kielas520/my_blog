@@ -34,100 +34,179 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 <script>
   import SpeedTest, { type MeasurementSummary } from '@cloudflare/speedtest';
 
-  const button = document.querySelector<HTMLButtonElement>('#speed-button');
-  const phase = document.querySelector<HTMLElement>('#phase');
-  const progress = document.querySelector<HTMLElement>('#progress-bar');
-  const status = document.querySelector<HTMLElement>('#speed-status');
-  const mainValue = document.querySelector<HTMLElement>('#main-value');
-  const mainUnit = document.querySelector<HTMLElement>('#main-unit');
+  let initializedButton: HTMLButtonElement | null = null;
+  let cleanup: (() => void) | undefined;
 
-  const setText = (selector: string, value: string) => {
-    const element = document.querySelector<HTMLElement>(selector);
-    if (element) element.textContent = value;
-  };
+  const initializeSpeedTest = () => {
+    const button = document.querySelector<HTMLButtonElement>('#speed-button');
+    if (!button || button === initializedButton) return;
+    const phase = document.querySelector<HTMLElement>('#phase');
+    const progress = document.querySelector<HTMLElement>('#progress-bar');
+    const status = document.querySelector<HTMLElement>('#speed-status');
+    const mainValue = document.querySelector<HTMLElement>('#main-value');
+    const mainUnit = document.querySelector<HTMLElement>('#main-unit');
+    if (!phase || !progress || !status || !mainValue || !mainUnit) return;
 
-  const formatSpeed = (bps?: number) => typeof bps === 'number' && Number.isFinite(bps)
-    ? (bps / 1_000_000).toFixed(bps >= 100_000_000 ? 0 : 1)
-    : '—';
-  const formatMs = (ms?: number) => typeof ms === 'number' && Number.isFinite(ms) ? ms.toFixed(ms >= 100 ? 0 : 1) : '—';
+    cleanup?.();
+    initializedButton = button;
+    let activeTest: SpeedTest | null = null;
+    let activeMetric: 'latency' | 'download' | 'upload' = 'latency';
+    const failedMetrics = new Set<'latency' | 'jitter' | 'download' | 'upload'>();
+    const getSummary = (test: SpeedTest) => {
+      const summary = test.results.getSummary();
+      for (const metric of failedMetrics) summary[metric] = undefined;
+      return summary;
+    };
 
-  const render = (summary: MeasurementSummary) => {
-    setText('#download', formatSpeed(summary.download));
-    setText('#upload', formatSpeed(summary.upload));
-    setText('#latency', formatMs(summary.latency));
-    setText('#jitter', formatMs(summary.jitter));
-    if (mainValue && mainUnit) {
-      const active = summary.download ?? summary.upload;
-      if (active) {
-        mainValue.textContent = formatSpeed(active);
-        mainUnit.textContent = 'Mbps';
-      } else {
-        mainValue.textContent = formatMs(summary.latency) === '—' ? '0.0' : formatMs(summary.latency);
-        mainUnit.textContent = 'ms';
+    const setText = (selector: string, value: string) => {
+      const element = document.querySelector<HTMLElement>(selector);
+      if (element) element.textContent = value;
+    };
+    const isValid = (value: unknown): value is number =>
+      typeof value === 'number' && Number.isFinite(value) && value >= 0;
+    const isValidSpeed = (value: unknown): value is number => isValid(value) && value > 0;
+    const formatSpeed = (bps?: number) => isValidSpeed(bps)
+      ? (bps / 1_000_000).toFixed(bps >= 100_000_000 ? 0 : 1)
+      : '—';
+    const formatMs = (ms?: number) => isValid(ms) ? ms.toFixed(ms >= 100 ? 0 : 1) : '—';
+
+    const render = (summary: MeasurementSummary) => {
+      setText('#download', formatSpeed(summary.download));
+      setText('#upload', formatSpeed(summary.upload));
+      setText('#latency', formatMs(summary.latency));
+      setText('#jitter', formatMs(summary.jitter));
+      mainValue.textContent = activeMetric === 'latency'
+        ? formatMs(summary.latency)
+        : formatSpeed(summary[activeMetric]);
+      mainUnit.textContent = activeMetric === 'latency' ? 'ms' : 'Mbps';
+    };
+
+    const releaseTest = () => {
+      const test = activeTest;
+      activeTest = null;
+      if (!test) return;
+      test.onPhaseChange = () => {};
+      test.onResultsChange = () => {};
+      test.onError = () => {};
+      test.onFinish = () => {};
+      test.pause();
+    };
+
+    const runTest = () => {
+      if (activeTest || button.disabled) return;
+      button.disabled = true;
+      button.textContent = 'TESTING…';
+      phase.textContent = 'CONNECTING';
+      status.textContent = '正在连接测速节点…';
+      progress.style.width = '2%';
+      mainValue.textContent = '0.0';
+      mainUnit.textContent = 'ms';
+      activeMetric = 'latency';
+      ['#download', '#upload', '#latency', '#jitter'].forEach((selector) => setText(selector, '—'));
+
+      const measurements = [
+        { type: 'latency' as const, numPackets: 12 },
+        { type: 'download' as const, bytes: 100_000, count: 2, bypassMinDuration: true },
+        { type: 'download' as const, bytes: 1_000_000, count: 3 },
+        { type: 'download' as const, bytes: 10_000_000, count: 3 },
+        { type: 'download' as const, bytes: 25_000_000, count: 2 },
+        { type: 'upload' as const, bytes: 100_000, count: 2, bypassMinDuration: true },
+        { type: 'upload' as const, bytes: 1_000_000, count: 3 },
+        { type: 'upload' as const, bytes: 10_000_000, count: 2 },
+      ];
+      failedMetrics.clear();
+      const errors = new Set<string>();
+      let lastError = '';
+      const renderRunningStatus = (measurementId: number) => {
+        status.textContent = `${phase.textContent} · ${measurementId + 1}/${measurements.length}`
+          + (lastError ? ` · 部分测量失败，继续测速：${lastError}` : '');
+      };
+
+      try {
+        const test = new SpeedTest({
+          autoStart: false,
+          logMeasurementApiUrl: null,
+          logAimApiUrl: null,
+          measurements,
+          bandwidthFinishRequestDuration: 800,
+          measureDownloadLoadedLatency: false,
+          measureUploadLoadedLatency: false,
+        });
+        activeTest = test;
+        let measurementId = 0;
+
+        test.onPhaseChange = ({ measurementId: id, measurement }) => {
+          if (activeTest !== test) return;
+          measurementId = id;
+          const labels = { latency: 'LATENCY', download: 'DOWNLOAD', upload: 'UPLOAD', packetLoss: 'PACKET LOSS' } as const;
+          phase.textContent = labels[measurement.type];
+          if (measurement.type !== 'packetLoss') activeMetric = measurement.type;
+          render(getSummary(test));
+          renderRunningStatus(id);
+          progress.style.width = `${Math.max(4, (id / measurements.length) * 100)}%`;
+        };
+        test.onResultsChange = () => {
+          if (activeTest === test) render(getSummary(test));
+        };
+        test.onFinish = () => {
+          if (activeTest !== test) return;
+          const summary = getSummary(test);
+          activeMetric = isValidSpeed(summary.download) ? 'download' : isValidSpeed(summary.upload) ? 'upload' : 'latency';
+          render(summary);
+          const expectedMetrics = [
+            ['download', '下载速度'],
+            ['upload', '上传速度'],
+            ['latency', '延迟'],
+            ['jitter', '抖动'],
+          ] as const;
+          const missing = expectedMetrics.filter(([key]) =>
+            key === 'download' || key === 'upload' ? !isValidSpeed(summary[key]) : !isValid(summary[key])
+          ).map(([, label]) => label);
+          if (missing.length) errors.add(`缺少有效结果：${missing.join('、')}`);
+          const failed = errors.size > 0;
+          phase.textContent = failed ? 'ERROR' : 'COMPLETE';
+          status.textContent = failed
+            ? `测速未完整成功，已保留有效结果：${[...errors].join('；')}`
+            : isValid(summary.totalDurationMs)
+              ? `测试完成 · ${(summary.totalDurationMs / 1000).toFixed(1)}s`
+              : '测试完成。';
+          progress.style.width = '100%';
+          releaseTest();
+          button.disabled = false;
+          button.textContent = failed ? 'TRY AGAIN' : 'TEST AGAIN';
+        };
+        test.onError = (message) => {
+          if (activeTest !== test) return;
+          // The engine advances to the next phase after onError, even if paused here.
+          errors.add(message);
+          lastError = message;
+          failedMetrics.add(activeMetric);
+          if (activeMetric === 'latency') failedMetrics.add('jitter');
+          render(getSummary(test));
+          renderRunningStatus(measurementId);
+        };
+        test.play();
+      } catch (error) {
+        releaseTest();
+        phase.textContent = 'ERROR';
+        status.textContent = `无法启动测速：${error instanceof Error ? error.message : String(error)}`;
+        button.disabled = false;
+        button.textContent = 'TRY AGAIN';
       }
-    }
+    };
+
+    button.addEventListener('click', runTest);
+    cleanup = () => {
+      releaseTest();
+      button.removeEventListener('click', runTest);
+      initializedButton = null;
+      cleanup = undefined;
+    };
   };
 
-  const runTest = () => {
-    if (!button || !phase || !progress || !status || !mainValue || !mainUnit) return;
-    button.disabled = true;
-    button.textContent = 'TESTING…';
-    phase.textContent = 'CONNECTING';
-    status.textContent = '正在连接测速节点…';
-    progress.style.width = '2%';
-    mainValue.textContent = '0.0';
-    mainUnit.textContent = 'ms';
-    ['#download', '#upload', '#latency', '#jitter'].forEach((selector) => setText(selector, '—'));
-
-    const measurements = [
-      { type: 'latency' as const, numPackets: 12 },
-      { type: 'download' as const, bytes: 100_000, count: 2, bypassMinDuration: true },
-      { type: 'download' as const, bytes: 1_000_000, count: 3 },
-      { type: 'download' as const, bytes: 10_000_000, count: 3 },
-      { type: 'download' as const, bytes: 25_000_000, count: 2 },
-      { type: 'upload' as const, bytes: 100_000, count: 2, bypassMinDuration: true },
-      { type: 'upload' as const, bytes: 1_000_000, count: 3 },
-      { type: 'upload' as const, bytes: 10_000_000, count: 2 },
-    ];
-
-    const test = new SpeedTest({
-      autoStart: false,
-      logMeasurementApiUrl: null,
-      logAimApiUrl: null,
-      measurements,
-      bandwidthFinishRequestDuration: 800,
-      measureDownloadLoadedLatency: false,
-      measureUploadLoadedLatency: false,
-    });
-
-    test.onPhaseChange = ({ measurementId, measurement }) => {
-      const labels = { latency: 'LATENCY', download: 'DOWNLOAD', upload: 'UPLOAD', packetLoss: 'PACKET LOSS' } as const;
-      phase.textContent = labels[measurement.type] || measurement.type.toUpperCase();
-      status.textContent = `${phase.textContent} · ${measurementId + 1}/${measurements.length}`;
-      progress.style.width = `${Math.max(4, (measurementId / measurements.length) * 100)}%`;
-    };
-    test.onResultsChange = () => render(test.results.getSummary());
-    test.onFinish = (results) => {
-      const summary = results.getSummary();
-      render(summary);
-      phase.textContent = 'COMPLETE';
-      status.textContent = summary.totalDurationMs
-        ? `测试完成 · ${(summary.totalDurationMs / 1000).toFixed(1)}s`
-        : '测试完成。';
-      progress.style.width = '100%';
-      button.disabled = false;
-      button.textContent = 'TEST AGAIN';
-    };
-    test.onError = (message) => {
-      phase.textContent = 'ERROR';
-      status.textContent = `测速失败：${message}`;
-      button.disabled = false;
-      button.textContent = 'TRY AGAIN';
-    };
-    test.play();
-  };
-
-  button?.addEventListener('click', runTest);
+  initializeSpeedTest();
+  document.addEventListener('astro:page-load', initializeSpeedTest);
+  document.addEventListener('astro:before-swap', () => cleanup?.());
 </script>
 
 <style>

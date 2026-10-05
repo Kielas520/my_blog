@@ -15,6 +15,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 
 CONFIG_NAMES = {
@@ -63,7 +64,10 @@ def picgo_locations() -> list[tuple[Path, Path]]:
 def locate_picgo() -> tuple[Path, Path, Path]:
     for directory, cli in picgo_locations():
         config = directory / "data.json"
-        if config.is_file() and cli.is_file():
+        local_entry = directory / "node_modules" / "picgo" / "bin" / "picgo"
+        if config.is_file() and local_entry.is_file():
+            return directory, config, local_entry
+        if config.is_file() and cli.is_file() and cli.suffix.lower() not in (".cmd", ".bat"):
             return directory, config, cli
     searched = ", ".join(str(path) for _, path in picgo_locations())
     raise RuntimeError(f"找不到 PicGo 配置或 CLI，请检查这些路径：{searched}")
@@ -78,7 +82,10 @@ def parse_arguments() -> argparse.Namespace:
 
 def load_config(config_path: Path) -> dict[str, Any]:
     try:
-        return json.loads(config_path.read_text(encoding="utf-8"))
+        config = json.loads(config_path.read_text(encoding="utf-8-sig"))
+        if not isinstance(config, dict):
+            raise RuntimeError("PicGo 配置必须是 JSON 对象")
+        return config
     except (OSError, json.JSONDecodeError) as error:
         raise RuntimeError(f"无法读取 PicGo 配置：{error}") from error
 
@@ -87,7 +94,9 @@ def select_config(config: dict[str, Any], media_type: str) -> dict[str, Any]:
     config_name = CONFIG_NAMES[media_type]
     try:
         uploader_store = config["uploader"]["aws-s3"]
-        selected = next(item for item in uploader_store["configList"] if item.get("_configName") == config_name)
+        selected = next(item for item in uploader_store["configList"] if isinstance(item, dict) and item.get("_configName") == config_name)
+        if not selected.get("_id"):
+            raise RuntimeError(f"PicGo 配置缺少 _id：{config_name}")
     except (KeyError, TypeError, StopIteration) as error:
         raise RuntimeError(f"PicGo 中找不到配置：{config_name}") from error
 
@@ -100,6 +109,8 @@ def select_config(config: dict[str, Any], media_type: str) -> dict[str, Any]:
         selected = selected.copy()
         selected.update(endpoint=endpoint, accessKeyID=access_key, secretAccessKey=secret_key)
 
+    if not isinstance(config.get("picBed", {}), dict):
+        raise RuntimeError("PicGo picBed 必须是配置对象")
     uploader_store["defaultId"] = selected["_id"]
     config.setdefault("picBed", {})["uploader"] = "aws-s3"
     config["picBed"]["current"] = "aws-s3"
@@ -110,7 +121,7 @@ def select_config(config: dict[str, Any], media_type: str) -> dict[str, Any]:
 def extract_url(output: str, media_type: str) -> str:
     expected_hosts = {"image": "image.kielasovo.com", "sound": "sound.kielasovo.com", "video": "video.kielasovo.com"}
     urls = re.findall(r"https?://[^\s\]\[\"'<>]+", output)
-    matching_urls = [url.rstrip(".,;)") for url in urls if expected_hosts[media_type] in url]
+    matching_urls = [url.rstrip(".,;)") for url in urls if urlsplit(url).hostname == expected_hosts[media_type]]
     if not matching_urls:
         raise RuntimeError("PicGo 未返回可识别的上传 URL，请检查下面的 PicGo 输出。")
     return matching_urls[-1]
@@ -122,7 +133,13 @@ def upload(source: Path, media_type: str, config: dict[str, Any], directory: Pat
         with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", suffix=".json", prefix="media-uploader-", dir=directory, delete=False) as temporary_file:
             json.dump(config, temporary_file, ensure_ascii=False, indent=2)
             temporary_path = Path(temporary_file.name)
-        result = subprocess.run([str(cli), "--config", str(temporary_path), "upload", str(source)], cwd=directory, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
+        command = [str(cli)]
+        if cli.name == "picgo" and cli.parent.name == "bin":
+            node = shutil.which("node")
+            if not node:
+                raise RuntimeError("未找到 Node.js，无法启动 PicGo")
+            command = [node, str(cli)]
+        result = subprocess.run([*command, "--config", str(temporary_path), "upload", str(source)], cwd=directory, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
         combined_output = "\n".join(part for part in (result.stdout, result.stderr) if part).strip()
         if result.returncode != 0:
             raise RuntimeError(f"PicGo 上传失败（退出码 {result.returncode}）：\n{combined_output}")
@@ -160,8 +177,11 @@ def main() -> int:
                 delay = RETRY_DELAYS_SECONDS[attempt - 1]
                 print(f"上传连接中断，将在 {delay} 秒后重试（{attempt + 1}/{MAX_UPLOAD_ATTEMPTS}）…", file=sys.stderr)
                 time.sleep(delay)
-        append_log(source, url)
-    except RuntimeError as error:
+        try:
+            append_log(source, url)
+        except OSError as error:
+            print(f"上传已成功，但无法写入日志：{error}", file=sys.stderr)
+    except (RuntimeError, OSError) as error:
         print(f"上传失败：{error}", file=sys.stderr)
         return 1
     print(url)

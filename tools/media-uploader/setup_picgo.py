@@ -7,6 +7,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -39,9 +40,14 @@ def install_picgo() -> Path:
     if not npm:
         raise RuntimeError("未找到 npm，请先安装 Node.js： https://nodejs.org/")
     root = choose_root()
-    if not shutil.which("picgo"):
-        subprocess.run([npm, "install", "--global", "picgo", "picgo-plugin-s3"], check=True)
-    subprocess.run([npm, "install", "--prefix", str(root), "@aws-sdk/client-s3"], check=True)
+    command = [npm]
+    if Path(npm).suffix.lower() in (".cmd", ".bat"):
+        node = shutil.which("node")
+        entry = Path(npm).parent / "node_modules" / "npm" / "bin" / "npm-cli.js"
+        if not node or not entry.is_file():
+            raise RuntimeError("无法定位 npm JavaScript 入口，请检查 Node.js 安装")
+        command = [node, str(entry)]
+    subprocess.run([*command, "install", "--prefix", str(root), "picgo", "picgo-plugin-s3", "@aws-sdk/client-s3"], check=True)
     return root
 
 
@@ -54,23 +60,37 @@ def main() -> int:
     print("检查并安装 PicGo CLI/S3 插件…")
     root = install_picgo()
     config_path = root / "data.json"
-    config = json.loads(config_path.read_text(encoding="utf-8")) if config_path.is_file() else {}
-    backup = config_path.with_name(f"data.json.backup-{datetime.now():%Y%m%d-%H%M%S}")
+    config = json.loads(config_path.read_text(encoding="utf-8-sig")) if config_path.is_file() else {}
+    if not isinstance(config, dict):
+        raise RuntimeError("PicGo 配置必须是 JSON 对象")
+    backup = config_path.with_name(f"data.json.backup-{datetime.now():%Y%m%d-%H%M%S-%f}")
     if config_path.is_file():
         shutil.copy2(config_path, backup)
     store = config.setdefault("uploader", {}).setdefault("aws-s3", {})
     existing = store.setdefault("configList", [])
+    if not isinstance(existing, list) or any(not isinstance(item, dict) for item in existing):
+        raise RuntimeError("PicGo configList 必须是配置对象列表")
     for media_type, (name, default_bucket, custom_url) in CONFIGS.items():
         bucket = input(f"{media_type} Bucket [{default_bucket}]: ").strip() or default_bucket
         item = next((x for x in existing if x.get("_configName") == name), None)
         if item is None:
             item = {"_configName": name, "_id": name}
             existing.append(item)
+        if not item.get("_id"):
+            item["_id"] = name
         item.update(accessKeyID=access, secretAccessKey=secret, bucketName=bucket, region="auto",
                     endpoint=endpoint, uploadPath="{year}/{month}/{fullName}",
-                    outputURLPattern=f"{custom_url}/{{path}}", pathStyleAccess=False, acl="public-read")
-    store["defaultId"] = existing[0]["_id"]
-    config_path.write_text(json.dumps(config, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                    outputURLPattern=f"{custom_url}/{{path}}", pathStyleAccess=False, acl="")
+    store["defaultId"] = next(item["_id"] for item in existing if item.get("_configName") == CONFIGS["image"][0])
+    temporary_path = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", prefix="data-", suffix=".json.tmp", dir=root, delete=False) as temporary_file:
+            temporary_path = Path(temporary_file.name)
+            temporary_file.write(json.dumps(config, ensure_ascii=False, indent=2) + "\n")
+        temporary_path.replace(config_path)
+    finally:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
     print(f"已写入 PicGo 配置：{config_path}")
     if backup.exists():
         print(f"原配置备份：{backup}")
@@ -80,6 +100,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (OSError, RuntimeError, subprocess.CalledProcessError) as error:
+    except (OSError, RuntimeError, ValueError, TypeError, AttributeError, EOFError, subprocess.CalledProcessError) as error:
         print(f"配置失败：{error}", file=sys.stderr)
         raise SystemExit(1)

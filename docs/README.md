@@ -113,3 +113,14 @@ git push origin main
 | `images/album/pixel-scene-p38.gif` | [服务器文件](https://image.kielasovo.com/2026/10/9d0bd851c74deb77dfdeec6d9a7e3dc1.gif) |
 | `images/album/pixel-scene-p52.webp` | [服务器文件](https://image.kielasovo.com/2026/10/950b9830242afd2d444a42e4b8b5395c.webp) |
 | `images/album/pixel-scene-p52.gif` | [服务器文件](https://image.kielasovo.com/2026/10/3af5626ed208840dba4783f0d7523df3.gif) |
+
+## Tools 网页的检测边界
+
+- **IP Inspector**：直接由浏览器访问 [ipapi.co 的当前 IP 接口](https://ipapi.co/api/)，
+  显示公网 IP、城市/地区/国家、ASN/组织及 IPv4/IPv6。该接口不提供代理、VPN、Tor 等风险字段，
+  风险项保持未知，不计算总分。接口错误、限流和请求超时不会残留上次结果；
+  请求最多等待 15 秒。无需 API 密钥，也不通过网站服务器代查，避免误显示服务器的出口 IP。
+- **Speed Test**：连接 Cloudflare 测速节点，会产生实际上下行流量。测量阶段出错或
+  结果缺失时显示 `ERROR`，不会由结束回调覆盖成 `COMPLETE`；失败阶段的指标显示 `—`。
+  只有上下行、延迟和抖动结果完整有效时才显示完成。上传阶段主仪表显示上传结果。
+- 两个工具均支持站内导航后返回；离开页面会取消 IP 请求或暂停测速，避免旧回调更新新页面。

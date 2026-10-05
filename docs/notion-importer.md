@@ -203,9 +203,11 @@ src/content/blogs/<category>/<file-name>.md
 文章目录统一为 `journal/` 与 `notes/`。已发布文章使用 frontmatter `slug` 固定原地址；
 更新时使用当前目录对应的 `--category`、原文件名及 `--force`，导入器会保留已有 `slug`。
 
+日期、文件名、文章类型和顺序以及目标文件覆盖冲突会在 API 请求/媒体上传前检查。未知或重复参数会报错；布尔开关可使用裸开关、`=true/false` 或独立的 `true/false` 值。页面 URL 的查询参数及片段不会被误当作页面 ID。
+
 ## 六、媒体和代理
 
-Notion 图片、音频和视频默认会尝试转存到项目现有的媒体存储配置。只导入文字、不处理图片时可以使用：
+Notion 图片、音频和视频默认会尝试转存到项目现有的媒体存储配置，音视频添加播放控件；代码示例不会参与媒体转存。文件/PDF 会转换为原 URL 链接并提示链接过期风险。只导入文字、不处理图片时可以使用（音视频仍会转存）：
 
 ```bash
 npm run import:notion -- --skip-images ...
@@ -223,11 +225,15 @@ npm run import:notion -- --proxy "http://127.0.0.1:7897" ...
 npm run import:notion -- --no-proxy ...
 ```
 
-页面存在权限缺失或内容截断时，工具默认停止，避免生成残缺文章。确认可以接受后才使用：
+代理功能要求 Node.js 24+ 或 22.21+。显式 `--proxy` 优先于环境代理；`--no-proxy` 在启用了 `NODE_USE_ENV_PROXY=1` 的进程中也会强制直连。两者不可同时使用。自动 PicGo 配置按 Windows/macOS/Linux 的配置目录读取。
+
+页面内容截断时，工具先按 Notion 返回的未知区块 ID 递归读取子树并恢复内容（Markdown API 无 cursor 分页）。存在权限缺失或无法恢复的内容时默认停止，避免生成残缺文章。确认可以接受后才使用：
 
 ```bash
 --allow-incomplete
 ```
+
+Notion callout/columns/synced block 容器会展开为正文，页面引用/提及转成链接或文本，颜色属性会移除；不支持的 API 区块保留来源链接并警告。正文分隔线不会被误删为 frontmatter。
 
 ## 七、安全注意事项
 

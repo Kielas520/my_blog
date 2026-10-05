@@ -88,7 +88,8 @@ Kielas-nas-video   → https://video.kielasovo.com
 npm run setup:picgo
 ```
 
-脚本会按当前系统安装 PicGo CLI 和 S3 插件，创建或更新三套配置。三种媒体默认都
+脚本会在本机 PicGo 配置目录内安装 PicGo CLI、S3 插件和 AWS SDK，不依赖全局 CLI，
+并创建或更新三套配置。R2 不使用公共 ACL，公开访问由绑定域名控制。三种媒体默认都
 使用现有的 `kielas-blog-assets` Bucket：
 
 ```text
@@ -96,8 +97,12 @@ kielas-blog-assets
 ```
 
 只有在你准备重命名或拆分 Bucket 时，才需要在提示处输入其他名称；直接按回车就使用
-当前这个 Bucket。脚本会先备份原有 `data.json`，不会输出密钥，也不会修改环境变量。
+当前这个 Bucket。脚本会先备份原有 `data.json`，再原子替换配置，不会输出密钥，也不会修改环境变量。
 配置完成后再执行上传测试。Windows、macOS、Linux 均使用同一条 npm 命令。
+
+`npm run cleanup:r2-test` 默认只预览文件名以 `kielasovo-r2-smoke` 开头的测试对象，
+扫描全部分页且不删除普通图片。可用 `-- --prefix "2026/10/"` 限定路径，
+确认列表后添加 `--delete` 才执行删除；自定义 Bucket 使用 `--bucket NAME`。
 
 下面的环境变量章节因此改为第七节。
 

@@ -4,6 +4,11 @@ const candidates = process.platform === 'win32' ? ['python', 'py'] : ['python3',
 const script = process.argv[2];
 const args = process.argv.slice(3);
 
+if (!script) {
+  console.error('用法：node tools/media-uploader/run-python.mjs SCRIPT [ARGS...]');
+  process.exit(1);
+}
+
 for (const executable of candidates) {
   const result = spawnSync(executable, [script, ...args], { stdio: 'inherit' });
   if (!result.error) process.exit(result.status ?? 1);
