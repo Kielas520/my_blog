@@ -13,7 +13,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     <section class="inspector" id="ip-inspector" aria-live="polite">
       <div class="score-panel">
-        <div class="score-ring" id="score-ring"><strong id="score">--</strong><span>/ 100</span></div>
+        <div class="score-ring" id="score-ring"><strong id="score">等待</strong><span>公网地址查询</span></div>
         <p id="verdict">等待检测</p>
         <button id="inspect-button" type="button">START INSPECTION</button>
       </div>
@@ -35,11 +35,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <p class="status" id="status">点击按钮开始检测。</p>
       </div>
     </section>
-    <p class="notice">数据来自 ipapi.co，仅供参考。此接口不提供代理、VPN 等风险检测，风险项保持未知，不计算评分。</p>
+    <p class="notice">采用开源多来源查询策略，支持 IPv4/IPv6。查询结果来自当前成功的来源；未提供的归属信息不会猜测，也不生成 VPN、代理等风险评分。</p>
   </article>
 </BaseLayout>
 
 <script>
+  import ipaddr from 'ipaddr.js';
+
+  // MyIP's validated-provider-chain approach: https://github.com/jason5ng32/MyIP
+  // Address parsing and range classification use the MIT-licensed ipaddr.js.
+  const sources = [
+    { name: 'ipapi.co', url: 'https://ipapi.co/json/', trace: false },
+    { name: 'Cloudflare', url: 'https://www.cloudflare.com/cdn-cgi/trace', trace: true },
+    { name: 'ipify', url: 'https://api64.ipify.org?format=json', trace: false },
+  ];
   const text = (value: unknown): string => typeof value === 'string' ? value.trim() : '';
   const record = (value: unknown): Record<string, unknown> =>
     value !== null && typeof value === 'object' && !Array.isArray(value)
@@ -78,7 +87,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       if (element) element.textContent = value;
     };
     const resetResults = () => {
-      score.textContent = '--';
+      score.textContent = '等待';
       scoreRing.style.removeProperty('--score');
       delete scoreRing.dataset.level;
       ['#ip', '#location', '#network', '#network-type'].forEach((selector) => setText(selector, '—'));
@@ -105,32 +114,70 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       }, 15_000);
 
       try {
-        const response = await fetch('https://ipapi.co/json/', {
-          cache: 'no-store',
-          signal: controller.signal,
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = record(await response.json());
+        const failures: string[] = [];
+        let result: { data: Record<string, unknown>; ip: string; version: string; source: string } | undefined;
+        for (const source of sources) {
+          if (controller.signal.aborted) throw new Error('请求已取消');
+          status.textContent = `正在查询 ${source.name}…`;
+          const hop = new AbortController();
+          const cancel = () => hop.abort();
+          controller.signal.addEventListener('abort', cancel, { once: true });
+          const hopTimeout = setTimeout(cancel, 4_000);
+          try {
+            const response = await fetch(source.url, { cache: 'no-store', signal: hop.signal });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            let data: Record<string, unknown>;
+            if (source.trace) {
+              const trace = new Map((await response.text()).split('\n').map((line) => {
+                const separator = line.indexOf('=');
+                return [line.slice(0, separator), line.slice(separator + 1)] as const;
+              }));
+              data = { ip: trace.get('ip'), country_code: trace.get('loc') };
+            } else {
+              data = record(await response.json());
+            }
+            if (hop.signal.aborted) throw new Error('请求超时');
+            if (data.error || data.success === false) {
+              throw new Error(text(data.reason) || text(data.message) || text(data.error) || '服务返回错误');
+            }
+            const ip = text(data.ip);
+            if (ip.includes('%') || (!ipaddr.IPv4.isValidFourPartDecimal(ip) && !ipaddr.IPv6.isValid(ip))) {
+              throw new Error('服务返回无效 IP');
+            }
+            const address = ipaddr.process(ip);
+            if (address.range() !== 'unicast') throw new Error('服务未返回可用的公网 IP');
+            result = { data, ip: address.toString(), version: address.kind() === 'ipv6' ? 'IPv6' : 'IPv4', source: source.name };
+            break;
+          } catch (error) {
+            if (controller.signal.aborted) throw error;
+            const reason = hop.signal.aborted ? '请求超时' : error instanceof Error ? error.message : '网络不可用';
+            failures.push(`${source.name}：${reason}`);
+          } finally {
+            clearTimeout(hopTimeout);
+            controller.signal.removeEventListener('abort', cancel);
+          }
+        }
         if (disposed) return;
         if (controller.signal.aborted) throw new Error('请求已取消');
-        if (data.error) {
-          throw new Error(text(data.reason) || text(data.message) || text(data.error) || '检测服务返回错误');
-        }
-        const ip = text(data.ip);
-        if (!ip) throw new Error('检测服务未返回有效的公网 IP');
+        if (!result) throw new Error(`所有查询来源均不可用（${failures.join('；')}）`);
+        const { data, ip, version, source } = result;
 
-        verdict.textContent = '网络归属查询完成';
+        score.textContent = '已连接';
+        verdict.textContent = `查询完成 · ${source}`;
         const locationText = [text(data.city), text(data.region), text(data.country_name) || text(data.country_code)]
           .filter(Boolean).join(' · ');
         const network = [text(data.asn), text(data.org)].filter(Boolean).join(' · ');
         setText('#ip', ip);
-        setText('#location', locationText || 'Unknown');
-        setText('#network', network || 'Unknown');
-        setText('#network-type', text(data.version) || 'Unknown');
-        status.textContent = '查询完成 · ipapi.co；此接口不提供风险检测，风险项为未知，不计算评分。';
+        setText('#location', locationText || '该来源未提供');
+        setText('#network', network || '该来源未提供');
+        setText('#network-type', version);
+        status.textContent = failures.length
+          ? `已切换至 ${source} 获取公网 IP；其他来源暂不可用，未提供的归属和风险信息不会猜测。`
+          : `查询完成 · ${source}；风险项为未知，不计算评分。`;
       } catch (error) {
         if (disposed) return;
         resetResults();
+        score.textContent = '失败';
         status.textContent = timedOut
           ? '检测失败：请求超时，请重试。'
           : `检测失败：${error instanceof Error ? error.message : '网络不可用'}`;
@@ -170,7 +217,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   header { padding: 72px 0 38px; }
   header h1 { margin: 0; color: #143f57; font-size: clamp(2.6rem, 7vw, 5rem); line-height: 1; letter-spacing: -.06em; text-wrap: balance; }
   header > p:last-child { max-width: 620px; margin: 20px 0 0; color: var(--muted); }
-  .inspector { display: grid; grid-template-columns: minmax(250px, .72fr) minmax(0, 1.5fr); overflow: hidden; background: rgba(255,255,255,.64); border: 1px solid rgba(255,255,255,.92); border-radius: 24px; box-shadow: 0 18px 42px rgba(36,104,133,.13); }
+  .inspector { display: grid; grid-template-columns: minmax(250px, .72fr) minmax(0, 1.5fr); min-width: 0; overflow: hidden; background: rgba(255,255,255,.64); border: 1px solid rgba(255,255,255,.92); border-radius: 24px; box-shadow: 0 18px 42px rgba(36,104,133,.13); }
   .score-panel { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 440px; padding: 34px; background: linear-gradient(155deg, rgba(207,242,252,.86), rgba(238,251,230,.7)); border-right: 1px solid var(--line); }
   .score-ring { --score: 0; display: grid; width: 184px; height: 184px; background: radial-gradient(circle at center, #f7fdff 61%, transparent 62%), conic-gradient(#54a940 calc(var(--score) * 1%), rgba(48,112,139,.13) 0); border-radius: 50%; place-content: center; text-align: center; box-shadow: inset 0 0 0 1px rgba(255,255,255,.8), 0 12px 26px rgba(36,103,130,.12); }
   .score-ring strong { color: #174b63; font-size: 3rem; line-height: 1; }
@@ -178,7 +225,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .score-panel > p { margin: 18px 0 24px; color: #315f72; font-weight: 700; }
   button { padding: 11px 15px; color: white; background: linear-gradient(#4eafd0,#237f9f); border: 1px solid #1f7694; border-radius: 10px; box-shadow: inset 0 1px rgba(255,255,255,.45), 0 5px 12px rgba(32,108,139,.18); font: 700 .62rem/1 Verdana, sans-serif; cursor: var(--site-cursor); }
   button:disabled { cursor: wait; opacity: .62; }
-  .details { padding: 36px; }
+  .details { min-width: 0; padding: 36px; }
   dl { margin: 0; }
   dl div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 20px; padding: 17px 0; border-bottom: 1px solid var(--line); }
   dt { color: #71909d; font: .62rem/1.4 ui-monospace, monospace; }

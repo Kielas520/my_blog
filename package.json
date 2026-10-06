@@ -20,6 +20,7 @@
     "@astrojs/check": "^0.9.6",
     "@cloudflare/speedtest": "^1.13.0",
     "astro": "^7.1.6",
+    "ipaddr.js": "^2.5.0",
     "sirv-cli": "^3.0.1",
     "typescript": "^5.9.3"
   },

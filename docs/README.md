@@ -116,10 +116,15 @@ git push origin main
 
 ## Tools 网页的检测边界
 
-- **IP Inspector**：直接由浏览器访问 [ipapi.co 的当前 IP 接口](https://ipapi.co/api/)，
-  显示公网 IP、城市/地区/国家、ASN/组织及 IPv4/IPv6。该接口不提供代理、VPN、Tor 等风险字段，
-  风险项保持未知，不计算总分。接口错误、限流和请求超时不会残留上次结果；
-  请求最多等待 15 秒。无需 API 密钥，也不通过网站服务器代查，避免误显示服务器的出口 IP。
+- **IP Inspector**：参考 MIT 开源项目 [MyIP 的多来源地址查询链](https://github.com/jason5ng32/MyIP/blob/a185d1844d28e7535ea3ec5c0277280a77435609/frontend/utils/getips/index.js)，
+  按 ipapi.co → Cloudflare Trace → ipify 双栈接口依次查询；每个来源最多等待 4 秒，
+  查询整体最多等待 15 秒。使用 MIT 开源库 [ipaddr.js](https://github.com/whitequark/ipaddr.js)
+  校验 IPv4/IPv6 并拒绝私网、回环和保留地址；错误响应或无效地址会切换至下一个来源。
+  地址、位置和 ASN 只采用当前成功来源的数据，不混合不同网络出口的归属信息；
+  来源未提供的位置/网络明确显示“该来源未提供”。无可用来源时明确失败，支持重新查询。
+  状态卡显示等待、已连接或失败，不再展示永远没有分数的 `-- / 100`。
+  三个来源均不提供完整 VPN/代理/Tor 风险检测，因此风险项仍为未知，不计算评分。
+  无需 API 密钥，不增加服务器代理；查询的是手机/浏览器当前网络出口，而非网站服务器 IP。
 - **Speed Test**：连接 Cloudflare 测速节点，会产生实际上下行流量。测量阶段出错或
   结果缺失时显示 `ERROR`，不会由结束回调覆盖成 `COMPLETE`；失败阶段的指标显示 `—`。
   只有上下行、延迟和抖动结果完整有效时才显示完成。上传阶段主仪表显示上传结果。
